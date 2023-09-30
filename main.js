@@ -14,7 +14,7 @@ const createWindow = async () => {
         await win.loadFile('index.html');
         console.log('Window loaded.');
         console.log('User data path:', app.getPath('userData'));
-        const gentables_sql_path = path.join(app.getPath('userData'),'gen_tables.sql');
+        const gentables_sql_path = path.join(app.getPath('userData'),'resources','gen_tables.sql');
         console.log('gen_tables.sql path:', gentables_sql_path);
         console.log('Waiting for user to select a photo library...');
         const system_photo_library_path = await showOpenDialog(win);
