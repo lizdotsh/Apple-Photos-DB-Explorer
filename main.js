@@ -12,10 +12,17 @@ const createWindow = async () => {
         });
 
         await win.loadFile('index.html');
+        console.log('Window loaded.');
+        console.log('User data path:', app.getPath('userData'));
         const gentables_sql_path = path.join(app.getPath('userData'),'gen_tables.sql');
+        console.log('gen_tables.sql path:', gentables_sql_path);
+        console.log('Waiting for user to select a photo library...');
         const system_photo_library_path = await showOpenDialog(win);
+        console.log('User selected:', system_photo_library_path);  
+        console.log('Copying database and executing SQL script...');
         if (system_photo_library_path) {
             await handleFileAndDbActions(system_photo_library_path, gentables_sql_path, win);
+            console.log('Done.');
             }
     } catch (err) {
         console.error('Error in createWindow:', err);
@@ -68,28 +75,31 @@ async function handleFileAndDbActions(system_db_path, dot_sql_path, win) {
 
 async function readSqlFile(db_path, dot_sql_path) {
     try {
-      const sql_file = await fs.readFile(dot_sql_path, 'utf8');
-      let db = new sqlite3.Database(db_path);
-  
-      db.serialize(() => {
-        db.run('BEGIN TRANSACTION');
-        db.exec(sql_file, (err) => {
-          if (err) {
-            console.error(`Couldn't execute SQL script: ${err}`);
-            db.run('ROLLBACK');
-            db.close();
-            return;
-          }
-          db.run('COMMIT');
-          db.close((err) => {
+        const sql_file = await fs.readFile(dot_sql_path, 'utf8');
+
+        let db = new sqlite3.Database(db_path);
+        console.log('connected to the photo library database')
+        console.log('executing SQL script...')
+        db.serialize(() => {
+            db.run('BEGIN TRANSACTION');
+            db.exec(sql_file, (err) => {
             if (err) {
-              console.error(`Error closing the database: ${err}`);
+                console.error(`Couldn't execute SQL script: ${err}`);
+                db.run('ROLLBACK');
+                db.close();
+                return;
             }
-          });
+            db.run('COMMIT');
+            db.close((err) => {
+                if (err) {
+                console.error(`Error closing the database: ${err}`);
+                }
+            });
+            });
         });
-      });
+        console.log('SQL script executed.')
     } catch (err) {
-      console.error(`Error in readSqlFile: ${err}`);
+        console.error(`Error in readSqlFile: ${err}`);
     }
 }
   
