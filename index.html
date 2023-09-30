@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8" />
-  <script src="./renderer.js"></script>
+  
   <link rel="stylesheet" type="text/css" href="styles.css">
   <title>Apple Photos Examiner</title>
 </head>
@@ -10,9 +10,17 @@
   <h1>Apple Photos Examiner</h1>
   <p>What does apple photos think about you? Attach your apple photos library to see more.</p>
 
-  <button id="select-library">Select Photo Library</button>
+  <p>Photo Library has been automatically selected for you if available. To pick a specific library, click "Select Library".</p>
 
-  <h2>Console Logs:</h2>
+  <div id="container">
+    <input type="text" id="dirPath">
+    <button id="selectDirBtn">Select Directory</button>
+    <br>
+    <button id="generateReportBtn">Generate Report</button>
+  </div>
+
+  <h2>Console Log:</h2>
   <pre id="db-load-log"></pre>
+  <script src="./renderer.js"></script>
 </body>
 </html>

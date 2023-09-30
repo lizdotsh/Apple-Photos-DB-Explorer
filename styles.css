@@ -14,6 +14,7 @@ body {
     max-height: 300px;
     overflow-y: auto;
     font-family: 'Courier New', monospace;
+    font-size: 12px;
 }
 h1, h2 {
   color: #333;
@@ -47,4 +48,15 @@ pre {
 
 
   
+#dirPath {
+    width: 70%; /* or a specific pixel value */
+  }
+
+  #container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+  }
   

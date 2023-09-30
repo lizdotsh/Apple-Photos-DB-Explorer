@@ -1,4 +1,4 @@
-const { app, BrowserWindow, dialog } = require("electron");
+const { app, ipcMain, BrowserWindow, dialog } = require("electron");
 const sqlite3 = require("sqlite3").verbose();
 const fs = require("fs").promises;
 const path = require("path");
@@ -21,9 +21,9 @@ const createWindow = async () => {
       win.webContents.send("log-update", message);
     });
     logEmitter.on("error-update", (message) => {
-        console.error(message);
-        win.webContents.send("error-update", message);
-      });
+      console.error(message);
+      win.webContents.send("error-update", message);
+    });
 
     await win.loadFile("index.html");
     console.log("Window loaded.");
@@ -35,10 +35,7 @@ const createWindow = async () => {
       "gen_tables.sql"
     );
     logEmitter.emit("log-update", `gen_tables.sql path: ${gentables_sql_path}`);
-    logEmitter.emit(
-      "log-update",
-      "Waiting for user to select a photo library..."
-    );
+    /* 
     const system_photo_library_path = await showOpenDialog(win);
     console.log("User selected:", system_photo_library_path);
     if (system_photo_library_path) {
@@ -48,8 +45,7 @@ const createWindow = async () => {
         win
       );
       logEmitter.emit("log-update", "Processing complete.");
-    }
-    
+    } */
   } catch (err) {
     console.error("Error in createWindow:", err);
   }
@@ -61,15 +57,75 @@ app.whenReady().then(() => {
   );
 });
 
+app.on("window-all-closed", function () {
+  if (process.platform !== "darwin") app.quit();
+});
+
+app.on("activate", function () {
+  if (BrowserWindow.getAllWindows().length === 0) createWindow();
+});
+
+ipcMain.handle('select-directory', async () => {
+    let isValid = false;
+    let selectedPath = null;
+  
+    while (!isValid) {
+      const result = dialog.showOpenDialogSync({ 
+        properties: ['openFile'], 
+        filters: [{ name: 'Photo Library', extensions: ['photoslibrary'] }],
+        defaultPath: `${process.env.HOME}/Pictures`
+      });
+      
+      if (!result) {
+        break; // User clicked cancel
+      }
+  
+      if (result[0].endsWith('.photoslibrary')) {
+        selectedPath = result[0];
+        isValid = true;
+      } else {
+        dialog.showMessageBoxSync({
+          type: 'warning',
+          title: 'Invalid Selection',
+          message: 'Please select a .photoslibrary file.'
+        });
+      }
+    }
+  
+    return selectedPath;
+  });
+  
+
+ipcMain.handle("validate-directory", async (event, dirPath) => {
+  if (dirPath.endsWith(".photoslibrary")) {
+    const sqlitePath = path.join(dirPath, "database", "Photos.sqlite");
+    if (fs.existsSync(sqlitePath)) {
+      return true;
+    }
+  }
+  return false;
+});
+
+ipcMain.handle("get-default-directory", () => {
+  return `${process.env.HOME}/Pictures/Photos Library.photoslibrary`;
+});
+
 function showOpenDialog(win) {
   return new Promise((resolve, reject) => {
+    logEmitter.emit(
+      "log-update",
+      "Waiting for user to select a photo library..."
+    );
     dialog
       .showOpenDialog(win, {
         properties: ["openFile", "openDirectory"],
       })
       .then((result) => {
         if (!result.canceled) {
-        logEmitter.emit("log-update", `User selected: ${result.filePaths[0]}`);
+          logEmitter.emit(
+            "log-update",
+            `User selected: ${result.filePaths[0]}`
+          );
           resolve(result.filePaths[0]);
         }
 
@@ -91,49 +147,10 @@ async function handleFileAndDbActions(system_db_path, dot_sql_path, win) {
     await readSqlFile(db_path, dot_sql_path);
     await basicStats(db_path);
     win.webContents.send("file-and-db-actions-complete");
-
   } catch (err) {
     console.error("Error in handleFileAndDbActions:", err);
   }
 }
-/* 
-async function readSqlFile(db_path, dot_sql_path) {
-    try {
-      const sql_file = await fs.readFile(dot_sql_path, "utf8");
-  
-      let db = new sqlite3.Database(db_path, (err) => {
-        if (err) {
-          logEmitter.emit("error-update", `Error connecting to the database: ${err}`);
-          return;
-        }
-        logEmitter.emit("log-update", "Connecting to the photo library database...");
-      });
-  
-      db.serialize(() => {
-        db.run("BEGIN TRANSACTION");
-  
-        db.exec(sql_file, (err) => {
-          if (err) {
-            logEmitter.emit("error-update", `Couldn't execute SQL script: ${err}`);
-            db.run("ROLLBACK");
-            return;
-          }
-          db.run("COMMIT");
-          logEmitter.emit("log-update", "SQL script executed.");
-        });
-  
-        db.close((err) => {
-          if (err) {
-            logEmitter.emit("error-update", `Error closing the database: ${err}`);
-            return;
-          }
-          logEmitter.emit("log-update", "Database closed.");
-        });
-      });
-    } catch (err) {
-      logEmitter.emit("error-update", `Error in readSqlFile: ${err}`);
-    }
-} */
 
 async function copyDatabase(system_photo_library_path) {
   try {
@@ -152,60 +169,37 @@ async function copyDatabase(system_photo_library_path) {
   }
 }
 
-/* async function basicStats(db_path) {
-    let db = new sqlite3.Database(db_path);
-    db.serialize(() => {
-        // Begin transaction
-        db.run("BEGIN TRANSACTION");
-        // Get count of unique zuuid values in the photo_info table
-        db.get("SELECT COUNT(DISTINCT zuuid) AS photo_count FROM photo_info", (err, row) => {
-            if (err) {
-               // console.error(`Error getting photo count: ${err}`);
-                logEmitter.emit("error-update", `Error getting photo count: ${err}`);
-                db.run("ROLLBACK");
-                db.close();
-                return;
-            }
-            console.log(`Photo count: ${row.photo_count}`);
-            logEmitter.emit("log-update", `Unique Photo count: ${row.photo_count.toLocaleString()} Photos`);
-        });
-        db.run("COMMIT");
-        db.close((err) => {
-            if (err) {
-                //console.error(`Error closing the database: ${err}`);
-                logEmitter.emit("error-update", `Error closing the database: ${err}`);
-            }
-        });
+const dbRun = (db, query) =>
+  new Promise((resolve, reject) => {
+    db.run(query, (err) => {
+      if (err) reject(err);
+      else resolve();
     });
-} */
-
-const dbRun = (db, query) => new Promise((resolve, reject) => {
-  db.run(query, (err) => {
-    if (err) reject(err);
-    else resolve();
   });
-});
 
-const dbExec = (db, query) => new Promise((resolve, reject) => {
-  db.exec(query, (err) => {
-    if (err) reject(err);
-    else resolve();
+const dbExec = (db, query) =>
+  new Promise((resolve, reject) => {
+    db.exec(query, (err) => {
+      if (err) reject(err);
+      else resolve();
+    });
   });
-});
 
-const dbClose = (db) => new Promise((resolve, reject) => {
-  db.close((err) => {
-    if (err) reject(err);
-    else resolve();
+const dbClose = (db) =>
+  new Promise((resolve, reject) => {
+    db.close((err) => {
+      if (err) reject(err);
+      else resolve();
+    });
   });
-});
 
-const dbGet = (db, query) => new Promise((resolve, reject) => {
-  db.get(query, (err, row) => {
-    if (err) reject(err);
-    else resolve(row);
+const dbGet = (db, query) =>
+  new Promise((resolve, reject) => {
+    db.get(query, (err, row) => {
+      if (err) reject(err);
+      else resolve(row);
+    });
   });
-});
 
 async function readSqlFile(db_path, dot_sql_path) {
   try {
@@ -225,30 +219,35 @@ async function basicStats(db_path) {
   try {
     let db = new sqlite3.Database(db_path);
     await dbRun(db, "BEGIN TRANSACTION");
-    const row = await dbGet(db, "SELECT COUNT(DISTINCT zuuid) AS photo_count FROM photo_info");
-    logEmitter.emit("log-update", `Unique Photo count: ${row.photo_count.toLocaleString()} Photos`);
+    const row = await dbGet(
+      db,
+      "SELECT COUNT(DISTINCT zuuid) AS photo_count FROM photo_info"
+    );
+    logEmitter.emit(
+      "log-update",
+      `Unique Photo count: ${row.photo_count.toLocaleString()} Photos`
+    );
     await dbRun(db, "COMMIT");
     await dbClose(db);
   } catch (err) {
     logEmitter.emit("error-update", `Error in basicStats: ${err}`);
-}
+  }
 }
 
 async function photoLibraryAvailable() {
-    // Check if the user has a photo library available
-    // by looking for the Photos.sqlite file in the
-    // ~/Pictures/Photos Library.photoslibrary/database directory
-    const photos_library_path = path.join(
-      app.getPath("pictures"),
-      "Photos Library.photoslibrary",
-      "database",
-      "Photos.sqlite"
-    );
-    try {
-      await fs.access(photos_library_path);
-      return true;
-    } catch (err) {
-      return false;
-    }
+  // Check if the user has a photo library available
+  // by looking for the Photos.sqlite file in the
+  // ~/Pictures/Photos Library.photoslibrary/database directory
+  const photos_library_path = path.join(
+    app.getPath("pictures"),
+    "Photos Library.photoslibrary",
+    "database",
+    "Photos.sqlite"
+  );
+  try {
+    await fs.access(photos_library_path);
+    return true;
+  } catch (err) {
+    return false;
+  }
 }
-
