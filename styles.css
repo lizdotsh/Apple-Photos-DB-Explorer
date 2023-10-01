@@ -57,6 +57,17 @@ pre {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100vh;
+  }
+  
+  #directorySection {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    width: 85%
+  }
+  
+  #generateReportBtn {
+    margin-top: 20px;
+    width: 30%;
   }
   

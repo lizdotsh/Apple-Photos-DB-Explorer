@@ -27,25 +27,6 @@ const createWindow = async () => {
 
     await win.loadFile("index.html");
     console.log("Window loaded.");
-    //await testReadFile();
-    logEmitter.emit("log-update", `User data path: ${app.getPath("userData")}`);
-    const gentables_sql_path = path.join(
-      __dirname,
-      "resources",
-      "gen_tables.sql"
-    );
-    logEmitter.emit("log-update", `gen_tables.sql path: ${gentables_sql_path}`);
-    /* 
-    const system_photo_library_path = await showOpenDialog(win);
-    console.log("User selected:", system_photo_library_path);
-    if (system_photo_library_path) {
-      await handleFileAndDbActions(
-        system_photo_library_path,
-        gentables_sql_path,
-        win
-      );
-      logEmitter.emit("log-update", "Processing complete.");
-    } */
   } catch (err) {
     console.error("Error in createWindow:", err);
   }
@@ -65,42 +46,44 @@ app.on("activate", function () {
   if (BrowserWindow.getAllWindows().length === 0) createWindow();
 });
 
-ipcMain.handle('select-directory', async () => {
-    let isValid = false;
-    let selectedPath = null;
-  
-    while (!isValid) {
-      const result = dialog.showOpenDialogSync({ 
-        properties: ['openFile'], 
-        filters: [{ name: 'Photo Library', extensions: ['photoslibrary'] }],
-        defaultPath: `${process.env.HOME}/Pictures`
-      });
-      
-      if (!result) {
-        break; // User clicked cancel
-      }
-  
-      if (result[0].endsWith('.photoslibrary')) {
-        selectedPath = result[0];
-        isValid = true;
-      } else {
-        dialog.showMessageBoxSync({
-          type: 'warning',
-          title: 'Invalid Selection',
-          message: 'Please select a .photoslibrary file.'
-        });
-      }
+ipcMain.handle("select-directory", async () => {
+  let isValid = false;
+  let selectedPath = null;
+
+  while (!isValid) {
+    const result = dialog.showOpenDialogSync({
+      properties: ["openFile"],
+      filters: [{ name: "Photo Library", extensions: ["photoslibrary"] }],
+      defaultPath: `${process.env.HOME}/Pictures`,
+    });
+
+    if (!result) {
+      break; // User clicked cancel
     }
-  
-    return selectedPath;
-  });
-  
+
+    if (result[0].endsWith(".photoslibrary")) {
+      selectedPath = result[0];
+      isValid = true;
+    } else {
+      dialog.showMessageBoxSync({
+        type: "warning",
+        title: "Invalid Selection",
+        message: "Please select a .photoslibrary file.",
+      });
+    }
+  }
+
+  return selectedPath;
+});
 
 ipcMain.handle("validate-directory", async (event, dirPath) => {
   if (dirPath.endsWith(".photoslibrary")) {
     const sqlitePath = path.join(dirPath, "database", "Photos.sqlite");
-    if (fs.existsSync(sqlitePath)) {
+    try {
+      await fs.access(sqlitePath);
       return true;
+    } catch (err) {
+      return false;
     }
   }
   return false;
@@ -108,6 +91,25 @@ ipcMain.handle("validate-directory", async (event, dirPath) => {
 
 ipcMain.handle("get-default-directory", () => {
   return `${process.env.HOME}/Pictures/Photos Library.photoslibrary`;
+});
+
+ipcMain.handle("generate-report", async (event, system_photo_library_path) => {
+  console.log("User selected:", system_photo_library_path);
+  logEmitter.emit("log-update", `User data path: ${app.getPath("userData")}`);
+  const gentables_sql_path = path.join(
+    __dirname,
+    "resources",
+    "gen_tables.sql"
+  );
+  logEmitter.emit("log-update", `gen_tables.sql path: ${gentables_sql_path}`);
+
+  if (system_photo_library_path) {
+    await handleFileAndDbActions(
+      system_photo_library_path,
+      gentables_sql_path
+    );
+    logEmitter.emit("log-update", "Processing complete.");
+  }
 });
 
 function showOpenDialog(win) {
@@ -137,7 +139,7 @@ function showOpenDialog(win) {
   });
 }
 
-async function handleFileAndDbActions(system_db_path, dot_sql_path, win) {
+async function handleFileAndDbActions(system_db_path, dot_sql_path) {//, win) {
   try {
     logEmitter.emit(
       "log-update",
@@ -146,7 +148,7 @@ async function handleFileAndDbActions(system_db_path, dot_sql_path, win) {
     const db_path = await copyDatabase(system_db_path);
     await readSqlFile(db_path, dot_sql_path);
     await basicStats(db_path);
-    win.webContents.send("file-and-db-actions-complete");
+    //win.webContents.send("file-and-db-actions-complete");
   } catch (err) {
     console.error("Error in handleFileAndDbActions:", err);
   }
@@ -231,23 +233,5 @@ async function basicStats(db_path) {
     await dbClose(db);
   } catch (err) {
     logEmitter.emit("error-update", `Error in basicStats: ${err}`);
-  }
-}
-
-async function photoLibraryAvailable() {
-  // Check if the user has a photo library available
-  // by looking for the Photos.sqlite file in the
-  // ~/Pictures/Photos Library.photoslibrary/database directory
-  const photos_library_path = path.join(
-    app.getPath("pictures"),
-    "Photos Library.photoslibrary",
-    "database",
-    "Photos.sqlite"
-  );
-  try {
-    await fs.access(photos_library_path);
-    return true;
-  } catch (err) {
-    return false;
   }
 }
