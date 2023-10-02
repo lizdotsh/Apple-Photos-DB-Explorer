@@ -1,7 +1,7 @@
 module.exports = {
   packagerConfig: {
     asar: true,
-    extraResource: ["resources/gen_tables.sql"],
+    extraResource: ["resources/gen_tables.sql", "svelte-app/public/**"],
   },
   rebuildConfig: {},
   makers: [

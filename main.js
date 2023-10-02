@@ -6,6 +6,7 @@ const EventEmitter = require("events");
 //const { log } = require("console");
 const logEmitter = new EventEmitter();
 // test read file gen_tables.sql
+const aq = require("arquero");
 
 const createWindow = async () => {
   try {
@@ -13,8 +14,8 @@ const createWindow = async () => {
       webPreferences: {
         preload: path.join(__dirname, "preload.js"),
       },
-      width: 800,
-      height: 600,
+      width: 1200,
+      height: 1000,
     });
     logEmitter.on("log-update", (message) => {
       console.log(message);
@@ -25,7 +26,8 @@ const createWindow = async () => {
       win.webContents.send("error-update", message);
     });
 
-    await win.loadFile("index.html");
+ //   await win.loadFile("index.html");
+    await win.loadFile("svelte-app/public/index.html");
     console.log("Window loaded.");
   } catch (err) {
     console.error("Error in createWindow:", err);
@@ -101,12 +103,19 @@ ipcMain.handle("generate-report", async (event, system_photo_library_path) => {
     "resources",
     "gen_tables.sql"
   );
+  const rollup_sql_path = path.join(
+    __dirname,
+    "resources",
+    "rollup.sql"
+  );
   logEmitter.emit("log-update", `gen_tables.sql path: ${gentables_sql_path}`);
+  logEmitter.emit("log-update", `rollup.sql path: ${rollup_sql_path}`);
 
   if (system_photo_library_path) {
     await handleFileAndDbActions(
       system_photo_library_path,
-      gentables_sql_path
+      gentables_sql_path,
+      rollup_sql_path
     );
     logEmitter.emit("log-update", "Processing complete.");
   }
@@ -139,14 +148,14 @@ function showOpenDialog(win) {
   });
 }
 
-async function handleFileAndDbActions(system_db_path, dot_sql_path) {//, win) {
+async function handleFileAndDbActions(system_db_path, dot_sql_path, rollup_sql_path) {//, win) {
   try {
     logEmitter.emit(
       "log-update",
       "Copying database and executing SQL script..."
     );
     const db_path = await copyDatabase(system_db_path);
-    await readSqlFile(db_path, dot_sql_path);
+    await readSqlFile(db_path, dot_sql_path, rollup_sql_path);
     await basicStats(db_path);
     //win.webContents.send("file-and-db-actions-complete");
   } catch (err) {
@@ -202,13 +211,21 @@ const dbGet = (db, query) =>
       else resolve(row);
     });
   });
-
-async function readSqlFile(db_path, dot_sql_path) {
+const dbGetAll = (db, query) =>
+  new Promise((resolve, reject) => {
+    db.all(query, (err, rows) => { // Note the use of `all` and `rows`
+      if (err) reject(err);
+      else resolve(rows);
+    });
+  });
+async function readSqlFile(db_path, dot_sql_path, rollup_sql_path) {
   try {
     const sql_file = await fs.readFile(dot_sql_path, "utf8");
+    const rollup_sql_file = await fs.readFile(rollup_sql_path, "utf8");
     let db = new sqlite3.Database(db_path);
     await dbRun(db, "BEGIN TRANSACTION");
     await dbExec(db, sql_file);
+    await dbExec(db, rollup_sql_file);
     await dbRun(db, "COMMIT");
     await dbClose(db);
     logEmitter.emit("log-update", "SQL script executed and database closed.");
@@ -235,3 +252,16 @@ async function basicStats(db_path) {
     logEmitter.emit("error-update", `Error in basicStats: ${err}`);
   }
 }
+ipcMain.on('sql-query', async (event, sqlQuery) => {
+    try {
+      let db = new sqlite3.Database(path.join(app.getPath("userData"), "photo_lib.sqlite"));
+      await dbRun(db, "BEGIN TRANSACTION");
+      const rows = await dbGetAll(db, sqlQuery);  // rows will be an array of objects
+      await dbRun(db, "COMMIT");
+      await dbClose(db);
+      //const dt = aq.from(rows);
+      event.reply('sql-results', rows);
+    } catch (err) {
+      logEmitter.emit("error-update", `Error in sql-query: ${err}`);
+    }
+  });

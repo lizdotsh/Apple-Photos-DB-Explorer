@@ -132,23 +132,6 @@ SELECT
     CASE
         zDetFace.ZFACIALHAIRTYPE
         WHEN 0
-            THEN '0-StillTesting'
-        WHEN 1
-            THEN 'Clean Shaven Facial Hair Type-1'
-        WHEN 2
-            THEN 'Beard Facial Hair Type-2'
-        WHEN 3
-            THEN 'Goatee Facial Hair Type-3'
-        WHEN 4
-            THEN 'Mustache Facial Hair Type-4'
-        WHEN 5
-            THEN 'Stubble Facial Hair Type-5'
-        ELSE 'Unknown-New-Value!: ' || zDetFace.ZFACIALHAIRTYPE || ''
-    END AS 'zDetFace-Facial Hair Type',
-
-    CASE
-        zDetFace.ZFACIALHAIRTYPE
-        WHEN 0
             THEN 'other/unknown'
         WHEN 1
             THEN 'Clean Shaven'
@@ -236,14 +219,6 @@ SELECT
          else 'Unknown-New-Value!: ' || zDetFace.ZHASSMILE || ' ' || zDetFace.ZSMILETYPE || ''
     END AS 'smile_combined_estimate',
 
-     CASE
-        zDetFace.ZLIPMAKEUPTYPE
-        WHEN 0
-            THEN 'zDetFace No Lip Makeup-0'
-        WHEN 1
-            THEN 'zDetFace Lip Makeup Detected-1'
-        ELSE 'Unknown-New-Value!: ' || zDetFace.ZLIPMAKEUPTYPE || ''
-    END AS 'zDetFace-Lip Makeup Type',
 
     CASE 
         zDetFace.ZLIPMAKEUPTYPE
@@ -253,18 +228,7 @@ SELECT
             THEN 'Wearing Lip Makeup'
         ELSE 'Unknown-New-Value!: ' || zDetFace.ZLIPMAKEUPTYPE || ''
     END AS 'lip_makeup_estimate',
-    CASE
-        zDetFace.ZEYESSTATE
-        WHEN 0
-            THEN '0-StillTesting'
-        WHEN 1
-            THEN 'Eyes Closed-1'
-        WHEN 2
-            THEN 'Eyes Open-2'
-        ELSE 'Unknown-New-Value!: ' || zDetFace.ZEYESSTATE || ''
-    END AS 'zDetFace-Eyes State',
-
-    CASE 
+     CASE 
         zDetFace.ZEYESSTATE
         WHEN 0
             THEN 'other/unknown'
@@ -283,19 +247,6 @@ SELECT
         ELSE 'other/unknown' || zDetFace.ZISLEFTEYECLOSED || ' ' || zDetFace.ZISRIGHTEYECLOSED || ''
     END AS 'winking_estimate',
 
-    CASE
-        zDetFace.ZGLASSESTYPE
-        WHEN 0
-            THEN '0-StillTesting'
-        WHEN 1
-            THEN 'Eye Glasses-1'
-        WHEN 2
-            THEN 'Sun Glasses-2'
-        WHEN 3
-            THEN 'No Glasses-3'
-        ELSE 'Unknown-New-Value!: ' || zDetFace.ZGLASSESTYPE || ''
-    END AS 'zDetFace-Eye Glasses Type',
-
     CASE 
         zDetFace.ZGLASSESTYPE
         WHEN 0
@@ -309,14 +260,6 @@ SELECT
         ELSE 'Unknown-New-Value!: ' || zDetFace.ZGLASSESTYPE || ''
     END AS 'glasses_estimate',
 
-    CASE
-        zDetFace.ZEYEMAKEUPTYPE
-        WHEN 0
-            THEN 'No Eye Makeup-0'
-        WHEN 1
-            THEN 'Eye Makeup Detected-1'
-        ELSE 'Unknown-New-Value!: ' || zDetFace.ZEYEMAKEUPTYPE || ''
-    END AS 'zDetFace-Eye Makeup Type',
 
     CASE 
         zDetFace.ZEYEMAKEUPTYPE
@@ -344,12 +287,6 @@ SELECT
     END AS 'resource_type_estimate', */
     zAsset.ZCURATIONSCORE AS 'curation_score',
     zDetFace.ZASSET AS 'asset_contains_face',
-
-    CASE zDetFace.ZASSETVISIBLE
-        WHEN 0 THEN 'Asset Not Visible Photo Library-0'
-        WHEN 1 THEN 'Asset Visible Photo Library-1'
-        ELSE 'Unknown-New-Value!: ' || zDetFace.ZASSETVISIBLE || ''
-    END AS 'zDetFace-Asset Visible',
 
     CASE zDetFace.ZASSETVISIBLE
         WHEN 0 THEN 'Yes'
@@ -401,7 +338,12 @@ SELECT
         LEFT JOIN ZDETECTEDFACE zDetFace ON zAsset.Z_PK = zDetFace.ZASSET
         LEFT JOIN ZPERSON zPerson ON zPerson.Z_PK = zDetFace.ZPERSON
         LEFT JOIN ZCOMPUTEDASSETATTRIBUTES zCompAssetAttr ON zCompAssetAttr.Z_PK = zAsset.ZCOMPUTEDATTRIBUTES
-        LEFT JOIN ZMEDIAANALYSISASSETATTRIBUTES zMedAnlyAstAttr ON zAsset.ZMEDIAANALYSISATTRIBUTES = zMedAnlyAstAttr.Z_PK
+        LEFT JOIN ZMEDIAANALYSISASSETATTRIBUTES zMedAnlyAstAttr ON zAsset.ZMEDIAANALYSISATTRIBUTES = zMedAnlyAstAttr.Z_PK;
 
  
+CREATE INDEX photo_info_idx_zuuid ON photo_info (zuuid);
 
+
+
+
+-- OLAP cube esque thing 
