@@ -72,15 +72,21 @@
 
   $: filtered_photos = photos_per_user?.params({ name: elm_name })
     .filter((d, $) => d.full_name === $.name)
-    .derive({
-      year_month: (d) => faq.op.parse_date(d.year_month),
-    }).orderby("year_month");
+    .orderby("year_month");
+    //.derive({
+     // year_month: (d) => faq.op.parse_date(d.year_month),
+   // }).orderby("year_month");
   /*   $: filtered_photos_daily = photos_per_user_daily
     ?.params({ name: elm_name })
     .filter((d, $) => d.full_name === $.name)
     .derive({
       date: (d) => aq.op.parse_date(d.date),
     }).orderby("date"); */
+    $: filtered_photos_daily = photos_per_user_daily
+    ?.params({ name: elm_name })
+    .filter((d, $) => d.full_name === $.name)
+    .orderby("date");
+    $: console.log(filtered_photos_daily)
 </script>
 
 <!-- Random Normal -->
@@ -104,21 +110,16 @@
 
 <!-- ... -->
 
-<!-- get selected option value-->
+<!-- make component smaller -->
+
+
+
 
 <SortedPhotosBar name_count={photos_per_user} />
 
 {#if filtered_photos}
 <!--  <SortedPhotosTimeLine filt_tab={filtered_photos} /> -->
-  <PlotRender
-    options={{
-      title: "Photos of user over time",
-      marks: [
-        Plot.lineX(filtered_photos, { x: "year_month", y: "count_val", tip: true }),
-      ],
-    }}
-  />
-  <SortedPhotosTimeLinePlotly table={filtered_photos} />
+  <SortedPhotosTimeLinePlotly table={filtered_photos_daily} width = "20%"/>
 {:else}
   <p>Waiting for data...</p>
 {/if}

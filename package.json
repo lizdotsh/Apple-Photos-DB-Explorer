@@ -1,6 +1,6 @@
 {
   "name": "apple-photos-db-explorer",
-  "description": "Vite + Svelte + Electron + Tailwind",
+  "description": "Apple Photos Database Explorer",
   "license": "MIT",
   "private": true,
   "version": "0.0.0",
@@ -21,7 +21,7 @@
     "@electron-forge/maker-rpm": "^6.1.1",
     "@electron-forge/maker-squirrel": "^6.1.1",
     "@electron-forge/maker-zip": "^6.1.1",
-    "@sveltejs/vite-plugin-svelte": "^2.0.3",
+    "@sveltejs/vite-plugin-svelte": "^2.4.6",
     "concurrently": "^8.0.1",
     "cross-env": "^7.0.3",
     "electron": "^24.3.1",

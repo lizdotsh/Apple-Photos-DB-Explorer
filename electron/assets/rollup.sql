@@ -49,7 +49,7 @@ when full_name is null then 'no_face'
 else full_name end as full_name,
 -- year-month of the photo. sqlite. 
 -- https://www.sqlite.org/lang_datefunc.html
-strftime('%Y-%m-d', date_created) as year_month,
+strftime('%Y-%m', date_created) || '-01' as year_month,
 camera_make,
 camera_model,
 face_count,
@@ -74,7 +74,28 @@ group by
 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19, 20, 21;
 
 
+drop table if exists photos_per_user_daily;
+create table photos_per_user_daily as
+        select 
+          full_name, 
+          date,
+          sum(count) as count
+          from photo_info_rollup_daily
+          where date > '1950-01-01'
+          group by 1,2
+          order by count desc;
 
+drop table if exists photos_per_user_daily_filled;
+create table photos_per_user_daily_filled as
+WITH RECURSIVE date_series AS (
+  SELECT MIN(date) AS date FROM photos_per_user_daily
+  UNION ALL
+  SELECT date(date, '+1 day') FROM date_series
+  WHERE date < (SELECT MAX(date) FROM photos_per_user_daily)
+)
+SELECT date_series.date, IFNULL(photos_per_user_daily.count, 0) AS count
+FROM date_series
+LEFT JOIN photos_per_user_daily ON date_series.date = photos_per_user_daily.date;
 
 drop table if exists sum_photos_monthly;
 

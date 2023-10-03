@@ -28,7 +28,7 @@ const createWindow = () => {
     // Create the browser window.
     win = new BrowserWindow({
         width: 1300,
-        height: 600,
+        height: 900,
         webPreferences: {
             preload: path.join(__dirname, 'preload.js')
         }
@@ -45,6 +45,7 @@ const createWindow = () => {
     if (isDevEnvironment) {
 
        // win.loadFile(path.join(__dirname, 'db_load/index.html'));
+
         // if your vite app is running on a different port, change it here
         win.loadURL('http://localhost:5173/');
 
