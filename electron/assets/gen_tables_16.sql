@@ -287,7 +287,7 @@ SELECT
         ELSE 'Unknown-New-Value!: ' || zIntResou.ZRESOURCETYPE || ''
     END AS 'resource_type_estimate', */
     zAsset.ZCURATIONSCORE AS 'curation_score',
-    zDetFace.ZASSETFORFACE AS 'asset_contains_face',
+    zDetFace.ZASSET AS 'asset_contains_face',
 
     CASE zDetFace.ZASSETVISIBLE
         WHEN 0 THEN 'Yes'
@@ -336,8 +336,8 @@ SELECT
         LEFT JOIN ZADDITIONALASSETATTRIBUTES zAddAssetAttr ON zAddAssetAttr.Z_PK = zAsset.ZADDITIONALATTRIBUTES
         LEFT JOIN ZEXTENDEDATTRIBUTES zExtAttr ON zExtAttr.Z_PK = zAsset.ZEXTENDEDATTRIBUTES
      --   LEFT JOIN ZINTERNALRESOURCE zIntResou ON zIntResou.ZASSET = zAsset.Z_PK
-        LEFT JOIN ZDETECTEDFACE zDetFace ON zAsset.Z_PK = zDetFace.ZASSETFORFACE
-        LEFT JOIN ZPERSON zPerson ON zPerson.Z_PK = zDetFace.ZPERSONFORFACE
+        LEFT JOIN ZDETECTEDFACE zDetFace ON zAsset.Z_PK = zDetFace.ZASSET
+        LEFT JOIN ZPERSON zPerson ON zPerson.Z_PK = zDetFace.ZPERSON
         LEFT JOIN ZCOMPUTEDASSETATTRIBUTES zCompAssetAttr ON zCompAssetAttr.Z_PK = zAsset.ZCOMPUTEDATTRIBUTES
         LEFT JOIN ZMEDIAANALYSISASSETATTRIBUTES zMedAnlyAstAttr ON zAsset.ZMEDIAANALYSISATTRIBUTES = zMedAnlyAstAttr.Z_PK;
 
