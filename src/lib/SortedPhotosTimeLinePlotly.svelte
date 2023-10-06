@@ -85,7 +85,7 @@ $: console.log(rolltest); */
       rangeslider: {},
       type: "date",
     },
-    yaxis: { autorange: true, type: "linear" },
+    yaxis: { autorange: true, type: "linear"},
   };
 
   let data;

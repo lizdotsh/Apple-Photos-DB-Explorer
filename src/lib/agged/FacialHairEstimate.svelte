@@ -1,0 +1,50 @@
+<script>
+    import * as Plot from "@observablehq/plot";
+    import PlotRender from "../Plot.svelte"
+    export let person_group_stats;
+    import * as aq from "arquero";
+    let filt;
+    $: person_group_stats.then((data) => {
+  
+      filt = aq
+        .from(data)
+        .groupby("facial_hair_estimate")
+        .rollup({ cnt: (d) => aq.op.sum(d.count) })
+        .orderby("cnt")
+        .ungroup()
+        .derive({ pct: (d) => d.cnt / aq.op.sum(d.cnt) });
+    
+      // face_expression_estimate
+  
+      //   console.log(df);
+    });
+  </script>
+ {#if filt}
+ <PlotRender
+ options={{
+   x: { label: "User", line: true, percent: true },
+   y: {
+      domain: ['Clean Shaven', 'Goatee', 'Mustache', 'Stubble', 'other/unknown']
+   },
+   color: { legend: true },
+   marginLeft: 100,
+   marks: [
+     // Plot.barY(
+     //     // filter by not no_name or no_face
+     //     gender,
+
+     //     {x: 'gender_estimate', y: 'cnt', tip: true, fill: 'gender_estimate', sort: {x: 'y', reverse: true}}),
+     Plot.barX(filt, {
+       x: "pct",
+       y: "facial_hair_estimate",
+       fill: "facial_hair_estimate",
+       tip: true,
+       label: true,
+       sort: { y: "x", reverse: true },
+     }),
+   ],
+ }}
+/>
+{:else}
+ <p>Waiting for data...</p>
+{/if}

@@ -8,6 +8,9 @@
   import SortedPhotosBar from "./lib/person_agnostic/SortedPhotosBar.svelte";
   import SortedPhotosTimeLine from "./lib/SortedPhotosTimeLine.svelte";
   import SortedPhotosTimeLinePlotly from "./lib/SortedPhotosTimeLinePlotly.svelte";
+  import AggStats from "./lib/AggStats.svelte";
+  import AgeEstimate from "./lib/agged/GenderEstimate.svelte";
+  import GenderEstimate from "./lib/agged/GenderEstimate.svelte";
 
   let photos_per_user;
   let names_ids;
@@ -87,6 +90,22 @@
     .filter((d, $) => d.full_name === $.name)
     .orderby("date");
     $: console.log(filtered_photos_daily)
+    let person_group_stats;
+
+    async function invoke_req(api, arg) {
+        try {
+            const result = await window.myAPI.invoke(api, arg);
+            console.log(result);
+            return result;
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    $: person_group_stats = invoke_req("call-person-group-stats", elm_name);
+    
+
+
 </script>
 
 <!-- Random Normal -->
@@ -94,7 +113,7 @@
 <h1>Apple Photos DB Explorer</h1>
 <!-- ... -->
 {#if typeof names_ids !== "undefined"}
-  <select bind:value={elm_name}>
+  <select bind:value={elm_name} >
     {#each names_ids as name_entry}
       <option value={name_entry.full_name}>{name_entry.full_name}</option>
     {/each}
@@ -113,13 +132,15 @@
 <!-- make component smaller -->
 
 
+<AggStats {person_group_stats} />
 
+<GenderEstimate {person_group_stats} />
 
 <SortedPhotosBar name_count={photos_per_user} />
 
 {#if filtered_photos}
 <!--  <SortedPhotosTimeLine filt_tab={filtered_photos} /> -->
-  <SortedPhotosTimeLinePlotly table={filtered_photos_daily} width = "20%"/>
+<!--   <SortedPhotosTimeLinePlotly table={filtered_photos_daily} width = "20%"/> -->
 {:else}
   <p>Waiting for data...</p>
 {/if}

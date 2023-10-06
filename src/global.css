@@ -61,3 +61,17 @@ button:not(:disabled):active {
 button:focus {
 	border-color: #666;
 }
+.flex-parent-element {
+    display: flex;
+    width: 50%;
+  }
+  
+  .flex-child-element {
+    flex: 1;
+    border: 2px solid blueviolet;
+    margin: 10px;
+  }
+  
+  .flex-child-element:first-child {
+    margin-right: 20px;
+  }

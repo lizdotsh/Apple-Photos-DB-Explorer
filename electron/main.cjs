@@ -27,8 +27,8 @@ const createWindow = () => {
     
     // Create the browser window.
     win = new BrowserWindow({
-        width: 1300,
-        height: 900,
+        width: 1700,
+        height: 1200,
         webPreferences: {
             preload: path.join(__dirname, 'preload.js')
         }
@@ -44,7 +44,7 @@ const createWindow = () => {
     // define how electron will load the app
     if (isDevEnvironment) {
 
-       // win.loadFile(path.join(__dirname, 'db_load/index.html'));
+    //    win.loadFile(path.join(__dirname, 'db_load/index.html'));
 
         // if your vite app is running on a different port, change it here
         win.loadURL('http://localhost:5173/');
@@ -342,3 +342,21 @@ async function handleQueries(queryarr) {
     }
   });
   
+
+ // sendsql but async using handle/invoke
+ 
+    ipcMain.handle("call-person-group-stats", async (event, name_entry) => {
+
+        try {
+            const results = await dbquery(`SELECT * FROM person_group_stats WHERE full_name = '${name_entry}'`);
+            
+            if (results) {
+                return results;
+            }
+        } catch (err) {
+            console.error("error-update", `Error in call-person-group-stats: ${err}`);
+            throw err;
+        }
+        
+    });
+
