@@ -11,6 +11,7 @@
   import AggStats from "./lib/AggStats.svelte";
   import AgeEstimate from "./lib/agged/GenderEstimate.svelte";
   import GenderEstimate from "./lib/agged/GenderEstimate.svelte";
+  import PhotosDayHistogram from "./lib/agged/PhotosDayHistogram.svelte";
 
   let photos_per_user;
   let names_ids;
@@ -91,6 +92,7 @@
     .orderby("date");
     $: console.log(filtered_photos_daily)
     let person_group_stats;
+    let daily_with_rolling;
 
     async function invoke_req(api, arg) {
         try {
@@ -103,11 +105,14 @@
     }
 
     $: person_group_stats = invoke_req("call-person-group-stats", elm_name);
-    
+    $: daily_with_rolling = invoke_req("daily-zeroed-counts", elm_name);
+   let avg_photos_daily; 
+    $: avg_photos_daily = elm_name
 
 
 </script>
-
+<div class="flex-container">
+    <div id="selector" class = "text-intro">
 <!-- Random Normal -->
 
 <h1>Apple Photos DB Explorer</h1>
@@ -118,6 +123,7 @@
       <option value={name_entry.full_name}>{name_entry.full_name}</option>
     {/each}
   </select>
+  
   <h2>
     You have selected {elm_name}, they have {names_ids?.find(
       (e) => e.full_name === elm_name
@@ -126,17 +132,27 @@
 {:else}
   <p>Waiting for data...</p>
 {/if}
+    </div>
 
-<!-- ... -->
+  <div id="SortedPhotosBar">
 
 <!-- make component smaller -->
 
-
+<SortedPhotosBar name_count={photos_per_user} />
+</div>
+</div>
+<div class="flex-container">
+<div id="time">
+    {#if daily_with_rolling}
+  <SortedPhotosTimeLinePlotly {daily_with_rolling} />
+{:else}
+  <p>Waiting for data...</p>
+{/if}
+</div>
+</div>
 <AggStats {person_group_stats} />
 
-<GenderEstimate {person_group_stats} />
 
-<SortedPhotosBar name_count={photos_per_user} />
 
 {#if filtered_photos}
 <!--  <SortedPhotosTimeLine filt_tab={filtered_photos} /> -->
@@ -144,3 +160,17 @@
 {:else}
   <p>Waiting for data...</p>
 {/if}
+
+<PhotosDayHistogram {daily_with_rolling} />
+
+
+<style>
+    .flex-container {
+      display: flex;
+      justify-content: space-around;
+      min-width: "30%";
+    }
+    .text-intro {
+        max-width: 40%;
+    }
+  </style>

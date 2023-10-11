@@ -34,6 +34,7 @@
     "arquero": "^5.2.0",
     "electron-squirrel-startup": "^1.0.0",
     "plotly.js-dist": "^2.26.1",
+    "sql-tagged-template-literal": "^1.2.0",
     "sqlite3": "^5.1.6",
     "svelte-plotly.js": "^0.3.2"
   }

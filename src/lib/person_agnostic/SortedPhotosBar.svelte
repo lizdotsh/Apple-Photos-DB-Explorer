@@ -4,10 +4,10 @@
     export let name_count;
     import * as aq from "arquero";
   </script>
-  
+  <h2> Number of Photos by person (all time)</h2> 
   {#if name_count}
   <PlotRender options={{ 
-    x: {label: 'User', line: true, tickRotate: -45},
+    x: {label: 'Name', line: true, tickRotate: -45},
     y: {label: 'Number of Photos', line: true},
     marginBottom: 120,
     marks: [

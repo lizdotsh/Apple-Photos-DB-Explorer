@@ -85,12 +85,12 @@ create table photos_per_user_daily as
           group by 1,2
           order by count desc;
 
-drop table if exists dates;
+drop table if exists date_series;
 create table date_series as
 WITH RECURSIVE dates AS (
   SELECT MIN(date) AS date FROM photos_per_user_daily
   UNION ALL
-  SELECT date(date, '+1 day') FROM date_series
+  SELECT date(date, '+1 day') FROM dates
   WHERE date < (SELECT MAX(date) FROM photos_per_user_daily)
 )
 SELECT dates.date
