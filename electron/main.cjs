@@ -343,20 +343,58 @@ ipcMain.on("sql-query", async (event, queryarr) => {
 
 // sendsql but async using handle/invoke
 
-ipcMain.handle("call-person-group-stats", async (event, name_entry) => {
-  try {
-    const results = await dbquery(
-      `SELECT * FROM person_group_stats WHERE full_name = '${name_entry}'`
-    );
-
-    if (results) {
-      return results;
+ipcMain.handle(
+  "call-person-group-stats",
+  async (event, { name_entry, start_date, end_date }) => {
+    try {
+      console.log(start_date, end_date);
+      const query = `select
+    person_uuid,
+    full_name,
+    -- year-month of the photo. sqlite. 
+    -- https://www.sqlite.org/lang_datefunc.html
+    camera_make,
+    camera_model,
+    face_count,
+    gender_estimate,
+    age_estimate,
+    ethnicity_estimate,
+    skin_tone_estimate,
+    facial_hair_estimate,
+    face_mask_estimate,
+    face_expression_estimate,
+    pose_type_estimate,
+    smile_estimate,
+    smile_type_estimate,
+    smile_combined_estimate,
+    lip_makeup_estimate,
+    winking_estimate,
+    glasses_estimate,
+    eye_makeup_estimate,
+    sum(count) as count
+    from photo_info_rollup_monthly
+    where full_name == '${name_entry}'
+    and year_month >= '${start_date ?? "1900-01-01"}' and year_month <= '${
+        end_date ?? "2100-01-01"
+      }'
+    group by
+    1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19, 20;
+    `;
+      console.log(query);
+      const results = await dbquery(
+        query
+        //`SELECT * FROM person_group_stats WHERE full_name = '${name_entry}'`
+      );
+      if (results) {
+        // console.log(results);
+        return results;
+      }
+    } catch (err) {
+      console.error("error-update", `Error in call-person-group-stats: ${err}`);
+      throw err;
     }
-  } catch (err) {
-    console.error("error-update", `Error in call-person-group-stats: ${err}`);
-    throw err;
   }
-});
+);
 
 ipcMain.handle("daily-zeroed-counts", async (event, name_entry) => {
   try {
@@ -401,10 +439,10 @@ ipcMain.handle("daily-zeroed-counts", async (event, name_entry) => {
                 ROWS BETWEEN 90 PRECEDING AND current row 
             ) as 'ninety_day_rolling'
             from seven;
-            `
-        
+            `;
+
     const results = await dbquery(query);
-    console.log('ran daily-zeroed-counts query');
+    //console.log('ran daily-zeroed-counts query');
     if (results) {
       return results;
     }
@@ -413,3 +451,36 @@ ipcMain.handle("daily-zeroed-counts", async (event, name_entry) => {
     throw err;
   }
 });
+
+ipcMain.handle(
+  "call-photos-per-user",
+  async (event, { start_date, end_date }) => {
+    try {
+      query = `  select 
+        full_name, 
+        year_month,
+        sum(count) as count
+        from photo_info_rollup_monthly
+        where year_month >= '${start_date ?? "1900-01-01"}' 
+        and year_month <= '${end_date ?? "2100-01-01"}'
+        and full_name != 'no_name'
+        and full_name != 'no_face'
+        group by 1,2
+        order by count desc;
+      `;
+      console.log(start_date, end_date);
+      console.log(query);
+      const results = await dbquery(
+        query
+        //`SELECT * FROM person_group_stats WHERE full_name = '${name_entry}'`
+      );
+      if (results) {
+        // console.log(results);
+        return results;
+      }
+    } catch (err) {
+      console.error("error-update", `Error in call-person-group-stats: ${err}`);
+      throw err;
+    }
+  }
+);
