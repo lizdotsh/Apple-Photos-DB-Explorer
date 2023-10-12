@@ -147,8 +147,11 @@ Note: graphs unreliable if no photos in date range
   <p>Waiting for data...</p>
 {/if}
 </div>
+<div id="photos-hist">
+    <PhotosDayHistogram {daily_with_rolling} {start_date} {end_date} />
 </div>
-<AggStats {person_group_stats}{daily_with_rolling} {start_date} {end_date} />
+</div>
+<AggStats {person_group_stats} />
 
 
 

@@ -1,10 +1,37 @@
 <script>
     import * as Plot from "@observablehq/plot";
     import PlotRender from "../Plot.svelte"
-    export let filtered;
+    export let daily_with_rolling;
+    export let start_date;
+    export let end_date;
+    let table;
+    let filtered;
     import * as aq from "arquero";
     //todays date
-   
+    $: daily_with_rolling.then((d) => {
+    table = aq.from(d)
+  });
+    function filter_table(table, start_date, end_date){
+        if (start_date && end_date) {
+            return table
+            ?.params({start_date, end_date})
+            ?.filter((d, $) =>  d.date >= $.start_date && d.date <= $.end_date) ?? table;
+        }
+        if (start_date) {
+            return table
+            ?.params({start_date})
+            ?.filter((d, $) =>  d.date >= $.start_date) ?? table;
+        }
+        if (end_date) {
+            return table
+            ?.params({end_date})
+            ?.filter((d, $) =>  d.date <= $.end_date) ?? table;
+        }
+        return table;
+
+    }
+  $: filtered = filter_table(table, start_date, end_date);
+  $: console.log(start_date, end_date, filtered); 
     
     //date
  // $: start_date = start_date;
