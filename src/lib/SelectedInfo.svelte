@@ -1,7 +1,7 @@
 <script>
     export let name_count;
     export let elm_name;
-    export let names_ids;
+    export let person;
     let filt;
     let selected_count;
     import * as aq from "arquero";
@@ -17,13 +17,18 @@
 
     $: console.log(selected_count, filt);
   </script>
-  {#if filt}
+  {#if filt && person}
     
   <h2>
-    You have selected {elm_name}, they have {names_ids?.find(
-      (e) => e?.full_name === elm_name
-    )?.count ?? "N/A"} Photos total. You have selected {selected_count} photos.
+    You have selected {elm_name}, they have {person?.count ?? "N/A"} Photos total. You have selected {selected_count} photos.
   </h2>
+  <p>
+    You first uploaded a photo of {elm_name} on {
+        person?.start_date ?? "N/A"
+    } and last uploaded a photo of {elm_name} on {
+        person?.end_date ?? "N/A"
+    }. 
+  </p>
 
   
 {/if} 

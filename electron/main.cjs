@@ -484,3 +484,39 @@ ipcMain.handle(
     }
   }
 );
+/* ipcMain.handle(
+    "call-start-end-dates",
+    async (event, { elm_name }) => {
+      try {
+        query = `  select 
+            min(date) as start_date,
+            max(date) as end_date
+
+          full_name, 
+          year_month,
+          sum(count) as count
+          from photo_info_rollup_monthly
+          where year_month >= '${start_date ?? "1900-01-01"}' 
+          and year_month <= '${end_date ?? "2100-01-01"}'
+          and full_name != 'no_name'
+          and full_name != 'no_face'
+          group by 1,2
+          order by count desc;
+        `;
+        console.log(start_date, end_date);
+        console.log(query);
+        const results = await dbquery(
+          query
+          //`SELECT * FROM person_group_stats WHERE full_name = '${name_entry}'`
+        );
+        if (results) {
+          // console.log(results);
+          return results;
+        }
+      } catch (err) {
+        console.error("error-update", `Error in call-person-group-stats: ${err}`);
+        throw err;
+      }
+    }
+  );
+ */
