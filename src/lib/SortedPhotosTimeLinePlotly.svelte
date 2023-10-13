@@ -21,6 +21,7 @@ let table
 
   const layout = {
     title: "Number of Photos per Month",
+  //  width: 1000,
     width: 1500,
     height: 500,
     xaxis: {
@@ -39,6 +40,7 @@ let table
     },
     yaxis: { autorange: true, type: "linear"},
   };
+  const config = { responsive: true };
 
   let data;
   let filled;
@@ -79,5 +81,5 @@ let table
 
 </script>
 {#if table}
-  <Plot {data} {layout} />
+  <Plot {data} {layout} {config}/>
 {/if}

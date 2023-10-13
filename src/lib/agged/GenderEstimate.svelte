@@ -24,8 +24,10 @@
   {#if gender}
   <PlotRender
     options={{
-      x: { label: "Percent of Total", percent: true },
-      marginBottom: 120,
+      x: { label: "Percent of selected photos", percent: true },
+      //correct capitalization
+      title: "Gender", 
+      height: 100,
       color: {
         legend: true,
         type: "categorical",
@@ -51,6 +53,17 @@
           order: ['Male', "unknown", "Female"]
          // sort: true,
         }),
+        Plot.text(gender, {
+            x: "pct",
+            
+            text: (d) => `${((d.pct)*100).toFixed(0)}%`,
+            //center text
+            lineAnchor: "middle",
+            textAnchor: "beginning",
+            frameAnchor: "middle",
+            fill: "white",
+            //textAnchor: "middle",
+        })
       ],
     }}
   />

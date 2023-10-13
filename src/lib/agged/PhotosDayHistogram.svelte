@@ -49,7 +49,8 @@
    marks: [
     Plot.rectY(filtered
         //table.params({start_date, end_date}).filter((d, $) =>  d.date >= $.start_date && d.date <= $.end_date)
-    , Plot.binX({y: "count"}, {x: "thirty_day_rolling"})),
+    , Plot.binX({y: "count"}, {x: "thirty_day_rolling", tip: true, fill: "steelblue"}, ),
+    ),
     Plot.ruleY([0])
    ]
  }}

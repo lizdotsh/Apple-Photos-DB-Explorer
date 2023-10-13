@@ -22,12 +22,16 @@
  {#if filt}
  <PlotRender
  options={{
-   x: { label: "User", line: true, percent: true },
+   x: { label: "Percent of selected photos", line: true, percent: true },
+   title: "Facial Hair",
+   height: 250,
    y: {
+        label: "Facial Hair Type",
       domain: ['Clean Shaven', 'Goatee', 'Mustache', 'Stubble', 'other/unknown']
    },
    color: { legend: true },
    marginLeft: 100,
+   marginRight: 40,
    marks: [
      // Plot.barY(
      //     // filter by not no_name or no_face
@@ -42,6 +46,13 @@
        label: true,
        sort: { y: "x", reverse: true },
      }),
+     Plot.text(filt,{
+        x: "pct",
+        y: "facial_hair_estimate",
+        text: (d) => `${((d.pct)*100).toFixed(0)}%`,
+        dx: 15
+     }),
+
    ],
  }}
 />
