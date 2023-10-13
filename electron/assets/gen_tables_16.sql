@@ -82,7 +82,7 @@ SELECT
         WHEN 0
             THEN 'other/unknown'
         WHEN 1
-            THEN 'Black/African American'
+            THEN 'Black'
         WHEN 2
             THEN 'White'
         WHEN 3

@@ -145,3 +145,14 @@ from photo_info_rollup_monthly
 where full_name != 'no_name' and full_name != 'no_face'
 group by
 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19, 20;
+
+drop table if exists names_ids;
+
+
+create table names_ids as 
+select person_uuid, full_name, sum(count) as count,
+                max(date) as end_date, min(date) as start_date
+                from photo_info_rollup_daily where person_uuid != "no_person"
+                and full_name != "no_name"
+                and full_name != "no_face"
+                group by 1,2 order by count desc;
