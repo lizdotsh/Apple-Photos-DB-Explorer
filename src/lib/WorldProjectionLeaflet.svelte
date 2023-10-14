@@ -3,6 +3,7 @@
     import PlotRender from "./Plot.svelte";
     export let latlong;
     import * as TopoJSON from "topojson-client";
+    import L from 'leaflet';
     export let us;
     let latlong_here;
     let land_here;

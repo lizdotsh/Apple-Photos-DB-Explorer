@@ -20,7 +20,7 @@ let table
  $: console.log(table);
 
   const layout = {
-    title: "Number of Photos per Month",
+    title: "Number of Photos Detected per Week",
   //  width: 1000,
     width: 1500,
     height: 500,

@@ -13,6 +13,7 @@
   import GenderEstimate from "./lib/agged/GenderEstimate.svelte";
   import PhotosDayHistogram from "./lib/agged/PhotosDayHistogram.svelte";
   import SelectedInfo from "./lib/SelectedInfo.svelte";
+  import WorldProjection from "./lib/WorldProjection.svelte";
 
   let photos_per_user;
   let names_ids;
@@ -66,7 +67,9 @@
   let person_group_stats;
   let daily_with_rolling;
   let person;
-
+  let latlong;
+  let world;
+  let us;
   async function invoke_req(api, arg) {
     try {
       const result = await window.myAPI.invoke(api, arg);
@@ -76,23 +79,15 @@
       console.error(error);
     }
   }
-  async function invoke_req_date(api, arg, start_date, end_date) {
-    try {
-      console.log(start_date, end_date);
-      const result = await window.myAPI.invoke(api, arg, start_date, end_date);
-      console.log(result);
-      return result;
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
   $: person_group_stats = invoke_req("call-person-group-stats", {
     name_entry: elm_name,
     start_date,
     end_date,
   });
   $: daily_with_rolling = invoke_req("daily-zeroed-counts", [elm_name]);
+  $: latlong = invoke_req("call-lat-long", {elm_name, start_date, end_date});
+  $: world = invoke_req("call-map-json", "world");
+  $: us = invoke_req("call-map-json", "us");
   let avg_photos_daily;
   $: avg_photos_daily = elm_name;
   $: console.log(start_date, end_date);
@@ -193,6 +188,8 @@
 
 <!-- <PhotosDayHistogram {daily_with_rolling} /> -->
 </div>
+
+<WorldProjection {latlong} {us} />
 <style>
     body {
         margin: 0

@@ -6,6 +6,7 @@ const fs = require("fs").promises;
 const EventEmitter = require("events");
 const aq = require("arquero");
 const sqlite3 = require("sqlite3").verbose();
+const TopoJSON = require("topojson-client");
 //const sql = require('sql-tagged-template-literal');
 
 const logEmitter = new EventEmitter();
@@ -484,6 +485,44 @@ ipcMain.handle(
     }
   }
 );
+ipcMain.handle("call-lat-long", async (event, { elm_name, start_date, end_date }) => {
+    try { 
+        query = `select 
+        zuuid,
+        full_name,
+        latitude,
+        longitude
+        from photo_info
+        where latitude is not null
+        and longitude is not null
+    
+        and date_created >= '${start_date ?? "1900-01-01"}'
+        and date_created <= '${end_date ?? "2100-01-01"}'
+        order by date_created asc;
+        `//    and full_name = '${elm_name}'
+        console.log(query);
+        const results = await dbquery(query);
+        if (results) {
+            // console.log(results);
+            return results;
+        }
+    } catch (err) {
+        console.error("error-update", `Error in call-lat-long: ${err}`);
+        throw err;
+    }
+});
+ipcMain.handle("call-map-json", async (event, type) => {
+    try {
+    const world_file = await fs.readFile(path.join(__dirname, "assets", type + ".json")); 
+    const world_json = JSON.parse(world_file);
+  //  const countries = TopoJSON.feature(world_json, world_json.objects.countries);
+    return world_json;
+    } catch (err) {
+        console.error("error-update", `Error in call-world-json: ${err}`);
+        throw err;
+    }
+    
+});
 /* ipcMain.handle(
     "call-start-end-dates",
     async (event, { elm_name }) => {
