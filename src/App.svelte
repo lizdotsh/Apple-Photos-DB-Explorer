@@ -85,19 +85,39 @@
     end_date,
   });
   $: daily_with_rolling = invoke_req("daily-zeroed-counts", [elm_name]);
-  $: latlong = invoke_req("call-lat-long", {elm_name, start_date, end_date});
+  //$: latlong = invoke_req("call-lat-long", {elm_name, start_date, end_date});
   $: world = invoke_req("call-map-json", "world");
   $: us = invoke_req("call-map-json", "us");
   let avg_photos_daily;
   $: avg_photos_daily = elm_name;
   $: console.log(start_date, end_date);
   $: person = names_ids?.find((e) => e?.full_name === elm_name);
+  function addMonth(isoString) {
+    let [year, month] = isoString.split('-').map(Number);
+    let date = new Date(year, month - 1);
+    date.setMonth(date.getMonth() + 1);
+  
+    let newYear = date.getFullYear();
+  let newMonth = (date.getMonth() + 1).toString().padStart(2, '0');
+  
+  return `${newYear}-${newMonth}`;
+}
+  function addMonths() {
+    start_date_month = addMonth(start_date_month);
+    end_date_month = addMonth(end_date_month);
+  }
+  function addEndRangeMonth() {
+    end_date_month = addMonth(end_date_month);
+  }
+
 </script>
 
 <!-- Random Normal -->
 
 <!-- ... -->
 <div id="title-selector">
+    <button on:click={addMonths}>Add One Month</button>
+    <button on:click={addEndRangeMonth}>Add One Month to End Range</button>
   <div class="flex-container-title">
     {#if typeof names_ids !== "undefined"}
     <div class="flex-container-col">
@@ -189,10 +209,10 @@
 <!-- <PhotosDayHistogram {daily_with_rolling} /> -->
 </div>
 
-<WorldProjection {latlong} {us} />
+<!-- <WorldProjection {latlong} {us} /> -->
 <style>
     body {
-        margin: 0
+        margin: 5px;
     }
   .flex-container {
     display: flex;
@@ -219,7 +239,10 @@
     background: #ccc;
     z-index: 100;
     width: 100%;
+    /* padding: 5px; */
     padding: 5px;
+
+    box-sizing: border-box;
   }
 
 </style>

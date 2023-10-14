@@ -16,7 +16,9 @@
     // face_expression_estimate
 
     //   console.log(df);
-  });
+  }).catch((e) => {
+        console.log(e);
+      });
 </script>
 
 {#if filt}

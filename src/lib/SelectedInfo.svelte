@@ -8,12 +8,16 @@
 
     $: name_count.then((d) => {
         filt = aq.from(d)
-    })
-    $: selected_count = filt
+    }).catch((e) => {
+        console.log(e)
+    });
+    $:{
+        selected_count = filt
     ?.params({elm_name})
-    ?.filter((d, $) => d.full_name === $.elm_name)
-    ?.rollup({count: aq.op.sum("count")})
-    ?.objects()[0]?.count ?? "error"
+    .filter((d, $) => d.full_name === $.elm_name)
+    .rollup({count: aq.op.sum("count")})
+    .objects()[0]?.count ?? "error"
+}
 
     $: console.log(selected_count, filt);
   </script>
@@ -34,7 +38,7 @@
   </div> -->
 
   <div>
-    You have selected <b>{elm_name}</b>, you have selected <b>{selected_count}</b> of their <b>{person?.count ?? "N/A"}</b> total photos.
+    Showing photos  of <b>{elm_name}</b>, you have selected <b>{selected_count}</b> of their <b>{person?.count ?? "N/A"}</b> total photos.
   </div>
 <div>Note: graphs unreliable if no photos in date range</div>
   </div>  

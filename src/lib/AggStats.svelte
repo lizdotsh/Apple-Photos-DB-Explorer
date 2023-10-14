@@ -14,7 +14,7 @@
   
 </script>
 
-
+<!-- {#if person_group_stats?.length > 0} -->
   <div class="flex-container">
 
 <GenderEstimate {person_group_stats} />
@@ -40,3 +40,6 @@
     }
 </style>
   
+<!-- {:else} -->
+  <!-- <p>Not Enough Photos</p> -->
+<!-- {/if} -->

@@ -17,7 +17,9 @@
       // face_expression_estimate
   
       //   console.log(df);
-    });
+    }).catch((e) => {
+        console.log(e);
+      });
   </script>
  {#if filt}
  <PlotRender
@@ -27,7 +29,7 @@
    height: 250,
    y: {
         label: "Facial Hair Type",
-      domain: ['Clean Shaven', 'Goatee', 'Mustache', 'Stubble', 'other/unknown']
+      domain: ['Beard', 'Clean Shaven', 'Goatee', 'Mustache', 'Stubble', 'other/unknown']
    },
    color: { legend: true },
    marginLeft: 100,
