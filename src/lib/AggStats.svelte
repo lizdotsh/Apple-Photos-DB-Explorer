@@ -16,22 +16,19 @@
 
 
   <div class="flex-container">
-    <div id="graph1">
 
 <GenderEstimate {person_group_stats} />
-    </div>
-    <div id="graph2"> 
-<EthnicEstimate {person_group_stats} />
-    </div>
+
   </div>
 
 <div class="flex-container">
+<AgeEstimate {person_group_stats} />
 
-<FacialExpressionEstimate {person_group_stats} />
 <EthnicEstimate {person_group_stats} />
 </div>
 <div class="flex-container">
-<AgeEstimate {person_group_stats} />
+
+<FacialExpressionEstimate {person_group_stats} />
 
 <FacialHairEstimate {person_group_stats} />
 </div>
