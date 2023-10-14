@@ -18,17 +18,34 @@
     $: console.log(selected_count, filt);
   </script>
   {#if filt && person}
-    
-  <h2>
-    You have selected {elm_name}, they have {person?.count ?? "N/A"} Photos total. You have selected {selected_count} photos.
-  </h2>
-  <p>
-    You first uploaded a photo of {elm_name} on {
-        person?.start_date ?? "N/A"
-    } and last uploaded a photo of {elm_name} on {
-        person?.end_date ?? "N/A"
-    }. 
-  </p>
+  <div class="flex-container-col">
+<!-- <div id="total-count">
+    <b>Total Photos of {elm_name}: </b>{person?.count ?? "N/A"} 
+  </div>
+<div id="selected-count">
+    <b>{selected_count} / {person?.count ?? "N/A"}</b> photos of {elm_name} selected.
+  </div> -->
+  <!-- <div id="end-date">
+    <b>Earliest Photo: </b>{person?.start_date ?? "N/A"} 
+  </div>
+  <div id="end-date">
+
+    <b>Latest Photo: </b>  {person?.end_date ?? "N/A"}
+  </div> -->
+
+  <div>
+    You have selected <b>{elm_name}</b>, you have selected <b>{selected_count}</b> of their <b>{person?.count ?? "N/A"}</b> total photos.
+  </div>
+<div>Note: graphs unreliable if no photos in date range</div>
+  </div>  
 
   
 {/if} 
+
+<style>
+    .flex-container-col {
+    display: flex;
+    justify-content: space-around;
+    flex-direction: column;
+  }
+</style>

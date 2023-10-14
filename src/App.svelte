@@ -20,8 +20,8 @@
   let start_date_month;
   let end_date_month;
   let start_date;
-
   const today = new Date();
+
   let end_date; //= today?.toISOString()?.slice(0, 10);
   // Send SQL query to main process
   $: start_date = start_date_month ? start_date_month + "-01" : undefined;
@@ -96,31 +96,41 @@
   let avg_photos_daily;
   $: avg_photos_daily = elm_name;
   $: console.log(start_date, end_date);
-$: person = names_ids?.find((e) => e?.full_name === elm_name) 
+  $: person = names_ids?.find((e) => e?.full_name === elm_name);
 </script>
 
 <!-- Random Normal -->
 
-<h1>Apple Photos DB Explorer</h1>
 <!-- ... -->
-<div class="flex-container-title">
-  {#if typeof names_ids !== "undefined"}
+<div id="title-selector">
+  <div class="flex-container-title">
+    {#if typeof names_ids !== "undefined"}
     <div class="flex-container-col">
-      <div id="title-text">
-        <b>Select a name</b>
-      </div>
-      <div id="selector" class="text-intro">
-        <select bind:value={elm_name}>
-          {#each names_ids as name_entry}
-            <option value={name_entry.full_name}>{name_entry.full_name}</option>
-          {/each}
-        </select>
-      </div>
+        <div>
+
+      <h2>Apple Photos DB Explorer</h2>
+        </div>
+    <div>
     </div>
-    <div id="date-selector">
+    </div>
+      <div class="flex-container-col">
+        <div id="title-text">
+          <b>Select a name</b> 
+        </div>
+        <div id="selector" class="text-intro">
+          <select bind:value={elm_name}>
+            {#each names_ids as name_entry}
+              <option value={name_entry.full_name}
+                >{name_entry.full_name}</option
+              >
+            {/each}
+          </select>
+        </div>
+          <!-- {person?.count ?? "N/A"} Photos of {elm_name} -->
+      </div>
       <div class="flex-container-col">
         <div id="date-selector-title">
-          <b>Choose a date range: </b>
+          <b>Choose a date range </b>
         </div>
         <div id="date-selector">
           <!-- // starting and ending date selectors svelte -->
@@ -146,27 +156,30 @@ $: person = names_ids?.find((e) => e?.full_name === elm_name)
             min={start_date_month}
             max={today.toISOString().slice(0, 7)}
           />
-          Note: graphs unreliable if no photos in date range
+         
         </div>
+        <!-- {person?.start_date ?? "N/A"} to {person?.end_date ?? "N/A"} -->
       </div>
-    </div>
-  {:else}
-    <p>Waiting for data...</p>
-  {/if}
+
+    {:else}
+      <p>Waiting for data...</p>
+    {/if}
+  <SelectedInfo name_count={photos_per_user} {elm_name} {person} />
+  </div>
 </div>
-    <SelectedInfo name_count={photos_per_user} {elm_name} {person} />
-    <div class="flex-container">
-        <div id="time">
-          {#if daily_with_rolling}
-            <SortedPhotosTimeLinePlotly {daily_with_rolling} />
-            <!-- <AggStats {person_group_stats} {daily_with_rolling} /> -->
-          {:else}
-            <p>Waiting for data...</p>
-          {/if}
-        </div>
-      </div>
+<div id = "not-sticky">
 <div class="flex-container">
-  <div id = 'photo-hist' style = 'max-width: 100%; margin: auto'>
+  <div id="time">
+    {#if daily_with_rolling}
+      <SortedPhotosTimeLinePlotly {daily_with_rolling} />
+      <!-- <AggStats {person_group_stats} {daily_with_rolling} /> -->
+    {:else}
+      <p>Waiting for data...</p>
+    {/if}
+  </div>
+</div>
+<div class="flex-container">
+  <div id="photo-hist" style="max-width: 100%; margin: auto">
     <!-- <h2><br><br><br></h2> -->
     <PhotosDayHistogram {daily_with_rolling} {start_date} {end_date} />
   </div>
@@ -179,8 +192,11 @@ $: person = names_ids?.find((e) => e?.full_name === elm_name)
 <AggStats {person_group_stats} />
 
 <!-- <PhotosDayHistogram {daily_with_rolling} /> -->
-
+</div>
 <style>
+    body {
+        margin: 0
+    }
   .flex-container {
     display: flex;
     justify-content: center;
@@ -200,4 +216,13 @@ $: person = names_ids?.find((e) => e?.full_name === elm_name)
     flex-direction: column;
     min-width: "30%";
   }
+  #title-selector {
+    position: sticky;
+    top: 0;
+    background: #ccc;
+    z-index: 100;
+    width: 100%;
+    padding: 5px;
+  }
+
 </style>
