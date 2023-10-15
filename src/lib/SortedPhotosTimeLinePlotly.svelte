@@ -11,6 +11,8 @@ let table
     table = aq.from(d)
     .orderby('date');
     
+  }).catch((e) => {
+    console.log(e);
   });
 
   $: console.log(table?.filter(d => d.thirty_day_rolling > 200));

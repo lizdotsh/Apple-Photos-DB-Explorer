@@ -14,6 +14,7 @@
   import PhotosDayHistogram from "./lib/agged/PhotosDayHistogram.svelte";
   import SelectedInfo from "./lib/SelectedInfo.svelte";
   import WorldProjection from "./lib/WorldProjection.svelte";
+  import DoubleDateSlider from "./lib/DoubleDateSlider.svelte";
 
   let photos_per_user;
   let names_ids;
@@ -25,8 +26,7 @@
 
   let end_date; //= today?.toISOString()?.slice(0, 10);
   // Send SQL query to main process
-  $: start_date = start_date_month ? start_date_month + "-01" : undefined;
-  $: end_date = end_date_month ? end_date_month + "-01" : undefined;
+  
   window.myAPI.sendSQL([
     {
       name: "names_ids",
@@ -109,6 +109,9 @@
   function addEndRangeMonth() {
     end_date_month = addMonth(end_date_month);
   }
+  $: console.log(person);
+  $: start_date = start_date_month ? start_date_month + "-01" : undefined;
+  $: end_date = end_date_month ? end_date_month + "-01" : undefined;
 
 </script>
 
@@ -118,6 +121,9 @@
 <div id="title-selector">
     <button on:click={addMonths}>Add One Month</button>
     <button on:click={addEndRangeMonth}>Add One Month to End Range</button>
+    {#if person && names_ids}
+    <DoubleDateSlider dateMin = {person?.start_date} dateMax = {person?.end_date} bind:start_date_month bind:end_date_month />
+    {/if}
   <div class="flex-container-title">
     {#if typeof names_ids !== "undefined"}
     <div class="flex-container-col">
@@ -150,7 +156,7 @@
         <div id="date-selector">
           <!-- // starting and ending date selectors svelte -->
 
-          <input
+          <!-- <input
             type="month"
             bind:value={start_date_month}
             max={// minus one month
@@ -170,7 +176,8 @@
             bind:value={end_date_month}
             min={start_date_month}
             max={today.toISOString().slice(0, 7)}
-          />
+          /> -->
+          {start_date ?? "N/A"} to {end_date ?? "N/A"}
          
         </div>
         <!-- {person?.start_date ?? "N/A"} to {person?.end_date ?? "N/A"} -->

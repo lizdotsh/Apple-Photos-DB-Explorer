@@ -8,10 +8,25 @@
     let filtered;
     import * as aq from "arquero";
     //todays date
-    $: daily_with_rolling.then((d) => {
-    table = aq.from(d)
-  });
+    function processtable(daily_with_rolling, start_date, end_date){
+      //  let res;
+        if (daily_with_rolling) {
+            daily_with_rolling.then( d => {
+            const tempv = aq.from(d);
+            filtered = filter_table(tempv, start_date, end_date)
+        });
+        }
+    }
+    $: processtable(daily_with_rolling, start_date, end_date);
+    $: console.log(filtered);
+
+    
+ 
     function filter_table(table, start_date, end_date){
+        if (table?.nrows === 0) {
+            return null;
+        }
+        console.log(table?._nrows);
         if (start_date && end_date) {
             return table
             ?.params({start_date, end_date})
@@ -28,9 +43,8 @@
             ?.filter((d, $) =>  d.date <= $.end_date) ?? table;
         }
         return table;
-
     }
-  $: filtered = filter_table(table, start_date, end_date);
+  //$: filtered = filter_table(table, start_date, end_date);
   $: console.log(start_date, end_date, filtered); 
     
     //date

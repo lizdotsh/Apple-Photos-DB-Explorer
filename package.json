@@ -38,6 +38,7 @@
     "sql-tagged-template-literal": "^1.2.0",
     "sqlite3": "^5.1.6",
     "svelte-plotly.js": "^0.3.2",
-    "topojson-simplify": "^3.0.3"
+    "topojson-simplify": "^3.0.3",
+    "yootils": "^0.3.1"
   }
 }
