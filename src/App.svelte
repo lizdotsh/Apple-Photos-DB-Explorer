@@ -119,20 +119,16 @@
 
 <!-- ... -->
 <div id="title-selector">
-    <button on:click={addMonths}>Add One Month</button>
-    <button on:click={addEndRangeMonth}>Add One Month to End Range</button>
-    {#if person && names_ids}
-    <DoubleDateSlider dateMin = {person?.start_date} dateMax = {person?.end_date} bind:start_date_month bind:end_date_month />
-    {/if}
+   
   <div class="flex-container-title">
     {#if typeof names_ids !== "undefined"}
     <div class="flex-container-col">
-        <div>
-
-      <h2>Apple Photos DB Explorer</h2>
-        </div>
-    <div>
+      <div id = 'app-title'>
+        Apple Photos DB Explorer
+      </div>
+          <SelectedInfo name_count={photos_per_user} {elm_name} {person} />
     </div>
+    <div>
     </div>
       <div class="flex-container-col">
         <div id="title-text">
@@ -149,45 +145,23 @@
         </div>
           <!-- {person?.count ?? "N/A"} Photos of {elm_name} -->
       </div>
-      <div class="flex-container-col">
-        <div id="date-selector-title">
-          <b>Choose a date range </b>
-        </div>
-        <div id="date-selector">
-          <!-- // starting and ending date selectors svelte -->
-
-          <!-- <input
-            type="month"
-            bind:value={start_date_month}
-            max={// minus one month
-            d3.timeFormat("%Y-%m")(
-              new Date(
-                (end_date_month ?? today.toISOString().slice(0, 7)) + "-01"
-              ).setMonth(
-                new Date(
-                  (end_date_month ?? today.toISOString().slice(0, 7)) + "-01"
-                ).getMonth()
-              )
-            )}
-          />
-
-          <input
-            type="month"
-            bind:value={end_date_month}
-            min={start_date_month}
-            max={today.toISOString().slice(0, 7)}
-          /> -->
-          {start_date ?? "N/A"} to {end_date ?? "N/A"}
-         
-        </div>
+      <div id = "date-selector-slider">
+            {#if person && names_ids}
+            <DoubleDateSlider dateMin = {person?.start_date} dateMax = {person?.end_date} bind:start_date_month bind:end_date_month />
+          
+            {/if}
+   
+        
+        
         <!-- {person?.start_date ?? "N/A"} to {person?.end_date ?? "N/A"} -->
       </div>
-
+      
     {:else}
       <p>Waiting for data...</p>
     {/if}
-  <SelectedInfo name_count={photos_per_user} {elm_name} {person} />
+  
   </div>
+  
 </div>
 <div id = "not-sticky">
 <div class="flex-container">
@@ -220,24 +194,29 @@
 <style>
     body {
         margin: 5px;
+        max-width: 100%;
     }
   .flex-container {
     display: flex;
     justify-content: center;
-    min-width: "50%";
+
+    box-sizing: border-box;
   }
   .text-intro {
     max-width: 40%;
   }
+
   .flex-container-title {
     display: flex;
     justify-content: start;
     gap: 1em;
+    max-width: 100%;
   }
   .flex-container-col {
     display: flex;
-    justify-content: space-around;
+    box-sizing: border-box;
     flex-direction: column;
+    justify-content: space-around;
     min-width: "30%";
   }
   #title-selector {
@@ -248,8 +227,26 @@
     width: 100%;
     /* padding: 5px; */
     padding: 5px;
+    box-sizing: border-box;
 
+  }
+  #date-selector-slider { 
+    width: 100%;
     box-sizing: border-box;
   }
+  #app-title {
+    width: auto;
+    white-space: nowrap;
+    box-sizing: border-box;
+    margin-bottom: 2px;
+    font-weight: bold;
+    font-size: 24px;
+  }
+  #title-text {
+    padding-bottom: 5px;
+    box-sizing: border-box;
+
+  }
+
 
 </style>

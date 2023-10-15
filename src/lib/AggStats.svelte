@@ -37,6 +37,7 @@
     .flex-container {
       display: flex;
       justify-content: space-around;
+      box-sizing: border-box;
     }
 </style>
   
