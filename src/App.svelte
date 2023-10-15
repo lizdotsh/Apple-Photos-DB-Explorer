@@ -8,14 +8,15 @@
   import SortedPhotosBar from "./lib/person_agnostic/SortedPhotosBar.svelte";
   import SortedPhotosTimeLine from "./lib/SortedPhotosTimeLine.svelte";
   import SortedPhotosTimeLinePlotly from "./lib/SortedPhotosTimeLinePlotly.svelte";
-  import AggStats from "./lib/AggStats.svelte";
-  import AgeEstimate from "./lib/agged/GenderEstimate.svelte";
   import GenderEstimate from "./lib/agged/GenderEstimate.svelte";
   import PhotosDayHistogram from "./lib/agged/PhotosDayHistogram.svelte";
   import SelectedInfo from "./lib/SelectedInfo.svelte";
   import WorldProjection from "./lib/WorldProjection.svelte";
   import DoubleDateSlider from "./lib/DoubleDateSlider.svelte";
-
+  import FacialHairEstimate from "./lib/agged/FacialHairEstimate.svelte";
+  import FacialExpressionEstimate from "./lib/agged/FacialExpressionEstimate.svelte";
+  import EthnicEstimate from "./lib/agged/EthnicEstimate.svelte";
+  import AgeEstimate from "./lib/agged/AgeEstimate.svelte";
   let photos_per_user;
   let names_ids;
   let elm_name;
@@ -26,7 +27,7 @@
 
   let end_date; //= today?.toISOString()?.slice(0, 10);
   // Send SQL query to main process
-  
+
   window.myAPI.sendSQL([
     {
       name: "names_ids",
@@ -93,15 +94,15 @@
   $: console.log(start_date, end_date);
   $: person = names_ids?.find((e) => e?.full_name === elm_name);
   function addMonth(isoString) {
-    let [year, month] = isoString.split('-').map(Number);
+    let [year, month] = isoString.split("-").map(Number);
     let date = new Date(year, month - 1);
     date.setMonth(date.getMonth() + 1);
-  
+
     let newYear = date.getFullYear();
-  let newMonth = (date.getMonth() + 1).toString().padStart(2, '0');
-  
-  return `${newYear}-${newMonth}`;
-}
+    let newMonth = (date.getMonth() + 1).toString().padStart(2, "0");
+
+    return `${newYear}-${newMonth}`;
+  }
   function addMonths() {
     start_date_month = addMonth(start_date_month);
     end_date_month = addMonth(end_date_month);
@@ -112,27 +113,22 @@
   $: console.log(person);
   $: start_date = start_date_month ? start_date_month + "-01" : undefined;
   $: end_date = end_date_month ? end_date_month + "-01" : undefined;
-
 </script>
 
 <!-- Random Normal -->
 
 <!-- ... -->
 <div id="title-selector">
-   
   <div class="flex-container-title">
     {#if typeof names_ids !== "undefined"}
-    <div class="flex-container-col">
-      <div id = 'app-title'>
-        Apple Photos DB Explorer
+      <div class="flex-container-col">
+        <div id="app-title">Apple Photos DB Explorer</div>
+        <SelectedInfo name_count={photos_per_user} {elm_name} {person} />
       </div>
-          <SelectedInfo name_count={photos_per_user} {elm_name} {person} />
-    </div>
-    <div>
-    </div>
+      <div />
       <div class="flex-container-col">
         <div id="title-text">
-          <b>Select a name</b> 
+          <b>Select a name</b>
         </div>
         <div id="selector" class="text-intro">
           <select bind:value={elm_name}>
@@ -143,59 +139,77 @@
             {/each}
           </select>
         </div>
-          <!-- {person?.count ?? "N/A"} Photos of {elm_name} -->
+        <!-- {person?.count ?? "N/A"} Photos of {elm_name} -->
       </div>
-      <div id = "date-selector-slider">
-            {#if person && names_ids}
-            <DoubleDateSlider dateMin = {person?.start_date} dateMax = {person?.end_date} bind:start_date_month bind:end_date_month />
-          
-            {/if}
-   
-        
-        
+      <div id="date-selector-slider">
+        {#if person && names_ids}
+          <DoubleDateSlider
+            dateMin={person?.start_date}
+            dateMax={person?.end_date}
+            bind:start_date_month
+            bind:end_date_month
+          />
+        {/if}
+
         <!-- {person?.start_date ?? "N/A"} to {person?.end_date ?? "N/A"} -->
       </div>
-      
-    {:else}
-      <p>Waiting for data...</p>
-    {/if}
-  
-  </div>
-  
-</div>
-<div id = "not-sticky">
-<div class="flex-container">
-  <div id="time">
-    {#if daily_with_rolling}
-      <SortedPhotosTimeLinePlotly {daily_with_rolling} />
-      <!-- <AggStats {person_group_stats} {daily_with_rolling} /> -->
     {:else}
       <p>Waiting for data...</p>
     {/if}
   </div>
 </div>
-<div class="flex-container">
-  <div id="photo-hist" style="max-width: 100%; margin: auto">
-    <!-- <h2><br><br><br></h2> -->
-    <PhotosDayHistogram {daily_with_rolling} {start_date} {end_date} />
+<div id="not-sticky">
+  <div class="flex-container">
+    <div id="time">
+      {#if daily_with_rolling}
+        <SortedPhotosTimeLinePlotly {daily_with_rolling} />
+        <!-- <AggStats {person_group_stats} {daily_with_rolling} /> -->
+      {:else}
+        <p>Waiting for data...</p>
+      {/if}
+    </div>
   </div>
-  <div id="SortedPhotosBar" style="max-width: 100%; margin: auto">
-    <!-- make component smaller -->
-    <SortedPhotosBar name_count={photos_per_user} {elm_name} />
+  <div class="flex-container">
+    <div id="photo-hist" style="max-width: 100%; margin: auto">
+      <!-- <h2><br><br><br></h2> -->
+      <PhotosDayHistogram {daily_with_rolling} {start_date} {end_date} />
+    </div>
+    <div id="SortedPhotosBar" style="max-width: 100%; margin: auto">
+      <!-- make component smaller -->
+      <SortedPhotosBar name_count={photos_per_user} {elm_name} />
+    </div>
   </div>
-</div>
 
-<AggStats {person_group_stats} />
+  <div id="agg-stats-grouping">
+    <!-- {#if person_group_stats?.length > 0} -->
+    <div class="flex-container">
+      <GenderEstimate {person_group_stats} />
+    </div>
 
-<!-- <PhotosDayHistogram {daily_with_rolling} /> -->
+    <div class="flex-container">
+      <AgeEstimate {person_group_stats} />
+
+      <EthnicEstimate {person_group_stats} />
+    </div>
+    <div class="flex-container">
+        <div>
+           Date range: {start_date_month} to {end_date_month}
+      <FacialExpressionEstimate {person_group_stats} />
+        </div>
+
+      <FacialHairEstimate {person_group_stats} />
+    </div>
+  </div>
+
+  <!-- <PhotosDayHistogram {daily_with_rolling} /> -->
 </div>
 
 <!-- <WorldProjection {latlong} {us} /> -->
 <style>
-    body {
-        margin: 5px;
-        max-width: 100%;
-    }
+  body {
+    margin: 5px;
+    max-width: 100%;
+  }
   .flex-container {
     display: flex;
     justify-content: center;
@@ -228,9 +242,8 @@
     /* padding: 5px; */
     padding: 5px;
     box-sizing: border-box;
-
   }
-  #date-selector-slider { 
+  #date-selector-slider {
     width: 100%;
     box-sizing: border-box;
   }
@@ -245,8 +258,5 @@
   #title-text {
     padding-bottom: 5px;
     box-sizing: border-box;
-
   }
-
-
 </style>
