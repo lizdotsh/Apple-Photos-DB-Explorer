@@ -1,4 +1,5 @@
 <script>
+  import { get } from 'svelte/store';
 	// Editied to work with dates. Imported originally from https://svelte.dev/repl/75d34e46cbe64bb68b7c2ac2c61931ce?version=4.2.1
 	// Unsure who created it, just found it on google. Wasn't on npm either. Otherwise would credit. 
 	import { clamp } from 'yootils';
@@ -9,6 +10,9 @@
 	export let dateMax;
 	export let start_date_month;
 	export let end_date_month;
+    let isPlaying = false;
+    let interval;
+    let isOneWayMode;
 	function toMonths(iso_months) {
 		 const [year, month] = iso_months.split('-').map(Number);
 		return ((year*12) + month) -1
@@ -21,7 +25,12 @@
 	function remDays(iso_date_string) {
         return iso_date_string.slice(0,7)
     }
-    
+    function getDistInMonths(dateMin, dateMax) {
+        const [minCnt, maxCnt] = [dateMin, dateMax]
+            .map(remDays)
+            .map(toMonths);
+        return maxCnt - minCnt;
+    }
 	function formatDates(start, end, dateMin, dateMax) {
 
 		const [minCnt, maxCnt] = [dateMin, dateMax]
@@ -114,8 +123,45 @@
 		start = pStart;
 		end = pEnd;
 	}
+    function moveSlider(dist) { 
+        if (end + dist > 1) {
+            clearInterval(interval);
+            isPlaying = false;
+            start += (1 - end)
+            end = 1;
+            return;
+        } 
+        start += dist;
+        end += dist;
+    }
+    function toggleSlider() {
+        if (isPlaying) {
+            clearInterval(interval);
+            isPlaying = false;
+            return;
+        } 
+        if ((end === 1) && (start !== 0)) {
+            const dist = end-start;
+            start = 0;
+            end = dist;
+        }
+        interval = setInterval(
+            moveSlider, 
+            100, 
+            (1/getDistInMonths(dateMin, dateMax))
+            );
+        isPlaying = true;
+    }
 </script>
+<div id = 'total'>
+<div class='main'>
+    <div id= 'slider-labels'>
+<div class = 'label-left' ><b>Choose a date range</b> <span style="padding-right: 5px; padding-left: 5px;"><button class = "scrubber-button-toggle" on:click={toggleSlider}>{isPlaying ? 'Pause' : 'Play'}</button></span> 
+    <input style = "width: 20px;" type="checkbox" name='togglePlayMode' bind:checked= {isOneWayMode}> 
+    <span>Only move end of date range</span></div> <div class = 'label-right'>Note: graphs unreliable if no photos in date range</div> 
+    </div>
 
+<div class="main">
 <div class="double-range-container">
 	<div class="slider" bind:this={slider}>
 		<div
@@ -148,16 +194,30 @@
 			"
 		></div>
 	</div>
+    </div>
+    
 </div>
-
+<div class="labels">
+		<div class="label">{start_date_month}</div>
+		<div class="label">{end_date_month}</div>
+	</div>
+</div>
+</div>
 <style>
 	.double-range-container {
 		width: 100%;
-		height: 20px;
+		height: 15px;
 		user-select: none;
 		box-sizing: border-box;
-		white-space: nowrap
+		white-space: nowrap;
+        margin-top: 0em;    
 	}
+    .main {
+        display: flex;
+        flex-direction: column;
+        padding: 5px;
+        box-sizing: border-box;
+    }
 	.slider {
 		position: relative;
 		width: 100%;
@@ -198,4 +258,39 @@
 		background-color: #34a1ff;
 		bottom: 0;
 	}
+    .label:first-child {
+		float: left;
+        box-sizing: border-box;
+	}
+	.label:last-child {
+		float: right;
+        box-sizing: border-box;
+	}
+    .label-left {
+        position: relative;
+        left: 0;
+        font-size: 16px;
+        color: #333;
+        text-align: left;
+        box-sizing: border-box;
+    }
+
+    .label-right {
+        position: absolute;
+        right: 1em;
+        font-size: 16px;
+        color: #333;
+        text-align: right;
+        box-sizing: border-box;
+    }
+    #slider-labels {
+        display: flex;
+        
+    }
+    .scrubber-button-toggle {
+        padding-right: 5px; 
+        padding-left:5px; 
+        padding-top: 2px; 
+        padding-bottom: 2px;
+    }
 </style>
