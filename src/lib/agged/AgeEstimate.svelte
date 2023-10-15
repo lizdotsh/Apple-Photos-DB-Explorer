@@ -19,6 +19,13 @@
   }).catch((e) => {
         console.log(e);
       });
+    const ages = [
+      "Infant/Toddler",
+      "Toddler/Child",
+      "Child/Young Adult",
+      "Adult",
+      "unknown",
+    ];
 </script>
 
 {#if filt}
@@ -28,16 +35,10 @@
       marginRight: 40,
       title: "Age",
       height: 250,
-      color: { legend: true, label: "Age Estimate" },
+      color: { legend: true, label: "Age Estimate", domain: ages },
       y: {
         label: "Detected Age Group",
-        domain: [
-          "Infant/Toddler",
-          "Toddler/Child",
-          "Child/Young Adult",
-          "Adult",
-          "unknown",
-        ],
+        domain: ages,
       },
       marginLeft: 120,
       marks: [

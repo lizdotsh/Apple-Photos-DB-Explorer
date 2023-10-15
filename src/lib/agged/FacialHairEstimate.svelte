@@ -31,7 +31,7 @@
         label: "Facial Hair Type",
       domain: ['Beard', 'Clean Shaven', 'Goatee', 'Mustache', 'Stubble', 'other/unknown']
    },
-   color: { legend: true },
+   color: { legend: true , domain: ['Beard', 'Clean Shaven', 'Goatee', 'Mustache', 'Stubble', 'other/unknown']},
    marginLeft: 100,
    marginRight: 40,
    marks: [

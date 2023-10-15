@@ -17,12 +17,14 @@
   import FacialExpressionEstimate from "./lib/agged/FacialExpressionEstimate.svelte";
   import EthnicEstimate from "./lib/agged/EthnicEstimate.svelte";
   import AgeEstimate from "./lib/agged/AgeEstimate.svelte";
+  import {html} from "htl";
   let photos_per_user;
   let names_ids;
   let elm_name;
   let start_date_month;
   let end_date_month;
   let start_date;
+  let date_range_string;
   const today = new Date();
 
   let end_date; //= today?.toISOString()?.slice(0, 10);
@@ -113,6 +115,8 @@
   $: console.log(person);
   $: start_date = start_date_month ? start_date_month + "-01" : undefined;
   $: end_date = end_date_month ? end_date_month + "-01" : undefined;
+  $: date_range_string = html`<span style=${{'font-size': "12px", "padding": "2px", "margin": "2px"}}>${start_date_month ?? "error"} to ${end_date_month ?? "error"}</span>`;
+  $: console.log(date_range_string);
 </script>
 
 <!-- Random Normal -->
@@ -194,7 +198,7 @@
     <div class="flex-container">
         <div>
            Date range: {start_date_month} to {end_date_month}
-      <FacialExpressionEstimate {person_group_stats} />
+      <FacialExpressionEstimate {person_group_stats} {date_range_string} />
         </div>
 
       <FacialHairEstimate {person_group_stats} />
@@ -203,7 +207,11 @@
 
   <!-- <PhotosDayHistogram {daily_with_rolling} /> -->
 </div>
-
+<br><br><br><br>
+<br><br><br><br>
+<br><br><br><br>
+<br><br><br><br>
+<br><br><br><br>
 <!-- <WorldProjection {latlong} {us} /> -->
 <style>
   body {

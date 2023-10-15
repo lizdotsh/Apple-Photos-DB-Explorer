@@ -4,9 +4,20 @@
   export let person_group_stats;
   import * as aq from "arquero";
   let filt;
+  const ethnic = [
+    "Black",
+    "Asian",
+    "White",
+    "Pacific Islander",
+    "other/unknown"]
+
+  const eachEthnicityZero = ethnic.map(d => {
+    return {'ethnicity_estimate': d, 'count': 0};
+  })
   $: person_group_stats.then((data) => {
-    filt = aq
-      .from(data)
+    console.log(data);
+    filt  = aq
+      .from(eachEthnicityZero.concat(data))
       .groupby("ethnicity_estimate")
       .rollup({ cnt: (d) => aq.op.sum(d.count) })
       .orderby("cnt")
@@ -30,20 +41,20 @@
       color: {
         legend: true,
         domain: [
-          "White",
           "Black",
           "Asian",
+          "White",
           "Pacific Islander",
           "other/unknown",
         ],
-        label: "Ethnicity",
+        label: "Detected Ethnicity",
       },
       y: {
         label: "Detected Ethnicity",
         domain: [
-          "White",
           "Black",
           "Asian",
+          "White",
           "Pacific Islander",
           "other/unknown",
         ],
@@ -66,7 +77,7 @@
             },
           },
           label: true,
-          sort: { y: "x", reverse: true },
+        //  sort: { y: "x", reverse: true },
         }),
         Plot.text(filt, {
           x: "pct",

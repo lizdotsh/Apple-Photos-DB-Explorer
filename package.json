@@ -33,6 +33,7 @@
     "@observablehq/plot": "^0.6.11",
     "arquero": "^5.2.0",
     "electron-squirrel-startup": "^1.0.0",
+    "htl": "^0.3.1",
     "leaflet": "^1.9.4",
     "plotly.js-dist": "^2.26.1",
     "sql-tagged-template-literal": "^1.2.0",
