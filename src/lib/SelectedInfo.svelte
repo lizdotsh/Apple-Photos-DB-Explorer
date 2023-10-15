@@ -6,6 +6,8 @@
     let selected_count;
     import * as aq from "arquero";
     function process_filt(flt, name){
+        if (flt) {
+
         flt.then(d => {
             selected_count = aq.from(d)
             .params({name})
@@ -15,17 +17,14 @@
         }).catch(e => {
             console.log(e)
         });
+        }
     }
-    $: name_count.then((d) => {
-        filt = aq.from(d)
-    }).catch((e) => {
-        console.log(e)
-    });
+    $: process_filt(name_count, elm_name);
    
 
     $: console.log(selected_count, filt);
   </script>
-  {#if filt && person}
+  {#if selected_count && person}
   <div class = "flex-container-col">
     {selected_count} of {person?.count ?? "N/A"} photos selected.
   </div>
