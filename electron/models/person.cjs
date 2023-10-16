@@ -9,27 +9,30 @@ exports.getPersonStat = function(person_id, start_date, end_date, stats) {
         for (let stat of stats) {
             // I know this is horribly unsafe, im just lazy. 
             const query = `
+            with count_only as (
+
             select 
             person_uuid,
             full_name,
             ${stat},
-            sum(count) as count,
-            (100*sum(count))/ sum(sum(count)) over (partition by person_uuid) as pct
+            sum(count) as count
             from photo_info_rollup_monthly
             where year_month >= :start_date
             and year_month <= :end_date
             group by 1,2,3 
             having person_uuid = :person_id
+            )
+            -- unsure about how sqlite will handle this under the hood, breaking it up into two queries.
+            select 
+            person_uuid,
+            full_name,
+            ${stat},
+            count,
+            (100*count)/ sum(count) over (partition by person_uuid) as pct
+            from count_only
             order by count desc;
             `
-         //   const temp = 
-
-            // add a total to the end of the array
-         //   const total = temp.reduce((acc, cur) => acc + cur.count, 0);
-
             result[stat] = db.prepare(query).all({person_id, start_date, end_date});
-            
-         //   console.log(result[stat])
         }
     })();
     
@@ -46,13 +49,14 @@ exports.getDailyZeroedCounts = function(person_id) {
     photos_per_user_daily.person_uuid as person_uuid,
     date_series.date as date,
     sum(ifnull(photos_per_user_daily.count, 0)) as count
-
     from date_series 
     left join photos_per_user_daily on date_series.date = photos_per_user_daily.date 
     and photos_per_user_daily.person_uuid = :person_id
-    where date_series.date >= (select min(date) from photos_per_user_daily where person_uuid = :person_id)
+     where date_series.date >= (select min(date) from photos_per_user_daily where person_uuid = :person_id)
     and date_series.date <= (select max(date) from photos_per_user_daily where person_uuid = :person_id)
     group by 1,2
+    --having date_series.date between (select min(date) from photos_per_user_daily where person_uuid = :person_id) 
+   -- and (select max(date) from photos_per_user_daily where person_uuid = :person_id)
     order by date_series.date
     ),
     -- I know this is horribly inefficient lmao
@@ -81,5 +85,6 @@ exports.getDailyZeroedCounts = function(person_id) {
     ) as 'ninety_day_rolling'
     from seven;
     `;
+    
     return txGetAll(query, {person_id});
 }

@@ -1,11 +1,10 @@
-drop table if exists photo_info;
+DROP TABLE IF EXISTS photo_info;
 
-create table photo_info as
-
+CREATE TABLE photo_info AS
 SELECT
-    zAsset.zuuid as zuuid,
-    zasset.z_pk as asset_zpk,
-    zperson.z_pk as person_zpk,
+    zAsset.zuuid AS zuuid,
+    zasset.z_pk AS asset_zpk,
+    zperson.z_pk AS person_zpk,
     DATETIME(zAsset.ZDATECREATED + 978307200, 'UNIXEPOCH') AS 'date_created',
     zExtAttr.ZLATITUDE AS 'latitude',
     zExtAttr.ZLONGITUDE AS 'longitude',
@@ -18,7 +17,7 @@ SELECT
     zPerson.ZPERSONUUID AS 'person_uuid',
     zPerson.ZDISPLAYNAME AS 'display_name',
     zPerson.ZFULLNAME AS 'full_name',
-    zasset.zsorttoken as zsorttoken,
+    zasset.zsorttoken AS zsorttoken,
     CASE
         zDetFace.ZVIPMODELTYPE
         WHEN 0
@@ -34,7 +33,6 @@ SELECT
     zDetFace.ZMASTERIDENTIFIER AS 'zdet_master_id',
     zDetFace.ZCENTERX AS 'zdet_center_x',
     zDetFace.ZCENTERY AS 'zdet_center_y',
-
     CASE
         zDetFace.ZGENDERTYPE
         WHEN 0
@@ -155,7 +153,6 @@ SELECT
             THEN '2-StillTesting'
         ELSE 'Unknown-New-Value!: ' || zDetFace.ZHASFACEMASK || ''
     END AS 'face_mask_estimate',
-    
     CASE
         zDetFace.ZFACEEXPRESSIONTYPE
         WHEN 0
@@ -165,7 +162,6 @@ SELECT
         WHEN 2
             THEN 'Surprised/Fearful'
         WHEN 3
-
             THEN 'Neutral'
         WHEN 4
             THEN 'Confident/Smirk'
@@ -175,7 +171,6 @@ SELECT
             THEN 'Sadness'
         ELSE 'Unknown-New-Value!: ' || zDetFace.ZFACEEXPRESSIONTYPE || ''
     END AS 'face_expression_estimate',
-
     CASE
         zDetFace.ZPOSETYPE
         WHEN 0
@@ -192,7 +187,7 @@ SELECT
             THEN 'other/unknown - 5'
         ELSE 'Unknown-New-Value!: ' || zDetFace.ZPOSETYPE || ''
     END AS 'pose_type_estimate',
-    CASE 
+    CASE
         zDetFace.ZHASSMILE
         WHEN 0
             THEN 'other/unknown'
@@ -202,8 +197,7 @@ SELECT
             THEN 'Smiling'
         ELSE 'Unknown-New-Value!: ' || zDetFace.ZHASSMILE || ''
     END AS 'smile_estimate',
-
-    CASE 
+    CASE
         zDetFace.ZSMILETYPE
         WHEN 0
             THEN 'other/unknown'
@@ -213,15 +207,19 @@ SELECT
             THEN 'Showing Teeth'
         ELSE 'Unknown-New-Value!: ' || zDetFace.ZSMILETYPE || ''
     END AS 'smile_type_estimate',
-
-    CASE when zDetFace.ZHASSMILE = 0 and zDetFace.ZSMILETYPE = 0 then 'Not Smiling'
-         when zDetFace.ZHASSMILE = 1 and zDetFace.ZSMILETYPE = 1 then 'Smiling without Teeth'
-         when zDetFace.ZHASSMILE = 1 and zDetFace.ZSMILETYPE = 2 then 'Smiling with Teeth'
-         else 'Unknown-New-Value!: ' || zDetFace.ZHASSMILE || ' ' || zDetFace.ZSMILETYPE || ''
+    CASE
+        WHEN zDetFace.ZHASSMILE = 0
+        AND zDetFace.ZSMILETYPE = 0
+            THEN 'Not Smiling'
+        WHEN zDetFace.ZHASSMILE = 1
+        AND zDetFace.ZSMILETYPE = 1
+            THEN 'Smiling without Teeth'
+        WHEN zDetFace.ZHASSMILE = 1
+        AND zDetFace.ZSMILETYPE = 2
+            THEN 'Smiling with Teeth'
+        ELSE 'Unknown-New-Value!: ' || zDetFace.ZHASSMILE || ' ' || zDetFace.ZSMILETYPE || ''
     END AS 'smile_combined_estimate',
-
-
-    CASE 
+    CASE
         zDetFace.ZLIPMAKEUPTYPE
         WHEN 0
             THEN 'Not Wearing Lip Makeup'
@@ -229,7 +227,7 @@ SELECT
             THEN 'Wearing Lip Makeup'
         ELSE 'Unknown-New-Value!: ' || zDetFace.ZLIPMAKEUPTYPE || ''
     END AS 'lip_makeup_estimate',
-     CASE 
+    CASE
         zDetFace.ZEYESSTATE
         WHEN 0
             THEN 'other/unknown'
@@ -239,16 +237,22 @@ SELECT
             THEN 'Eyes Open'
         ELSE 'Unknown-New-Value!: ' || zDetFace.ZEYESSTATE || ''
     END AS 'closing_eyes_estimate',
-
-    CASE 
-        WHEN zDetFace.ZISLEFTEYECLOSED = 1 and zDetFace.ZISRIGHTEYECLOSED = 1 THEN 'Both Eyes Closed'
-        WHEN zDetFace.ZISLEFTEYECLOSED = 0 and zDetFace.ZISRIGHTEYECLOSED = 0 THEN 'Both Eyes Open'
-        WHEN zDetFace.ZISLEFTEYECLOSED = 1 and zDetFace.ZISRIGHTEYECLOSED = 0 THEN 'Winking'
-        WHEN zDetFace.ZISLEFTEYECLOSED = 0 and zDetFace.ZISRIGHTEYECLOSED = 1 THEN 'Winking'
+    CASE
+        WHEN zDetFace.ZISLEFTEYECLOSED = 1
+        AND zDetFace.ZISRIGHTEYECLOSED = 1
+            THEN 'Both Eyes Closed'
+        WHEN zDetFace.ZISLEFTEYECLOSED = 0
+        AND zDetFace.ZISRIGHTEYECLOSED = 0
+            THEN 'Both Eyes Open'
+        WHEN zDetFace.ZISLEFTEYECLOSED = 1
+        AND zDetFace.ZISRIGHTEYECLOSED = 0
+            THEN 'Winking'
+        WHEN zDetFace.ZISLEFTEYECLOSED = 0
+        AND zDetFace.ZISRIGHTEYECLOSED = 1
+            THEN 'Winking'
         ELSE 'other/unknown' || zDetFace.ZISLEFTEYECLOSED || ' ' || zDetFace.ZISRIGHTEYECLOSED || ''
     END AS 'winking_estimate',
-
-    CASE 
+    CASE
         zDetFace.ZGLASSESTYPE
         WHEN 0
             THEN 'other/unknown'
@@ -260,9 +264,7 @@ SELECT
             THEN 'No Glasses'
         ELSE 'Unknown-New-Value!: ' || zDetFace.ZGLASSESTYPE || ''
     END AS 'glasses_estimate',
-
-
-    CASE 
+    CASE
         zDetFace.ZEYEMAKEUPTYPE
         WHEN 0
             THEN 'Not Wearing Eye Makeup'
@@ -270,36 +272,42 @@ SELECT
             THEN 'Wearing Eye Makeup'
         ELSE 'Unknown-New-Value!: ' || zDetFace.ZEYEMAKEUPTYPE || ''
     END AS 'eye_makeup_estimate',
-
+    CASE
+        zAsset.ZDERIVEDCAMERACAPTUREDEVICE
+        WHEN 0
+            THEN 'Back Camera'
+        WHEN 1
+            THEN 'Front Camera'
+        ELSE 'unknown'
+    END AS 'which_camera',
     zDetFace.ZBLURSCORE AS 'face_blur_score',
     zDetFace.ZSIZE AS 'face_size_estimate',
     /*  
-    CASE    
-        zIntResou.ZRESOURCETYPE
-        WHEN 0 THEN 'Photo'
-        WHEN 1 THEN 'Video'
-        WHEN 3 THEN 'Live Photo'
-        WHEN 5 THEN 'Adjustment Data'
-        WHEN 6 THEN 'Screenshot'
-        WHEN 9 THEN 'Alternate Photo (3rd Party App)'
-        WHEN 13 THEN 'Movie'
-        WHEN 14 THEN 'Wallpaper'
-        ELSE 'Unknown-New-Value!: ' || zIntResou.ZRESOURCETYPE || ''
-    END AS 'resource_type_estimate', */
+     CASE    
+     zIntResou.ZRESOURCETYPE
+     WHEN 0 THEN 'Photo'
+     WHEN 1 THEN 'Video'
+     WHEN 3 THEN 'Live Photo'
+     WHEN 5 THEN 'Adjustment Data'
+     WHEN 6 THEN 'Screenshot'
+     WHEN 9 THEN 'Alternate Photo (3rd Party App)'
+     WHEN 13 THEN 'Movie'
+     WHEN 14 THEN 'Wallpaper'
+     ELSE 'Unknown-New-Value!: ' || zIntResou.ZRESOURCETYPE || ''
+     END AS 'resource_type_estimate', */
     zAsset.ZCURATIONSCORE AS 'curation_score',
     zDetFace.ZASSETFORFACE AS 'asset_contains_face',
-
-    CASE zDetFace.ZASSETVISIBLE
-        WHEN 0 THEN 'Yes'
-        WHEN 1 THEN 'No'
+    CASE
+        zDetFace.ZASSETVISIBLE
+        WHEN 0
+            THEN 'Yes'
+        WHEN 1
+            THEN 'No'
         ELSE 'Unknown-New-Value!: ' || zDetFace.ZASSETVISIBLE || ''
     END AS 'is_asset_visible',
-
     zDetFace.ZQUALITY AS 'detected_face_quality',
     zDetFace.ZQUALITYMEASURE AS 'detected_face_quality_measure',
     zMedAnlyAstAttr.ZFACECOUNT AS 'face_count',
-
-
     zMedAnlyAstAttr.ZACTIVITYSCORE AS 'zm_activity_score',
     zMedAnlyAstAttr.ZVIDEOSCORE AS 'zm_video_score',
     zMedAnlyAstAttr.ZAUDIOSCORE AS 'zm_audio_score',
@@ -307,7 +315,6 @@ SELECT
     zMedAnlyAstAttr.ZAUTOPLAYSUGGESTIONSCORE AS 'zm_autoplay_suggestion_score',
     zMedAnlyAstAttr.ZBLURRINESSSCORE AS 'zm_blurriness_score',
     zMedAnlyAstAttr.ZEXPOSURESCORE AS 'zm_exposure_score',
-
     zCompAssetAttr.ZBEHAVIORALSCORE AS 'zc_behavioral_score',
     zCompAssetAttr.ZFAILURESCORE AS 'zc_failure_score',
     zCompAssetAttr.ZHARMONIOUSCOLORSCORE AS 'zc_harmonious_color_score',
@@ -331,20 +338,21 @@ SELECT
     zCompAssetAttr.ZWELLCHOSENSUBJECTSCORE AS 'zc_well_chosen_subject_score',
     zCompAssetAttr.ZWELLFRAMEDSUBJECTSCORE AS 'zc_well_framed_subject_score',
     zCompAssetAttr.ZWELLTIMEDSHOTSCORE AS 'zc_well_timed_shot_score'
+FROM zasset
+LEFT JOIN ZADDITIONALASSETATTRIBUTES zAddAssetAttr
+    ON zAddAssetAttr.Z_PK = zAsset.ZADDITIONALATTRIBUTES
+LEFT JOIN ZEXTENDEDATTRIBUTES zExtAttr
+    ON zExtAttr.Z_PK = zAsset.ZEXTENDEDATTRIBUTES --   LEFT JOIN ZINTERNALRESOURCE zIntResou ON zIntResou.ZASSET = zAsset.Z_PK
+LEFT JOIN ZDETECTEDFACE zDetFace
+    ON zAsset.Z_PK = zDetFace.ZASSETFORFACE
+LEFT JOIN ZPERSON zPerson
+    ON zPerson.Z_PK = zDetFace.ZPERSONFORFACE
+LEFT JOIN ZCOMPUTEDASSETATTRIBUTES zCompAssetAttr
+    ON zCompAssetAttr.Z_PK = zAsset.ZCOMPUTEDATTRIBUTES
+LEFT JOIN ZMEDIAANALYSISASSETATTRIBUTES zMedAnlyAstAttr
+    ON zAsset.ZMEDIAANALYSISATTRIBUTES = zMedAnlyAstAttr.Z_PK;
 
-    from zasset 
-        LEFT JOIN ZADDITIONALASSETATTRIBUTES zAddAssetAttr ON zAddAssetAttr.Z_PK = zAsset.ZADDITIONALATTRIBUTES
-        LEFT JOIN ZEXTENDEDATTRIBUTES zExtAttr ON zExtAttr.Z_PK = zAsset.ZEXTENDEDATTRIBUTES
-     --   LEFT JOIN ZINTERNALRESOURCE zIntResou ON zIntResou.ZASSET = zAsset.Z_PK
-        LEFT JOIN ZDETECTEDFACE zDetFace ON zAsset.Z_PK = zDetFace.ZASSETFORFACE
-        LEFT JOIN ZPERSON zPerson ON zPerson.Z_PK = zDetFace.ZPERSONFORFACE
-        LEFT JOIN ZCOMPUTEDASSETATTRIBUTES zCompAssetAttr ON zCompAssetAttr.Z_PK = zAsset.ZCOMPUTEDATTRIBUTES
-        LEFT JOIN ZMEDIAANALYSISASSETATTRIBUTES zMedAnlyAstAttr ON zAsset.ZMEDIAANALYSISATTRIBUTES = zMedAnlyAstAttr.Z_PK;
+CREATE INDEX photo_info_idx_zuuid
+ON photo_info (zuuid);
 
- 
-CREATE INDEX photo_info_idx_zuuid ON photo_info (zuuid);
-
-
-
-
--- OLAP cube esque thing 
+-- OLAP cube esque thing

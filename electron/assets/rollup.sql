@@ -68,6 +68,7 @@ lip_makeup_estimate,
 winking_estimate,
 glasses_estimate,
 eye_makeup_estimate,
+which_camera,
 count(distinct zuuid) as count
 from photo_info
 group by
@@ -90,7 +91,7 @@ create table photos_per_user_daily as
 
 create index date_index_daily on photos_per_user_daily(date);
 create index person_uuid_index_daily on photos_per_user_daily(person_uuid);
-
+create index photo_per_user_daily_person_uuid_date_index on photos_per_user_daily(person_uuid, date);
 drop table if exists date_series;
 create table date_series as
 WITH RECURSIVE dates AS (
@@ -147,6 +148,7 @@ lip_makeup_estimate,
 winking_estimate,
 glasses_estimate,
 eye_makeup_estimate,
+which_camera,
 sum(count) as count
 from photo_info_rollup_monthly
 where full_name != 'no_name' and full_name != 'no_face'
