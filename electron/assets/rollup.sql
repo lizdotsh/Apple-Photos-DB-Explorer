@@ -73,17 +73,23 @@ from photo_info
 group by
 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19, 20, 21;
 
+create index person_monthly_uuid_index on photo_info_rollup_monthly(person_uuid);
 
 drop table if exists photos_per_user_daily;
 create table photos_per_user_daily as
         select 
-          full_name, 
+            person_uuid,
+      --  //  full_name, 
           date,
           sum(count) as count
           from photo_info_rollup_daily
           where date > '1950-01-01'
           group by 1,2
           order by count desc;
+
+
+create index date_index_daily on photos_per_user_daily(date);
+create index person_uuid_index_daily on photos_per_user_daily(person_uuid);
 
 drop table if exists date_series;
 create table date_series as
@@ -96,6 +102,7 @@ WITH RECURSIVE dates AS (
 SELECT dates.date
 FROM dates;
 
+create index date_index on date_series(date);
 drop table if exists sum_photos_monthly;
 
 create table sum_photos_monthly as
@@ -149,7 +156,7 @@ group by
 
 -- Add index
 
-create index person_uuid_index on person_group_stats(person_uuid);
+create index person_group_stats_uuid_index on person_group_stats(person_uuid);
 
 drop table if exists names_ids;
 

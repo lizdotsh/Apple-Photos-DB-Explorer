@@ -105,7 +105,10 @@
     }
   }
 
-  $: daily_with_rolling = invoke_req("daily-zeroed-counts", [elm_name]);
+  $: api.getDailyZeroedCounts(person_id).then((data) => {
+    daily_with_rolling = data ? aq.from(data): null;
+    console.log(data);
+  });
   //$: latlong = invoke_req("call-lat-long", {elm_name, start_date, end_date});
   $: world = invoke_req("call-map-json", "world");
   $: us = invoke_req("call-map-json", "us");
@@ -206,9 +209,10 @@
   <div id="agg-stats-grouping">
     <!-- {#if person_group_stats?.length > 0} -->
     <div class="flex-container">
-      <GenderEstimate {person_group_stats} />
-    </div>
 
+      <GenderEstimate {person_group_stats} />
+        </div>
+        
     <div class="flex-container">
       <AgeEstimate {person_group_stats} />
 

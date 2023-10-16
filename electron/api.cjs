@@ -12,5 +12,5 @@ module.exports = {
     getPeople: people.getPeople,
     getPeopleTime: people.getPeopleTime,
     getPersonStat: person.getPersonStat,
-    
+    getDailyZeroedCounts: person.getDailyZeroedCounts,
 }

@@ -32,7 +32,7 @@ exports.getPeople = function () {
     and full_name != 'no_face' 
   group by 1,2 order by count desc;
             `;
-  console.log(query);
+//   console.log(query);
   return arr_reduce(txGetAll(query, []), "person_uuid");
 };
 
@@ -53,7 +53,7 @@ exports.getPeopleTime = function (start_date, end_date){
       group by 1,2 order by count desc;
       
               `;
-    console.log(query);
+    // console.log(query);
     return (txGetAll(query, [start_date, end_date]));
   };
   

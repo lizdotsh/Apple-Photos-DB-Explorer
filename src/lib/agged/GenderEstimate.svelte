@@ -26,7 +26,8 @@
   {#if person_group_stats}
   <PlotRender
     options={{
-      x: { label: "Percent of selected photos", percent: false },
+      x: { label: "Percent of selected photos", percent: false
+     },
       //correct capitalization
       title: "Gender", 
       height: 100,
@@ -55,17 +56,20 @@
           order: ['Male', "unknown", "Female"]
          // sort: true,
         }),
-        Plot.text(person_group_stats.gender_estimate, {
+        Plot.text(person_group_stats.gender_estimate, Plot.stackX({
             x: "pct",
-            
+           // fill: "gender_estimate",
+           z: 'gender_estimate',
             text: (d) => `${((d.pct)).toFixed(0)}%`,
             //center text
             lineAnchor: "middle",
-            textAnchor: "beginning",
+            textAnchor: "middle",
             frameAnchor: "middle",
+            percent: true,
             fill: "white",
+            order: ['Male', "unknown", "Female"]
             //textAnchor: "middle",
-        })
+        }))
       ],
     }}
   />

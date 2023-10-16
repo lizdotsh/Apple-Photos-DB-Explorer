@@ -7,13 +7,14 @@
   export let daily_with_rolling;
 
 let table
-  $: daily_with_rolling.then((d) => {
-    table = aq.from(d)
-    .orderby('date');
+$: table = daily_with_rolling;
+//   $: daily_with_rolling.then((d) => {
+//     table = aq.from(d)
+//     .orderby('date');
     
-  }).catch((e) => {
-    console.log(e);
-  });
+//   }).catch((e) => {
+//     console.log(e);
+//   });
 
   $: console.log(table?.filter(d => d.thirty_day_rolling > 200));
   

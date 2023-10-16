@@ -11,10 +11,10 @@
     function processtable(daily_with_rolling, start_date, end_date){
       //  let res;
         if (daily_with_rolling) {
-            daily_with_rolling.then( d => {
-            const tempv = aq.from(d);
+            // daily_with_rolling.then( d => {
+            const tempv = aq.from(daily_with_rolling);
             filtered = filter_table(tempv, start_date, end_date)
-        });
+        // });
         }
     }
     $: processtable(daily_with_rolling, start_date, end_date);
