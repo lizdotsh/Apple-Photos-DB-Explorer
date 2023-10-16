@@ -38,7 +38,7 @@ exports.getPeople = function () {
 
 
 
-exports.getPeopleTime = function (start_date, end_date) {
+exports.getPeopleTime = function (start_date, end_date){
     const query = `
       select 
       person_uuid, 

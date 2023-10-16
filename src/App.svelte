@@ -21,25 +21,28 @@
   import { api } from "./ipc.js";
   import { onMount } from "svelte";
   let people = {};
+  let person_id;
   onMount(async () => {
     people = await api.getPeople().then((data) => {
+      person_id = Object.keys(data)[0];
       console.log(data);
+
       return data;
+ //   person_id = Object.keys(people)[0];
     });
   });
   $: person = people[person_id];
+
   let person_time;
   let people_time;
- // let people_time;
 
-   $: api.getPeopleTime(start_date, end_date).then(
-    (data) => {
-       people_time =  aq.from(data)
-    }
-    );
-     $: console.log(person_time);
+   $: api.getPeopleTime(start_date, end_date).then((data) => {
+       people_time =  aq.from(data);
+       person_time = {...(data.find((e) => e.person_uuid === person_id)), start_date, end_date};
+    
+    });
+     $: console.log("person_time", person_time);
 // $: person_time = people_time?.objects()?.find((e) => e.person_uuid === person_id);
-  let names_ids;
   let elm_name;
   let start_date_month;
   let end_date_month;
@@ -52,37 +55,7 @@
   let end_date; //= today?.toISOString()?.slice(0, 10);
   // Send SQL query to main process
 
-  window.myAPI.sendSQL([
-    {
-      name: "names_ids",
-      query: `select * from names_ids`,
-    },
-    {
-      name: "photos_per_user_daily",
-      query: `
-          select 
-          full_name, 
-          date,
-          sum(count) as count
-          from photo_info_rollup_daily
-          group by 1,2
-          order by count desc
-        
-        `,
-    },
-  ]);
-  let photos_per_user_daily;
-  const ym_to_dt = d3.timeParse("%Y-%m");
-  // Receive SQL results
-  window.myAPI.receiveSQLResults((results) => {
-    console.log(results);
-    photos_per_user_daily = aq
-      .from(results.photos_per_user_daily)
-      .orderby("date");
-    //  .derive({rolling_count: aq.rolling(d => aq.op.average(d.count), [-60, 0])});
-    names_ids = results.names_ids;
-    //  user_time = results.photos_per_user;
-  });
+ 
   $: photos_per_user = invoke_req("call-photos-per-user", {
     start_date,
     end_date,
@@ -98,14 +71,14 @@
   async function invoke_req(api, arg) {
     try {
       const result = await window.myAPI.invoke(api, arg);
-      console.log(result);
+     // console.log(result);
       return result;
     } catch (error) {
       console.error(error);
     }
   }
   $: person_group_stats = invoke_req("call-person-group-stats", {
-    name_entry: elm_name,
+    name_entry: person?.full_name,
     start_date,
     end_date,
   });
@@ -141,7 +114,6 @@
     >${start_date_month ?? "error"} to ${end_date_month ?? "error"}</span
   >`;
   $: console.log(date_range_string);
-  let person_id;
 
   $: console.log(people[person_id]);
 </script>
@@ -151,7 +123,6 @@
 <!-- ... -->
 <div id="title-selector">
   <div class="flex-container-title">
-    {#if typeof names_ids !== "undefined"}
       <div class="flex-container-col">
         <div id="app-title">Apple Photos DB Explorer</div>
         <SelectedInfo name_count={photos_per_user} {elm_name} {person} />
@@ -166,13 +137,7 @@
           <b>Select a name</b>
         </div>
         <div id="selector" class="text-intro">
-          <select bind:value={elm_name}>
-            {#each names_ids as name_entry}
-              <option value={name_entry.full_name}
-                >{name_entry.full_name}</option
-              >
-            {/each}
-          </select>
+          
           <select bind:value={person_id}>
             {#each Object.keys(people) as pid}
               <option value={pid}>{people[pid]["full_name"]}</option>
@@ -182,7 +147,7 @@
         <!-- {person?.count ?? "N/A"} Photos of {elm_name} -->
       </div>
       <div id="date-selector-slider">
-        {#if person && names_ids}
+        {#if person}
           <DoubleDateSlider
             dateMin={person?.start_date}
             dateMax={person?.end_date}
@@ -193,9 +158,6 @@
 
         <!-- {person?.start_date ?? "N/A"} to {person?.end_date ?? "N/A"} -->
       </div>
-    {:else}
-      <p>Waiting for data...</p>
-    {/if}
   </div>
 </div>
 <div id="not-sticky">
