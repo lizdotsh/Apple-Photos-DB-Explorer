@@ -48,7 +48,9 @@ exports.getDailyZeroedCounts = function(person_id) {
     select 
     photos_per_user_daily.person_uuid as person_uuid,
     date_series.date as date,
-    sum(ifnull(photos_per_user_daily.count, 0)) as count
+    sum(ifnull(photos_per_user_daily.count, 0)) as count,
+    sum(ifnull(photos_per_user_daily.front_camera_count, 0)) as front_camera_count
+    
     from date_series 
     left join photos_per_user_daily on date_series.date = photos_per_user_daily.date 
     and photos_per_user_daily.person_uuid = :person_id
@@ -64,6 +66,7 @@ exports.getDailyZeroedCounts = function(person_id) {
     select 
     date,
     count,
+    front_camera_count,
     sum(count) OVER (
         ORDER BY date
         ROWS BETWEEN 7 PRECEDING AND current row 
@@ -74,6 +77,7 @@ exports.getDailyZeroedCounts = function(person_id) {
     :person_id as person_uuid,
     date, 
     count, 
+    front_camera_count,
     seven_day_sum,
     AVG(seven_day_sum) OVER (
         ORDER BY date

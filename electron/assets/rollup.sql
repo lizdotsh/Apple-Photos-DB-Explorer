@@ -30,10 +30,11 @@ lip_makeup_estimate,
 winking_estimate,
 glasses_estimate,
 eye_makeup_estimate,
+which_camera,
 count(distinct zuuid) as count
 from photo_info
 group by
-1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19, 20, 21;
+1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19, 20, 21,22;
 
 drop table if exists photo_info_rollup_monthly;
 
@@ -83,7 +84,8 @@ create table photos_per_user_daily as
             person_uuid,
       --  //  full_name, 
           date,
-          sum(count) as count
+          sum(count) as count,
+          sum(case when which_camera = 'Front Camera' then count else 0 end) as front_camera_count
           from photo_info_rollup_daily
           where date > '1950-01-01'
           group by 1,2
