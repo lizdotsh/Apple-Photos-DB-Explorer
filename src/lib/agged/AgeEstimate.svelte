@@ -26,7 +26,7 @@
       "Adult",
       "unknown",
     ];
-    $: console.log(person_group_stats?.age_estimate);
+    // $: console.log(person_group_stats?.age_estimate);
   //  $: person_group_stats['age_estimate'] = 
 </script>
 

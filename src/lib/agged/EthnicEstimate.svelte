@@ -34,7 +34,7 @@
     filt = fixthisshit(person_group_stats?.ethnicity_estimate);
     }
    } //?.concat(eachEthnicityZero)
-  $: console.log(filt);
+//   $: console.log(filt);
   //   $: person_group_stats.then((data) => {
   //     // console.log(data);
   //     filt  = aq

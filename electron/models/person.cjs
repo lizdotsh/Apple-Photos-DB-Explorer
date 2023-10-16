@@ -16,10 +16,11 @@ exports.getPersonStat = function(person_id, start_date, end_date, stats) {
             sum(count) as count,
             (100*sum(count))/ sum(sum(count)) over (partition by person_uuid) as pct
             from photo_info_rollup_monthly
-            where person_uuid = :person_id
-            and year_month >= :start_date
+            where year_month >= :start_date
             and year_month <= :end_date
-            group by 1,2,3 order by count desc;
+            group by 1,2,3 
+            having person_uuid = :person_id
+            order by count desc;
             `
          //   const temp = 
 

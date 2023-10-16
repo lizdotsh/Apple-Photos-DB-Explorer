@@ -91,9 +91,7 @@
   });
   $: console.log(photos_per_user);
   $: console.log(elm_name);
-//   let person_group_stats;
   let daily_with_rolling;
-  //   let person;
   let latlong;
   let world;
   let us;
@@ -106,11 +104,7 @@
       console.error(error);
     }
   }
-//   $: person_group_stats = invoke_req("call-person-group-stats", {
-//     name_entry: person?.full_name,
-//     start_date,
-//     end_date,
-//   });
+
   $: daily_with_rolling = invoke_req("daily-zeroed-counts", [elm_name]);
   //$: latlong = invoke_req("call-lat-long", {elm_name, start_date, end_date});
   $: world = invoke_req("call-map-json", "world");
@@ -212,7 +206,7 @@
   <div id="agg-stats-grouping">
     <!-- {#if person_group_stats?.length > 0} -->
     <div class="flex-container">
-      <!-- <GenderEstimate {person_group_stats} /> -->
+      <GenderEstimate {person_group_stats} />
     </div>
 
     <div class="flex-container">
@@ -223,10 +217,10 @@
     <div class="flex-container">
       <div>
         Date range: {start_date_month} to {end_date_month}
-        <!-- <FacialExpressionEstimate {person_group_stats} {date_range_string} /> -->
+        <FacialExpressionEstimate {person_group_stats} {date_range_string} />
       </div>
 
-      <!-- <FacialHairEstimate {person_group_stats} /> -->
+      <FacialHairEstimate {person_group_stats} />
     </div>
   </div>
 

@@ -4,32 +4,33 @@
   export let person_group_stats;
   export let date_range_string;
   import * as aq from "arquero";
-  let filt;
-  $: person_group_stats.then((data) => {
-    filt = aq
-      .from(data)
-      .groupby(`face_expression_estimate`)
-      .rollup({ cnt: (d) => aq.op.sum(d.count) })
-      .orderby("cnt")
-      .ungroup()
-      .derive({ pct: (d) => d.cnt / aq.op.sum(d.cnt) });
+//   let filt;
+//   $: person_group_stats.then((data) => {
+//     filt = aq
+//       .from(data)
+//       .groupby(`face_expression_estimate`)
+//       .rollup({ cnt: (d) => aq.op.sum(d.count) })
+//       .orderby("cnt")
+//       .ungroup()
+//       .derive({ pct: (d) => d.cnt / aq.op.sum(d.cnt) });
 
     // face_expression_estimate
 
     //   console.log(df);
-  }).catch((e) => {
-        console.log(e);
-      });
+//   }).catch((e) => {
+//         console.log(e);
+//       });
 </script>
 
-{#if filt}
+{#if person_group_stats}
   <PlotRender
     options={{
-      x: { label: "Percent of selected photos", line: true, percent: true },
+      x: { label: "Percent of selected photos", line: true, percent: false },
       title: "Facial Expression",
       subtitle: date_range_string,
       height: 250,
       color: {
+        label: "Facial Expression",
         legend: true,
         domain: [
           "Disgusted/Angry",
@@ -55,7 +56,7 @@
       },
       marginLeft: 120,
       marks: [
-        Plot.barX(filt, {
+        Plot.barX(person_group_stats['face_expression_estimate'], {
           x: "pct",
           y: "face_expression_estimate",
           marginRight: 40,
@@ -74,10 +75,10 @@
           label: true,
           sort: { y: "x", reverse: true },
         }),
-        Plot.text(filt, {
+        Plot.text(person_group_stats['face_expression_estimate'], {
           x: "pct",
           y: "face_expression_estimate",
-          text: (d) => `${(d.pct * 100).toFixed(0)}%`,
+          text: (d) => `${(d.pct ).toFixed(0)}%`,
           fill: "black",
           dx: 15,
           //    font: "bold 12px var(--sans-serif)",

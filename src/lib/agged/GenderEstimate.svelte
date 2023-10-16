@@ -4,29 +4,29 @@
     export let person_group_stats;
     import * as aq from "arquero";
 
-    let gender;
-    $: person_group_stats.then((data) => {
+    // let gender;
+    // $: person_group_stats.then((data) => {
   
-      gender = aq.from(data)
-        .groupby("gender_estimate")
-        .rollup({ cnt: (d) => aq.op.sum(d.count) })
-        .orderby("cnt")
-        .ungroup()
-        .derive({ pct: (d) => d.cnt / aq.op.sum(d.cnt) })
-        .orderby()
+    //   gender = aq.from(data)
+    //     .groupby("gender_estimate")
+    //     .rollup({ cnt: (d) => aq.op.sum(d.count) })
+    //     .orderby("cnt")
+    //     .ungroup()
+    //     .derive({ pct: (d) => d.cnt / aq.op.sum(d.cnt) })
+    //     .orderby()
     
       // face_expression_estimate
   
       //   console.log(df);
-    }).catch((e) => {
-        console.log(e);
-      });
+    // }).catch((e) => {
+    //     console.log(e);
+    //   });
   </script>
   
-  {#if gender}
+  {#if person_group_stats}
   <PlotRender
     options={{
-      x: { label: "Percent of selected photos", percent: true },
+      x: { label: "Percent of selected photos", percent: false },
       //correct capitalization
       title: "Gender", 
       height: 100,
@@ -43,22 +43,22 @@
         },
       },
       marks: [
-        Plot.barX(gender, {
+        Plot.barX(person_group_stats.gender_estimate, {
           x: "pct",
           fill: "gender_estimate",
           tip: {
             format: {
-              x: (d) => `${d.toFixed(2)}%`,
+              x: (d) => `${d.toFixed(1)}%`,
             },
           },
           percent: true,
           order: ['Male', "unknown", "Female"]
          // sort: true,
         }),
-        Plot.text(gender, {
+        Plot.text(person_group_stats.gender_estimate, {
             x: "pct",
             
-            text: (d) => `${((d.pct)*100).toFixed(0)}%`,
+            text: (d) => `${((d.pct)).toFixed(0)}%`,
             //center text
             lineAnchor: "middle",
             textAnchor: "beginning",
