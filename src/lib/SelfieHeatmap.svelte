@@ -28,14 +28,16 @@
   return years; 
   
 }
+$: num = filt?.rollup({'sum': d => aq.op.sum(d.front_camera_count)})
 
 $: dm = getYearsBetweenDates(start_date, end_date);
 
-   
+   $: console.log(num);
   
 </script>
 
 {#if filt}
+    
   <PlotRender
 
     options={{
@@ -52,7 +54,7 @@ $: dm = getYearsBetweenDates(start_date, end_date);
         fy: "year",
         // y: (d) => d.parsed_date.getUTCDay(),
         // fy: (d) => d.parsed_date.getUTCFullYear(),
-        fill: (d) => d.count == 0 ? 0 : Math.log(d.count),//(d, i) => i > 0 ? (d.Close - dji[i - 1].Close) / dji[i - 1].Close : NaN,
+        fill: (d) => d.front_camera_count == 0 ? 0 : Math.log(d.count),//(d, i) => i > 0 ? (d.Close - dji[i - 1].Close) / dji[i - 1].Close : NaN,
        // title: (d, i) => i > 0 ? ((d.Close - dji[i - 1].Close) / dji[i - 1].Close * 100).toFixed(1) : NaN,
         inset: 0.5,
         tip: true

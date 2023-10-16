@@ -26,7 +26,11 @@
   import SelfieHeatmap from "./lib/SelfieHeatmap.svelte";
   let person;
   let people = {};
+  let activeTab = 'Tab1';
 
+function setActive(tabName) {
+  activeTab = tabName;
+}
   let person_time;
   let people_time;
 
@@ -105,8 +109,17 @@
 //   $: console.log(people[person_id]);
 </script>
 
-x
+
 <StatusBar bind:people bind:person {person_time} bind:start_date bind:end_date />
+
+<div class="tabs">
+    <button on:click={() => setActive('Tab1')}>Main</button>
+    <button on:click={() => setActive('Tab2')}>Activity Map</button>
+
+</div>
+
+
+{#if activeTab === 'Tab1'}
 <!-- {/if} -->
 <div id="not-sticky">
   <div class="flex-container">
@@ -119,7 +132,6 @@ x
       {/if}
     </div>
   </div>
-  <SelfieHeatmap {daily_with_rolling} {start_date} {end_date} />
   <div class="flex-container">
 
     <div id="photo-hist" style="max-width: 100%; margin: auto">
@@ -159,6 +171,14 @@ x
 
   <!-- <PhotosDayHistogram {daily_with_rolling} /> -->
 </div>
+
+
+
+{:else if activeTab === 'Tab2'}
+    <SelfieHeatmap {daily_with_rolling} {start_date} {end_date} />
+ 
+{/if}
+  
 <br /><br /><br /><br />
 <br /><br /><br /><br />
 <br /><br /><br /><br />
@@ -220,4 +240,29 @@ x
     padding-bottom: 5px;
     box-sizing: border-box;
   }
+.tab-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
+.tab {
+    padding: 10px;
+    background-color: #eee;
+    border: 1px solid #ccc;
+    cursor: pointer;
+}
+
+.tab.active {
+    background-color: #ccc;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
 </style>
