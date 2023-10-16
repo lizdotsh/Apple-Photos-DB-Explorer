@@ -18,7 +18,7 @@
         }
     }
     $: processtable(daily_with_rolling, start_date, end_date);
-    $: console.log(filtered);
+    // $: console.log(filtered);
 
     
  
@@ -45,7 +45,7 @@
         return table;
     }
   //$: filtered = filter_table(table, start_date, end_date);
-  $: console.log(start_date, end_date, filtered); 
+//   $: console.log(start_date, end_date, filtered); 
     
     //date
  // $: start_date = start_date;

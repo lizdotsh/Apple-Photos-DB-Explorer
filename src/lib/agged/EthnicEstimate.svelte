@@ -15,7 +15,7 @@
     return {'ethnicity_estimate': d, 'count': 0};
   })
   $: person_group_stats.then((data) => {
-    console.log(data);
+    // console.log(data);
     filt  = aq
       .from(eachEthnicityZero.concat(data))
       .groupby("ethnicity_estimate")

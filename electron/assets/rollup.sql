@@ -143,8 +143,13 @@ eye_makeup_estimate,
 sum(count) as count
 from photo_info_rollup_monthly
 where full_name != 'no_name' and full_name != 'no_face'
+and person_uuid != 'no_person'
 group by
 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19, 20;
+
+-- Add index
+
+create index person_uuid_index on person_group_stats(person_uuid);
 
 drop table if exists names_ids;
 

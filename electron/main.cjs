@@ -1,4 +1,4 @@
-// Modules to control application life and create native browser window
+// // Modules to control application life and create native browser window
 const { log } = require("console");
 const { app, BrowserWindow, ipcMain, dialog } = require("electron");
 const path = require("path");
@@ -7,6 +7,22 @@ const EventEmitter = require("events");
 const aq = require("arquero");
 const sqlite3 = require("sqlite3").verbose();
 const TopoJSON = require("topojson-client");
+const exportFns = require('./api.cjs');
+// cjs versions below
+// import { log } from "console";
+// import { app, BrowserWindow, ipcMain, dialog } from "electron";
+// import path from "path";
+// import fs from "fs/promises";
+// import EventEmitter from "events";
+// import aq from "arquero";
+// import sqlite3 from "sqlite3/verbose";
+// import TopoJSON from "topojson-client";
+// import exportFns from "./api.cjs";
+
+
+ipcMain.handle('CALL_EXPOSED_MAIN_FN', (event, { methodName, args }) => 
+  exportFns[methodName](...args)
+);
 //const sql = require('sql-tagged-template-literal');
 
 const logEmitter = new EventEmitter();

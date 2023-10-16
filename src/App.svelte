@@ -5,7 +5,7 @@
   // arquero
   import * as aq from "arquero";
   import * as d3 from "d3";
-  import SortedPhotosBar from "./lib/person_agnostic/SortedPhotosBar.svelte";
+  import SortedPhotosBar from "./lib/SortedPhotosBar.svelte";
   import SortedPhotosTimeLine from "./lib/SortedPhotosTimeLine.svelte";
   import SortedPhotosTimeLinePlotly from "./lib/SortedPhotosTimeLinePlotly.svelte";
   import GenderEstimate from "./lib/agged/GenderEstimate.svelte";
@@ -17,8 +17,28 @@
   import FacialExpressionEstimate from "./lib/agged/FacialExpressionEstimate.svelte";
   import EthnicEstimate from "./lib/agged/EthnicEstimate.svelte";
   import AgeEstimate from "./lib/agged/AgeEstimate.svelte";
-  import {html} from "htl";
-  let photos_per_user;
+  import { html } from "htl";
+  import { api } from "./ipc.js";
+  import { onMount } from "svelte";
+  let people = {};
+  onMount(async () => {
+    people = await api.getPeople().then((data) => {
+      console.log(data);
+      return data;
+    });
+  });
+  $: person = people[person_id];
+  let person_time;
+  let people_time;
+ // let people_time;
+
+   $: api.getPeopleTime(start_date, end_date).then(
+    (data) => {
+       people_time =  aq.from(data)
+    }
+    );
+     $: console.log(person_time);
+// $: person_time = people_time?.objects()?.find((e) => e.person_uuid === person_id);
   let names_ids;
   let elm_name;
   let start_date_month;
@@ -26,7 +46,9 @@
   let start_date;
   let date_range_string;
   const today = new Date();
-
+  // let peopletest;
+  // $: peopletest = window.db.getPeople();
+  // $: console.log(peopletest);
   let end_date; //= today?.toISOString()?.slice(0, 10);
   // Send SQL query to main process
 
@@ -69,7 +91,7 @@
   $: console.log(elm_name);
   let person_group_stats;
   let daily_with_rolling;
-  let person;
+  //   let person;
   let latlong;
   let world;
   let us;
@@ -94,7 +116,7 @@
   let avg_photos_daily;
   $: avg_photos_daily = elm_name;
   $: console.log(start_date, end_date);
-  $: person = names_ids?.find((e) => e?.full_name === elm_name);
+  //   $: person = names_ids?.find((e) => e?.full_name === elm_name);
   function addMonth(isoString) {
     let [year, month] = isoString.split("-").map(Number);
     let date = new Date(year, month - 1);
@@ -112,11 +134,16 @@
   function addEndRangeMonth() {
     end_date_month = addMonth(end_date_month);
   }
-  $: console.log(person);
   $: start_date = start_date_month ? start_date_month + "-01" : undefined;
   $: end_date = end_date_month ? end_date_month + "-01" : undefined;
-  $: date_range_string = html`<span style=${{'font-size': "12px", "padding": "2px", "margin": "2px"}}>${start_date_month ?? "error"} to ${end_date_month ?? "error"}</span>`;
+  $: date_range_string = html`<span
+    style=${{ "font-size": "12px", padding: "2px", margin: "2px" }}
+    >${start_date_month ?? "error"} to ${end_date_month ?? "error"}</span
+  >`;
   $: console.log(date_range_string);
+  let person_id;
+
+  $: console.log(people[person_id]);
 </script>
 
 <!-- Random Normal -->
@@ -128,6 +155,10 @@
       <div class="flex-container-col">
         <div id="app-title">Apple Photos DB Explorer</div>
         <SelectedInfo name_count={photos_per_user} {elm_name} {person} />
+        <div class = "flex-container-col">
+            <!-- {people_time?.find()} of {person?.count ?? "N/A"} photos selected. -->
+          </div>
+
       </div>
       <div />
       <div class="flex-container-col">
@@ -140,6 +171,11 @@
               <option value={name_entry.full_name}
                 >{name_entry.full_name}</option
               >
+            {/each}
+          </select>
+          <select bind:value={person_id}>
+            {#each Object.keys(people) as pid}
+              <option value={pid}>{people[pid]["full_name"]}</option>
             {/each}
           </select>
         </div>
@@ -180,7 +216,7 @@
     </div>
     <div id="SortedPhotosBar" style="max-width: 100%; margin: auto">
       <!-- make component smaller -->
-      <SortedPhotosBar name_count={photos_per_user} {elm_name} />
+      <SortedPhotosBar {people_time} />
     </div>
   </div>
 
@@ -196,10 +232,10 @@
       <EthnicEstimate {person_group_stats} />
     </div>
     <div class="flex-container">
-        <div>
-           Date range: {start_date_month} to {end_date_month}
-      <FacialExpressionEstimate {person_group_stats} {date_range_string} />
-        </div>
+      <div>
+        Date range: {start_date_month} to {end_date_month}
+        <FacialExpressionEstimate {person_group_stats} {date_range_string} />
+      </div>
 
       <FacialHairEstimate {person_group_stats} />
     </div>
@@ -207,11 +243,12 @@
 
   <!-- <PhotosDayHistogram {daily_with_rolling} /> -->
 </div>
-<br><br><br><br>
-<br><br><br><br>
-<br><br><br><br>
-<br><br><br><br>
-<br><br><br><br>
+<br /><br /><br /><br />
+<br /><br /><br /><br />
+<br /><br /><br /><br />
+<br /><br /><br /><br />
+<br /><br /><br /><br />
+
 <!-- <WorldProjection {latlong} {us} /> -->
 <style>
   body {
