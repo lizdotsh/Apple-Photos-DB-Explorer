@@ -23,6 +23,7 @@
   import StatusBar from "./lib/status_bar/StatusBar.svelte";
   import WhichCamera from "./lib/agged/WhichCamera.svelte";
   import GlassesEstimate from "./lib/agged/GlassesEstimate.svelte";
+  import SelfieHeatmap from "./lib/SelfieHeatmap.svelte";
   let person;
   let people = {};
 
@@ -80,8 +81,14 @@
   let us;
  let daily_with_rolling;
   $: api.getDailyZeroedCounts(person?.person_uuid).then((data) => {
+    if (data) {
+        data.forEach(d => {
+        d.parsed_date = d3.utcParse("%Y-%m-%d")(d.date);
+    })
     daily_with_rolling = data ? aq.from(data): null;
     console.log(data);
+    }
+   
   });
   //$: latlong = invoke_req("call-lat-long", {elm_name, start_date, end_date});
 //   $: world = invoke_req("call-map-json", "world");
@@ -112,7 +119,9 @@ x
       {/if}
     </div>
   </div>
+  <SelfieHeatmap {daily_with_rolling} {start_date}  />
   <div class="flex-container">
+
     <div id="photo-hist" style="max-width: 100%; margin: auto">
       <!-- <h2><br><br><br></h2> -->
       <PhotosDayHistogram {daily_with_rolling} {start_date} {end_date} />
