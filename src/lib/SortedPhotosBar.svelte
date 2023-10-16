@@ -2,10 +2,15 @@
     import * as Plot from "@observablehq/plot";
     import PlotRender from './Plot.svelte';
     export let people_time;
-    // export let person_id;
-    // export let person_time;
-    import * as aq from "arquero";
-    let filt;
+    export let people;
+    let names; 
+    $: {
+        if (people) {
+            names = Object.values(people).map((e) => e.full_name);
+            console.log({names});
+        }
+    } 
+
     // $: people_time.then((data) => {
     //   filt = data;
         
@@ -27,6 +32,9 @@
   <PlotRender options={{ 
     x: {label: 'Name', line: true, tickRotate: -45},
     y: {label: 'Number of Photos', line: true},
+    color: {
+        domain: names,
+    },
     marginBottom: 120,
     marginLeft: 50,
     marks: [

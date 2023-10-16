@@ -1,3 +1,4 @@
+
 <script>
   let name;
   import * as Plot from "@observablehq/plot";
@@ -9,7 +10,7 @@
   import SortedPhotosTimeLine from "./lib/SortedPhotosTimeLine.svelte";
   import SortedPhotosTimeLinePlotly from "./lib/SortedPhotosTimeLinePlotly.svelte";
   import GenderEstimate from "./lib/agged/GenderEstimate.svelte";
-  import PhotosDayHistogram from "./lib/agged/PhotosDayHistogram.svelte";
+  import PhotosDayHistogram from "./lib/PhotosDayHistogram.svelte";
   import WorldProjection from "./lib/WorldProjection.svelte";
   import DoubleDateSlider from "./lib/status_bar/DoubleDateSlider.svelte";
   import FacialHairEstimate from "./lib/agged/FacialHairEstimate.svelte";
@@ -20,6 +21,8 @@
   import { api } from "./ipc.js";
   import { onMount } from "svelte";
   import StatusBar from "./lib/status_bar/StatusBar.svelte";
+  import WhichCamera from "./lib/agged/WhichCamera.svelte";
+  import GlassesEstimate from "./lib/agged/GlassesEstimate.svelte";
   let person;
   let people = {};
 
@@ -60,7 +63,7 @@
     .getPersonStat(person?.person_uuid, start_date, end_date, group_stats)
     .then((data) => {
       person_group_stats = data;
-      console.log(data);
+    //   console.log(data);
     });
   $: console.log("group", person_group_stats);
   let start_date;
@@ -116,7 +119,7 @@ x
     </div>
     <div id="SortedPhotosBar" style="max-width: 100%; margin: auto">
       <!-- make component smaller -->
-      <SortedPhotosBar {people_time} />
+      <SortedPhotosBar {people_time} {people} />
     </div>
   </div>
 
@@ -125,8 +128,11 @@ x
     <div class="flex-container">
 
       <GenderEstimate {person_group_stats} />
+      <WhichCamera {person_group_stats} />
         </div>
-        
+        <div class="flex-container">
+            <GlassesEstimate {person_group_stats} />
+              </div> 
     <div class="flex-container">
       <AgeEstimate {person_group_stats} />
 

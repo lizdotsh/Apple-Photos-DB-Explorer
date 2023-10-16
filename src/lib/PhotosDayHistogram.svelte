@@ -1,10 +1,10 @@
 <script>
     import * as Plot from "@observablehq/plot";
-    import PlotRender from "../Plot.svelte"
+    import PlotRender from "./Plot.svelte"
+    import { html } from 'htl';
     export let daily_with_rolling;
     export let start_date;
     export let end_date;
-    let table;
     let filtered;
     import * as aq from "arquero";
     //todays date
@@ -56,6 +56,10 @@
 
  <PlotRender
  options={{
+    title: "Distribution of photos per week",
+    caption: html`<span style=${{"font-size": "12px", "text-align": "left" }}>
+        Frequency represents number of rolling 30 day windows with that number of photos
+        </span>`,
    y: {grid: true},
    x: {
    },

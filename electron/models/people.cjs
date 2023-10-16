@@ -45,10 +45,9 @@ exports.getPeopleTime = function (start_date, end_date){
       full_name,
       sum(count) as count
       from photo_info_rollup_monthly
-      where full_name != 'no_name'
-      and full_name != 'no_face'
-      and year_month >= ?
-      and year_month <= ?
+      --where full_name != 'no_name'
+      --and full_name != 'no_face'
+      where year_month between ? and ? 
      
       group by 1,2 order by count desc;
       

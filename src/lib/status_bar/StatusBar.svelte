@@ -1,7 +1,6 @@
 <script>
   
   import DoubleDateSlider from "./DoubleDateSlider.svelte";
-  import { html } from "htl";
   import { api } from "../../ipc.js";
   import { onMount } from "svelte";
   export let people;

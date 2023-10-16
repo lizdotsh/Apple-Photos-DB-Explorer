@@ -254,15 +254,13 @@ SELECT
     END AS 'winking_estimate',
     CASE
         zDetFace.ZGLASSESTYPE
-        WHEN 0
-            THEN 'other/unknown'
         WHEN 1
             THEN 'Eye Glasses'
         WHEN 2
             THEN 'Sun Glasses'
         WHEN 3
             THEN 'No Glasses'
-        ELSE 'Unknown-New-Value!: ' || zDetFace.ZGLASSESTYPE || ''
+        ELSE 'unknown'
     END AS 'glasses_estimate',
     CASE
         zDetFace.ZEYEMAKEUPTYPE
