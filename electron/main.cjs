@@ -60,10 +60,10 @@ const createWindow = () => {
   });
   // define how electron will load the app
   if (isDevEnvironment) {
-    //    win.loadFile(path.join(__dirname, 'db_load/index.html'));
+       win.loadFile(path.join(__dirname, 'db_load/index.html'));
 
     // if your vite app is running on a different port, change it here
-    win.loadURL("http://localhost:5173/");
+    // win.loadURL("http://localhost:5173/");
 
     // Open the DevTools.
     win.webContents.on("did-frame-finish-load", () => {
@@ -73,8 +73,9 @@ const createWindow = () => {
     log("Electron running in dev mode: 🧪");
   } else {
     // when not in dev mode, load the build file instead
-    win.loadFile(path.join(__dirname, "build", "index.html"));
+    // win.loadFile(path.join(__dirname, "build", "index.html"));
 
+       win.loadFile(path.join(__dirname, 'db_load/index.html'));
     log("Electron running in prod mode: 🚀");
   }
 };
@@ -281,6 +282,7 @@ async function readSqlFile(db_path, dot_sql_path, rollup_sql_path) {
     await dbRun(db, "COMMIT");
     await dbClose(db);
     logEmitter.emit("log-update", "SQL script executed and database closed.");
+    win.loadFile(path.join(__dirname, "build", "index.html"));
   } catch (err) {
     logEmitter.emit("error-update", `Error in readSqlFile: ${err}`);
   }
