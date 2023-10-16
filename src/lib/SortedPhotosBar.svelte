@@ -28,6 +28,7 @@
     x: {label: 'Name', line: true, tickRotate: -45},
     y: {label: 'Number of Photos', line: true},
     marginBottom: 120,
+    marginLeft: 50,
     marks: [
         Plot.barY(
             people_time,

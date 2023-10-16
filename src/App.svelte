@@ -64,6 +64,7 @@
     "winking_estimate",
     "glasses_estimate",
     "eye_makeup_estimate",
+    "which_camera",
   ];
   $: api
     .getPersonStat(person_id, start_date, end_date, group_stats)
@@ -85,54 +86,18 @@
   let end_date; //= today?.toISOString()?.slice(0, 10);
   // Send SQL query to main process
 
-  $: photos_per_user = invoke_req("call-photos-per-user", {
-    start_date,
-    end_date,
-  });
-  $: console.log(photos_per_user);
-  $: console.log(elm_name);
-  let daily_with_rolling;
   let latlong;
   let world;
   let us;
-  async function invoke_req(api, arg) {
-    try {
-      const result = await window.myAPI.invoke(api, arg);
-      // console.log(result);
-      return result;
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
+ let daily_with_rolling;
   $: api.getDailyZeroedCounts(person_id).then((data) => {
     daily_with_rolling = data ? aq.from(data): null;
     console.log(data);
   });
   //$: latlong = invoke_req("call-lat-long", {elm_name, start_date, end_date});
-  $: world = invoke_req("call-map-json", "world");
-  $: us = invoke_req("call-map-json", "us");
-  let avg_photos_daily;
-  $: avg_photos_daily = elm_name;
+//   $: world = invoke_req("call-map-json", "world");
+//   $: us = invoke_req("call-map-json", "us");
   $: console.log(start_date, end_date);
-  //   $: person = names_ids?.find((e) => e?.full_name === elm_name);
-  function addMonth(isoString) {
-    let [year, month] = isoString.split("-").map(Number);
-    let date = new Date(year, month - 1);
-    date.setMonth(date.getMonth() + 1);
-
-    let newYear = date.getFullYear();
-    let newMonth = (date.getMonth() + 1).toString().padStart(2, "0");
-
-    return `${newYear}-${newMonth}`;
-  }
-  function addMonths() {
-    start_date_month = addMonth(start_date_month);
-    end_date_month = addMonth(end_date_month);
-  }
-  function addEndRangeMonth() {
-    end_date_month = addMonth(end_date_month);
-  }
   $: start_date = start_date_month ? start_date_month + "-01" : undefined;
   $: end_date = end_date_month ? end_date_month + "-01" : undefined;
   $: date_range_string = html`<span
@@ -151,7 +116,10 @@
   <div class="flex-container-title">
     <div class="flex-container-col">
       <div id="app-title">Apple Photos DB Explorer</div>
-      <SelectedInfo name_count={photos_per_user} {elm_name} {person} />
+      <div>
+      {person_time?.count ?? "error"} of {person?.count ?? "N/A"} Photos Selected
+      </div>
+      <!-- <SelectedInfo name_count={person?.count} {elm_name} {person} /> -->
       <div class="flex-container-col">
         <!-- {people_time?.find()} of {person?.count ?? "N/A"} photos selected. -->
       </div>
