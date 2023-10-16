@@ -2,40 +2,61 @@
   import * as Plot from "@observablehq/plot";
   import PlotRender from "../Plot.svelte";
   export let person_group_stats;
-  import * as aq from "arquero";
-  let filt;
   const ethnic = [
     "Black",
     "Asian",
     "White",
     "Pacific Islander",
-    "other/unknown"]
+    "other/unknown",
+  ];
 
-  const eachEthnicityZero = ethnic.map(d => {
-    return {'ethnicity_estimate': d, 'count': 0};
-  })
-  $: person_group_stats.then((data) => {
-    // console.log(data);
-    filt  = aq
-      .from(eachEthnicityZero.concat(data))
-      .groupby("ethnicity_estimate")
-      .rollup({ cnt: (d) => aq.op.sum(d.count) })
-      .orderby("cnt")
-      .ungroup()
-      .derive({ pct: (d) => d.cnt / aq.op.sum(d.cnt) });
+  const eachEthnicityZero = ethnic.map((d) => {
+    return { ethnicity_estimate: d, count: 0, pct: 0 };
+  });
+  function fixthisshit(stats) {
+    if (!stats) {
+      return null;
+    }
+    // console.log(stats);
+    const ethnic_estimate_stats = stats.map((d) => d.ethnicity_estimate);
+    // console.log(ethnic_estimate_stats);
+    eachEthnicityZero.forEach((e) => {
+      if (!ethnic_estimate_stats.includes(e.ethnicity_estimate)) {
+        stats.push(e);
+      }
+      
+    });
+    return stats;
+  }
+  let filt;
+  $: {
+    if (person_group_stats){
+    filt = fixthisshit(person_group_stats?.ethnicity_estimate);
+    }
+   } //?.concat(eachEthnicityZero)
+  $: console.log(filt);
+  //   $: person_group_stats.then((data) => {
+  //     // console.log(data);
+  //     filt  = aq
+  //       .from(eachEthnicityZero.concat(data))
+  //       .groupby("ethnicity_estimate")
+  //       .rollup({ cnt: (d) => aq.op.sum(d.count) })
+  //       .orderby("cnt")
+  //       .ungroup()
+  //       .derive({ pct: (d) => d.cnt / aq.op.sum(d.cnt) });
 
-    // face_expression_estimate
+  // face_expression_estimate
 
-    //   console.log(df);
-  }).catch((e) => {
-        console.log(e);
-      });
+  //   console.log(df);
+  //   }).catch((e) => {
+  //         console.log(e);
+  //       });
 </script>
 
 {#if filt}
   <PlotRender
     options={{
-      x: { label: "Percent of selected photos", line: true, percent: true },
+      x: { label: "Percent of selected photos", line: true, percent: false },
       title: "Ethnicity",
       height: 250,
       color: {
@@ -77,12 +98,12 @@
             },
           },
           label: true,
-        //  sort: { y: "x", reverse: true },
+          //  sort: { y: "x", reverse: true },
         }),
         Plot.text(filt, {
           x: "pct",
           y: "ethnicity_estimate",
-          text: (d) => `${(d.pct * 100).toFixed(0)}%`,
+          text: (d) => `${d.pct.toFixed(0)}%`,
           dx: 15,
         }),
       ],

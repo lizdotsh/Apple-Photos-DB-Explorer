@@ -28,7 +28,7 @@
       console.log(data);
 
       return data;
- //   person_id = Object.keys(people)[0];
+      //   person_id = Object.keys(people)[0];
     });
   });
   $: person = people[person_id];
@@ -36,13 +36,43 @@
   let person_time;
   let people_time;
 
-   $: api.getPeopleTime(start_date, end_date).then((data) => {
-       people_time =  aq.from(data);
-       person_time = {...(data.find((e) => e.person_uuid === person_id)), start_date, end_date};
-    
+  $: api.getPeopleTime(start_date, end_date).then((data) => {
+    people_time = aq.from(data);
+    person_time = {
+      ...data.find((e) => e.person_uuid === person_id),
+      start_date,
+      end_date,
+    };
+  });
+  let person_group_stats;
+  const group_stats = [
+    "camera_make",
+    "camera_model",
+    "face_count",
+    "gender_estimate",
+    "age_estimate",
+    "ethnicity_estimate",
+    "skin_tone_estimate",
+    "facial_hair_estimate",
+    "face_mask_estimate",
+    "face_expression_estimate",
+    "pose_type_estimate",
+    "smile_estimate",
+    "smile_type_estimate",
+    "smile_combined_estimate",
+    "lip_makeup_estimate",
+    "winking_estimate",
+    "glasses_estimate",
+    "eye_makeup_estimate",
+  ];
+  $: api
+    .getPersonStat(person_id, start_date, end_date, group_stats)
+    .then((data) => {
+      person_group_stats = data;
+      console.log(data);
     });
-     $: console.log("person_time", person_time);
-// $: person_time = people_time?.objects()?.find((e) => e.person_uuid === person_id);
+  $: console.log("group", person_group_stats);
+  // $: person_time = people_time?.objects()?.find((e) => e.person_uuid === person_id);
   let elm_name;
   let start_date_month;
   let end_date_month;
@@ -55,14 +85,13 @@
   let end_date; //= today?.toISOString()?.slice(0, 10);
   // Send SQL query to main process
 
- 
   $: photos_per_user = invoke_req("call-photos-per-user", {
     start_date,
     end_date,
   });
   $: console.log(photos_per_user);
   $: console.log(elm_name);
-  let person_group_stats;
+//   let person_group_stats;
   let daily_with_rolling;
   //   let person;
   let latlong;
@@ -71,17 +100,17 @@
   async function invoke_req(api, arg) {
     try {
       const result = await window.myAPI.invoke(api, arg);
-     // console.log(result);
+      // console.log(result);
       return result;
     } catch (error) {
       console.error(error);
     }
   }
-  $: person_group_stats = invoke_req("call-person-group-stats", {
-    name_entry: person?.full_name,
-    start_date,
-    end_date,
-  });
+//   $: person_group_stats = invoke_req("call-person-group-stats", {
+//     name_entry: person?.full_name,
+//     start_date,
+//     end_date,
+//   });
   $: daily_with_rolling = invoke_req("daily-zeroed-counts", [elm_name]);
   //$: latlong = invoke_req("call-lat-long", {elm_name, start_date, end_date});
   $: world = invoke_req("call-map-json", "world");
@@ -123,41 +152,39 @@
 <!-- ... -->
 <div id="title-selector">
   <div class="flex-container-title">
+    <div class="flex-container-col">
+      <div id="app-title">Apple Photos DB Explorer</div>
+      <SelectedInfo name_count={photos_per_user} {elm_name} {person} />
       <div class="flex-container-col">
-        <div id="app-title">Apple Photos DB Explorer</div>
-        <SelectedInfo name_count={photos_per_user} {elm_name} {person} />
-        <div class = "flex-container-col">
-            <!-- {people_time?.find()} of {person?.count ?? "N/A"} photos selected. -->
-          </div>
+        <!-- {people_time?.find()} of {person?.count ?? "N/A"} photos selected. -->
+      </div>
+    </div>
+    <div />
+    <div class="flex-container-col">
+      <div id="title-text">
+        <b>Select a name</b>
+      </div>
+      <div id="selector" class="text-intro">
+        <select bind:value={person_id}>
+          {#each Object.keys(people) as pid}
+            <option value={pid}>{people[pid]["full_name"]}</option>
+          {/each}
+        </select>
+      </div>
+      <!-- {person?.count ?? "N/A"} Photos of {elm_name} -->
+    </div>
+    <div id="date-selector-slider">
+      {#if person}
+        <DoubleDateSlider
+          dateMin={person?.start_date}
+          dateMax={person?.end_date}
+          bind:start_date_month
+          bind:end_date_month
+        />
+      {/if}
 
-      </div>
-      <div />
-      <div class="flex-container-col">
-        <div id="title-text">
-          <b>Select a name</b>
-        </div>
-        <div id="selector" class="text-intro">
-          
-          <select bind:value={person_id}>
-            {#each Object.keys(people) as pid}
-              <option value={pid}>{people[pid]["full_name"]}</option>
-            {/each}
-          </select>
-        </div>
-        <!-- {person?.count ?? "N/A"} Photos of {elm_name} -->
-      </div>
-      <div id="date-selector-slider">
-        {#if person}
-          <DoubleDateSlider
-            dateMin={person?.start_date}
-            dateMax={person?.end_date}
-            bind:start_date_month
-            bind:end_date_month
-          />
-        {/if}
-
-        <!-- {person?.start_date ?? "N/A"} to {person?.end_date ?? "N/A"} -->
-      </div>
+      <!-- {person?.start_date ?? "N/A"} to {person?.end_date ?? "N/A"} -->
+    </div>
   </div>
 </div>
 <div id="not-sticky">
@@ -185,7 +212,7 @@
   <div id="agg-stats-grouping">
     <!-- {#if person_group_stats?.length > 0} -->
     <div class="flex-container">
-      <GenderEstimate {person_group_stats} />
+      <!-- <GenderEstimate {person_group_stats} /> -->
     </div>
 
     <div class="flex-container">
@@ -196,10 +223,10 @@
     <div class="flex-container">
       <div>
         Date range: {start_date_month} to {end_date_month}
-        <FacialExpressionEstimate {person_group_stats} {date_range_string} />
+        <!-- <FacialExpressionEstimate {person_group_stats} {date_range_string} /> -->
       </div>
 
-      <FacialHairEstimate {person_group_stats} />
+      <!-- <FacialHairEstimate {person_group_stats} /> -->
     </div>
   </div>
 

@@ -53,3 +53,7 @@ exports.arr_reduce = function(arr, key) {
         return obj;
     }, {});
 };
+exports.txManyArr = function(arr, prep) {
+    
+    return result;
+}

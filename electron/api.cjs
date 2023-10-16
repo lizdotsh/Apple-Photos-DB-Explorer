@@ -6,9 +6,11 @@
 // convert to commonjs
 
 const people = require("./models/people.cjs");
+const person = require("./models/person.cjs");
 
 module.exports = {
     getPeople: people.getPeople,
     getPeopleTime: people.getPeopleTime,
+    getPersonStat: person.getPersonStat,
     
 }
