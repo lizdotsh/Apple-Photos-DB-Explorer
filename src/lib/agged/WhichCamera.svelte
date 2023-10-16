@@ -7,6 +7,7 @@
 
 {#if person_group_stats}
   <PlotRender
+  
     options={{
       x: { label: "Percent of selected photos", percent: false },
       //correct capitalization

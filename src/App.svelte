@@ -119,7 +119,7 @@ x
       {/if}
     </div>
   </div>
-  <SelfieHeatmap {daily_with_rolling} {start_date}  />
+  <SelfieHeatmap {daily_with_rolling} {start_date} {end_date} />
   <div class="flex-container">
 
     <div id="photo-hist" style="max-width: 100%; margin: auto">

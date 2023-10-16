@@ -25,22 +25,24 @@
     years.push(year);
   }
 
-  return years;
+  return years; 
+  
 }
 
+$: dm = getYearsBetweenDates(start_date, end_date);
 
-Plot.plot({
    
-  })
+  
 </script>
 
 {#if filt}
   <PlotRender
+
     options={{
       padding: 0,
     x: {axis: null},
     y: {tickFormat: Plot.formatWeekday("en", "narrow"), tickSize: 0},
-    fy: {tickFormat: "", domain: getYearsBetweenDates(start_date, end_date)},
+    fy: {tickFormat: "", domain: dm},
     color: {scheme: "PiYG", legend: true},
     marks: [
       Plot.cell(filt, {
