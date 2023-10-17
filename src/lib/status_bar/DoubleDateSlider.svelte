@@ -50,9 +50,6 @@
 let dateMinMs = new Date(dateMin).getTime();
 let dateMaxMs = new Date(dateMax).getTime();
 
-function getDistInMs(dateMinMs, dateMaxMs) {
-  return dateMaxMs - dateMinMs;
-}
 
 function formatDates(start, end, dateMinMs, dateMaxMs) {
   const valToTime = (frac) => dateMinMs + Math.floor(frac * (dateMaxMs - dateMinMs));
@@ -160,9 +157,60 @@ $: [start_date_ms, end_date_ms] = formatDates(start, end, dateMinMs, dateMaxMs);
     start = pStart;
     end = pEnd;
   }
-  function moveSlider(dist) {
-    if (end + dist > 1) {
-      clearInterval(interval);
+  function getDistInMs(dateMinMs, dateMaxMs) {
+  return dateMaxMs - dateMinMs;
+}
+$: console.log(start, stop)
+
+//   function moveSlider(dist) {
+//     if (end + dist > 1) {
+//       clearInterval(interval);
+//       isPlaying = false;
+//       start += 1 - end;
+//       end = 1;
+//       return;
+//     }
+//     start += dist;
+//     end += dist;
+//   }
+//   function toggleSlider() {
+//     if (isPlaying) {
+//       clearInterval(interval);
+//       isPlaying = false;
+//       return;
+//     }
+//     if (end === 1 && start !== 0) {
+//       const dist = end - start;
+//       start = 0;
+//       end = dist;
+//     }
+//     interval = setInterval(
+//       moveSlider,
+//       ms_per_month,
+//       1 / getDistInMonths(dateMin, dateMax)
+//     );
+//     isPlaying = true;
+//   }
+let lastTime;
+const ms_in_a_month = 1000 * 60 * 60 * 24 * 30;
+$: speedFactor =  ms_in_a_month/ms_per_month ; // Adjust this for speed control
+
+function moveSlider(timestamp) {
+  if (!lastTime) lastTime = timestamp;
+  const elapsed = timestamp - lastTime;
+  const dist = (elapsed) * speedFactor * (1 / getDistInMs(dateMinMs, dateMaxMs));
+
+  if (isOneWayMode) {
+    if (end + dist >= 1) {
+      cancelAnimationFrame(interval);
+      isPlaying = false;
+      end = 1;
+      return;
+    }
+    end += dist;
+  } else {
+    if (end + dist >= 1) {
+      cancelAnimationFrame(interval);
       isPlaying = false;
       start += 1 - end;
       end = 1;
@@ -171,24 +219,28 @@ $: [start_date_ms, end_date_ms] = formatDates(start, end, dateMinMs, dateMaxMs);
     start += dist;
     end += dist;
   }
-  function toggleSlider() {
-    if (isPlaying) {
-      clearInterval(interval);
-      isPlaying = false;
-      return;
-    }
-    if (end === 1 && start !== 0) {
-      const dist = end - start;
-      start = 0;
-      end = dist;
-    }
-    interval = setInterval(
-      moveSlider,
-      ms_per_month,
-      1 / getDistInMonths(dateMin, dateMax)
-    );
-    isPlaying = true;
+  
+  lastTime = timestamp;
+  interval = requestAnimationFrame(moveSlider);
+}
+function toggleSlider() {
+  if (isPlaying) {
+    cancelAnimationFrame(interval);
+    isPlaying = false;
+    return;
   }
+  if (end === 1 && start !== 0) {
+    const dist = end - start;
+    start = 0;
+    end = dist;
+  } else if (end === 1 && start === 0) {
+    end = .2;
+    toggleSlider();
+  }
+  lastTime = null;
+  interval = requestAnimationFrame(moveSlider);
+  isPlaying = true;
+}
 </script>
 
 <div id="total">
