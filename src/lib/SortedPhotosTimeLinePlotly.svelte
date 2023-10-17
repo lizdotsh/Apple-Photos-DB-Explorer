@@ -1,9 +1,5 @@
 <script>
-  import Plot from "svelte-plotly.js";
-
   import { onMount } from "svelte";
-  import * as aq from "arquero";
-
   export let daily_with_rolling;
   export let start_date_ms;
   export let end_date_ms;
@@ -12,22 +8,43 @@
   import Plotly from "plotly.js-dist";
   let domReady;
 
-  let table;
-  $: table = daily_with_rolling;
-  //   $: daily_with_rolling.then((d) => {
-  //     table = aq.from(d)
-  //     .orderby('date');
+  $: if (domReady) {
+    updateData(daily_with_rolling);
+  }
+  function formatData(table) {
+    return [
+      {
+        type: "scatter",
+        mode: "lines",
+        name: "Weekly Sum",
+        x: table?.columnArray("date"),
+        y: table?.columnArray("seven_day_sum"),
+        line: { color: "#7eb0d5" },
+      },
+      {
+        type: "scatter",
+        mode: "lines",
+        name: "30d Rolling",
+        x: table?.columnArray("date"),
+        y: table?.columnArray("thirty_day_rolling_week"),
+        line: { color: "#bd7ebe" },
+      },
+      {
+        type: "scatter",
+        mode: "lines",
+        name: "90d Rolling",
+        x: table?.columnArray("date"),
+        y: table?.columnArray("ninety_day_rolling_week"),
+        line: { color: "#ffb55a" },
+      },
+    ];
+  }
 
-  //   }).catch((e) => {
-  //     console.log(e);
-  //   });
 
-  $: console.log(table?.filter((d) => d.thirty_day_rolling_week > 200));
 
-  $: console.log(table);
-    let date_range = [start_date_daily, end_date_daily];
+  let date_range = [start_date_daily, end_date_daily];
   function handleRelayout(eventData) {
-    date_range = eventData["xaxis.range"]?.map(d => new Date(d))//, eventData["xaxis.range[1]"]];
+    date_range = eventData["xaxis.range"]?.map((d) => new Date(d)); //, eventData["xaxis.range[1]"]];
   }
   // $: console.log(date_range)
   onMount(() => {
@@ -55,36 +72,7 @@
       yaxis: { autorange: true, type: "linear" },
     };
     const config = { responsive: true };
-    const data = [
-      {
-        type: "scatter",
-        mode: "lines",
-        name: "Weekly Sum",
-        x: table?.columnArray("date"),
-        // x: filled.map((d) => d.date),
-        y: table?.columnArray("seven_day_sum"),
-        // y: filled.map((d) => d.count),
-        line: { color: "#7eb0d5" },
-      },
-      {
-        type: "scatter",
-        mode: "lines",
-        name: "30d Rolling",
-        x: table?.columnArray("date"),
-        y: table?.columnArray("thirty_day_rolling_week"),
-        // y: filled.map((d) => d.count),
-        line: { color: "#bd7ebe" },
-      },
-      {
-        type: "scatter",
-        mode: "lines",
-        name: "90d Rolling",
-        x: table?.columnArray("date"),
-        y: table?.columnArray("ninety_day_rolling_week"),
-        // y: filled.map((d) => d.count),
-        line: { color: "#ffb55a" },
-      },
-    ];
+    const data = formatData(daily_with_rolling);
     Plotly.newPlot("sortedPlotly", data, layout, config).then(() => {
       domReady = true;
       const plotDiv = document.getElementById("sortedPlotly");
@@ -98,10 +86,14 @@
     };
     Plotly.relayout("sortedPlotly", update);
   }
-  // $: console.log(data, layout, config)
+  function updateData(table) {
+    Plotly.update("sortedPlotly", formatData(table));
+  }
 </script>
 
-{#if table}
-  <div id="sortedPlotly" />
-  <!-- //   <Plot {data} {layout} {config}/> -->
-{/if}
+<div id="sortedPlotly">
+
+</div> 
+<!-- //   <Plot {data} {layout} {config}/> -->
+
+
