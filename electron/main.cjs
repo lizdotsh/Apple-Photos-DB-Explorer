@@ -101,7 +101,7 @@ app.on("activate", () => {
 // explicitly with Cmd + Q.
 // app.on('window-all-closed', () => {
 //     if (process.platform !== 'darwin') app.quit()
-// })
+// // })
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
@@ -250,6 +250,11 @@ async function copyDatabase(system_photo_library_path) {
         throw new Error("Permission denied. Please grant access to your Photos library in System Preferences.");
     } else {
         logEmitter.emit("log-update", "Permission granted.");
+
+        logEmitter.emit("log-update", "Deleting existing DB if it exists...");
+        await fs.rm(db_path, {force: true });
+        await fs.rm(db_path + '-shm', {force: true });
+        await fs.rm(db_path + '-wal', {force: true });
         logEmitter.emit("log-update", "Copying database...");
         await fs.copyFile(system_photo_db_path, db_path);
         return db_path;
@@ -321,9 +326,10 @@ async function readSqlFile(db_path, sql_path, rollup_sql_path) {
     // await dbRun(db, "COMMIT");
     // await dbClose(db);
     logEmitter.emit("log-update", "SQL script executed and database closed.");
-    win.loadFile(path.join(__dirname, "build", "index.html"));
   } catch (err) {
     logEmitter.emit("error-update", `Error in readSqlFile: ${err}`);
+  } finally {
+    win.loadFile(path.join(__dirname, "build", "index.html"));
   }
 }
 
