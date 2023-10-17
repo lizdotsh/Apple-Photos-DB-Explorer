@@ -28,9 +28,9 @@
   let people = {};
   let activeTab = 'Tab1';
 
-function setActive(tabName) {
-  activeTab = tabName;
-}
+// function setActive(tabName) {
+//   activeTab = tabName;
+// }
   let person_time;
   let people_time;
 
@@ -110,13 +110,13 @@ function setActive(tabName) {
 </script>
 
 
-<StatusBar bind:people bind:person {person_time} bind:start_date bind:end_date />
+<StatusBar bind:people bind:person {person_time} bind:start_date bind:end_date bind:activeTab/>
 
-<div class="tabs">
+<!-- <div class="tabs">
     <button on:click={() => setActive('Tab1')}>Main</button>
     <button on:click={() => setActive('Tab2')}>Activity Map</button>
 
-</div>
+</div> -->
 
 
 {#if activeTab === 'Tab1'}
@@ -175,7 +175,9 @@ function setActive(tabName) {
 
 
 {:else if activeTab === 'Tab2'}
+<div class="flex-container">
     <SelfieHeatmap {daily_with_rolling} {start_date} {end_date} />
+</div>
  
 {/if}
   
@@ -185,84 +187,3 @@ function setActive(tabName) {
 <br /><br /><br /><br />
 <br /><br /><br /><br />
 
-<!-- <WorldProjection {latlong} {us} /> -->
-<style>
-  body {
-    margin: 5px;
-    max-width: 100%;
-  }
-  .flex-container {
-    display: flex;
-    justify-content: center;
-
-    box-sizing: border-box;
-  }
-  .text-intro {
-    max-width: 40%;
-  }
-
-  .flex-container-title {
-    display: flex;
-    justify-content: start;
-    gap: 1em;
-    max-width: 100%;
-  }
-  .flex-container-col {
-    display: flex;
-    box-sizing: border-box;
-    flex-direction: column;
-    justify-content: space-around;
-    min-width: "30%";
-  }
-  #title-selector {
-    position: sticky;
-    top: 0;
-    background: #ccc;
-    z-index: 100;
-    width: 100%;
-    /* padding: 5px; */
-    padding: 5px;
-    box-sizing: border-box;
-  }
-  #date-selector-slider {
-    width: 100%;
-    box-sizing: border-box;
-  }
-  #app-title {
-    width: auto;
-    white-space: nowrap;
-    box-sizing: border-box;
-    margin-bottom: 2px;
-    font-weight: bold;
-    font-size: 24px;
-  }
-  #title-text {
-    padding-bottom: 5px;
-    box-sizing: border-box;
-  }
-.tab-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-}
-
-.tab {
-    padding: 10px;
-    background-color: #eee;
-    border: 1px solid #ccc;
-    cursor: pointer;
-}
-
-.tab.active {
-    background-color: #ccc;
-}
-
-.tab-content {
-    display: none;
-}
-
-.tab-content.active {
-    display: block;
-}
-</style>

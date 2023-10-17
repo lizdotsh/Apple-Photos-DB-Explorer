@@ -72,3 +72,16 @@ button:focus {
   .flex-child-element:first-child {
     margin-right: 20px;
   }
+  .flex-container-col {
+    display: flex;
+    box-sizing: border-box;
+    flex-direction: column;
+    justify-content: space-around;
+    min-width: "30%";
+  }
+  .flex-container {
+    display: flex;
+    justify-content: center;
+
+    box-sizing: border-box;
+  }

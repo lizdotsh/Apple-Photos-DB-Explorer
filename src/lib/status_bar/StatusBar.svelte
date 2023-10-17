@@ -7,6 +7,7 @@
   export let person;
   export let person_time;
   export let start_date;
+  export let activeTab;
     export let end_date;
     $: console.log("PERSON",people, person);
     let person_id;
@@ -33,7 +34,9 @@
   $: console.log(start_date, end_date);
   $: start_date = start_date_month ? start_date_month + "-01" : undefined;
   $: end_date = end_date_month ? end_date_month + "-01" : undefined;
-
+  function setActive(tabName) {
+  activeTab = tabName;
+}
  // $: console.log(people[person_id]);
 </script>
 
@@ -46,7 +49,12 @@
       {person_time?.count ?? "error"} of {person?.count ?? "N/A"} Photos Selected
       </div>
       <!-- <SelectedInfo name_count={person?.count} {elm_name} {person} /> -->
-      <div class="flex-container-col">
+      <div class="flex-container">
+        <div class="tabs">
+            <button class:active-tab={activeTab === 'Tab1'} on:click={() => setActive('Tab1')}>Main</button>
+            <button class:active-tab={activeTab === 'Tab2'} on:click={() => setActive('Tab2')}>Photo Heatmap</button>
+        
+        </div>
         <!-- {people_time?.find()} of {person?.count ?? "N/A"} photos selected. -->
       </div>
     </div>
@@ -123,6 +131,20 @@
   #title-text {
     padding-bottom: 5px;
     box-sizing: border-box;
+  }
+  .tabs {
+    /* display: flex; */
+    justify-content: space-around;
+    margin-top: .5em;
+    background-color: #ccc;
+    /* padding: 10px; */
+    border-radius: 5px;
+    margin-right: 10px;
+    cursor: pointer;
+  }
+  .active-tab {
+    background-color: #59aef4;
+    color: #fff;
   }
 </style>
 
