@@ -169,7 +169,7 @@ drop table if exists names_ids;
 create table names_ids as 
 select person_uuid, full_name, sum(count) as count,
                 max(date) as end_date, min(date) as start_date
-                from photo_info_rollup_daily where person_uuid != "no_person"
-                and full_name != "no_name"
-                and full_name != "no_face"
+                from photo_info_rollup_daily where person_uuid != 'no_person'
+                and full_name != 'no_name'
+                and full_name != 'no_face'
                 group by 1,2 order by count desc;

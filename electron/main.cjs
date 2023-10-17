@@ -1,13 +1,18 @@
 // // Modules to control application life and create native browser window
 const { log } = require("console");
-const { app, BrowserWindow, ipcMain, dialog } = require("electron");
+const { app, BrowserWindow, ipcMain, dialog, shell } = require("electron");
 const path = require("path");
 const fs = require("fs").promises;
 const EventEmitter = require("events");
 const aq = require("arquero");
-const sqlite3 = require("sqlite3").verbose();
+// const sqlite3 = require("sqlite3").verbose();
+const sqlite = require('better-sqlite3');
 const TopoJSON = require("topojson-client");
 const exportFns = require('./api.cjs');
+const  permissions  = require("electron-mac-permissions");
+const gentables_sql_path = path.join(__dirname, "assets");
+//const gentables_sql_path_16 = path.join(__dirname, "assets", "gen_tables_16.sql");
+
 // cjs versions below
 // import { log } from "console";
 // import { app, BrowserWindow, ipcMain, dialog } from "electron";
@@ -150,15 +155,15 @@ ipcMain.handle("get-default-directory", () => {
 ipcMain.handle("generate-report", async (event, system_photo_library_path) => {
   console.log("User selected:", system_photo_library_path);
   logEmitter.emit("log-update", `User data path: ${app.getPath("userData")}`);
-  const gentables_sql_path = path.join(__dirname, "assets", "gen_tables.sql");
+  
   const rollup_sql_path = path.join(__dirname, "assets", "rollup.sql");
   logEmitter.emit("log-update", `gen_tables.sql path: ${gentables_sql_path}`);
   logEmitter.emit("log-update", `rollup.sql path: ${rollup_sql_path}`);
 
   if (system_photo_library_path) {
+
     await handleFileAndDbActions(
       system_photo_library_path,
-      gentables_sql_path,
       rollup_sql_path
     );
     logEmitter.emit("log-update", "Processing complete.");
@@ -191,20 +196,37 @@ function showOpenDialog(win) {
       });
   });
 }
+function chooseSqlFile(db_path, sql_path) {
+    try { 
+        let db = new sqlite(db_path);
+        const result = db.pragma('table_info(ZDETECTEDFACE);');
+        db.close();
+        logEmitter.emit(result);
+        const in_res = result.some(e => e.name === 'ZASSETFORFACE')
+        logEmitter.emit('log-update', `Library Version: ${in_res ? '17' : '16'}`);
+        const file = path.join(sql_path, in_res ? 'gen_tables.sql' : 'gen_tables_16.sql');
+        logEmitter.emit("log-update", `Using ${file} for gen_tables.`);
+        return file;
+    } catch (err) {
+        logEmitter.emit("error-update", `Error in chooseSqlFile: ${err}`);
+        throw err;
+    }
+}
 
 async function handleFileAndDbActions(
   system_db_path,
-  dot_sql_path,
   rollup_sql_path
 ) {
   //, win) {
   try {
     logEmitter.emit(
       "log-update",
-      "Copying database and executing SQL script..."
+      "Requesting Permissions..."
     );
     const db_path = await copyDatabase(system_db_path);
-    await readSqlFile(db_path, dot_sql_path, rollup_sql_path);
+    const sql_file = chooseSqlFile(db_path, gentables_sql_path);
+    await readSqlFile(db_path, sql_file, rollup_sql_path);
+    
     await basicStats(db_path);
     //win.webContents.send("file-and-db-actions-complete");
   } catch (err) {
@@ -220,67 +242,84 @@ async function copyDatabase(system_photo_library_path) {
       "Photos.sqlite"
     );
     const db_path = path.join(app.getPath("userData"), "photo_lib.sqlite");
-    await fs.copyFile(system_photo_db_path, db_path);
-    logEmitter.emit("log-update", `Database copied to ${db_path}`);
-    return db_path;
+    //shell.openExternal('x-apple.systempreferences:com.apple.preference.security?Privacy_AllFiles');
+    const perms = await permissions.askForPhotosAccess('read-write');
+    console.log(perms);
+    if (perms === 'denied') {
+        logEmitter.emit("error-update", "Permission denied. Please grant access to your Photos library in System Preferences.");
+        throw new Error("Permission denied. Please grant access to your Photos library in System Preferences.");
+    } else {
+        logEmitter.emit("log-update", "Permission granted.");
+        logEmitter.emit("log-update", "Copying database...");
+        await fs.copyFile(system_photo_db_path, db_path);
+        return db_path;
+    }
   } catch (err) {
     console.error(`Error in copyDatabase: ${err}`);
     throw err; // Re-throw to be caught by calling function
   }
 }
 
-const dbRun = (db, query) =>
-  new Promise((resolve, reject) => {
-    db.run(query, (err) => {
-      if (err) reject(err);
-      else resolve();
-    });
-  });
+// const dbRun = (db, query) =>
+//   new Promise((resolve, reject) => {
+//     db.run(query, (err) => {
+//       if (err) reject(err);
+//       else resolve();
+//     });
+//   });
 
-const dbExec = (db, query) =>
-  new Promise((resolve, reject) => {
-    db.exec(query, (err) => {
-      if (err) reject(err);
-      else resolve();
-    });
-  });
+// const dbExec = (db, query) =>
+//   new Promise((resolve, reject) => {
+//     db.exec(query, (err) => {
+//       if (err) reject(err);
+//       else resolve();
+//     });
+//   });
 
-const dbClose = (db) =>
-  new Promise((resolve, reject) => {
-    db.close((err) => {
-      if (err) reject(err);
-      else resolve();
-    });
-  });
+// const dbClose = (db) =>
+//   new Promise((resolve, reject) => {
+//     db.close((err) => {
+//       if (err) reject(err);
+//       else resolve();
+//     });
+//   });
 
-const dbGet = (db, query) =>
-  new Promise((resolve, reject) => {
-    db.get(query, (err, row) => {
-      if (err) reject(err);
-      else resolve(row);
-    });
-  });
-const dbGetAll = (db, query) =>
-  new Promise((resolve, reject) => {
-    db.all(query, (err, rows) => {
-      // Note the use of `all` and `rows`
-      if (err) reject(err);
-      else resolve(rows);
-    });
-  });
-async function readSqlFile(db_path, dot_sql_path, rollup_sql_path) {
+// const dbGet = (db, query) =>
+//   new Promise((resolve, reject) => {
+//     db.get(query, (err, row) => {
+//       if (err) reject(err);
+//       else resolve(row);
+//     });
+//   });
+// const dbGetAll = (db, query) =>
+//   new Promise((resolve, reject) => {
+//     db.all(query, (err, rows) => {
+//       // Note the use of `all` and `rows`
+//       if (err) reject(err);
+//       else resolve(rows);
+//     });
+//   });
+async function readSqlFile(db_path, sql_path, rollup_sql_path) {
   try {
     logEmitter.emit("log-update", db_path);
-    const sql_file = await fs.readFile(dot_sql_path, "utf8");
+    const sql_file = await fs.readFile(sql_path, "utf8");
     const rollup_sql_file = await fs.readFile(rollup_sql_path, "utf8");
     logEmitter.emit("log-update", "SQL script read.");
     // logEmitter.emit("log-update", sql_file);
-    let db = new sqlite3.Database(db_path);
-    await dbRun(db, "BEGIN TRANSACTION");
-    await dbExec(db, sql_file);
-    await dbExec(db, rollup_sql_file);
-    await dbRun(db, "COMMIT");
-    await dbClose(db);
+    let db = new sqlite(db_path);
+    logEmitter.emit("log-update", "Running SQL script... may freeze up momentarily...");
+    // logEmitter.emit("log-update", sql_file);
+    db.transaction(() => {
+        db.exec(sql_file);
+        db.exec(rollup_sql_file);
+    })();
+    db.close();
+   // let db = new sqlite3.Database(db_path);
+    // await dbRun(db, "BEGIN TRANSACTION");
+    // await dbExec(db, sql_file);
+    // await dbExec(db, rollup_sql_file);
+    // await dbRun(db, "COMMIT");
+    // await dbClose(db);
     logEmitter.emit("log-update", "SQL script executed and database closed.");
     win.loadFile(path.join(__dirname, "build", "index.html"));
   } catch (err) {
@@ -290,257 +329,170 @@ async function readSqlFile(db_path, dot_sql_path, rollup_sql_path) {
 
 async function basicStats(db_path) {
   try {
-    let db = new sqlite3.Database(db_path);
-    await dbRun(db, "BEGIN TRANSACTION");
-    const row = await dbGet(
-      db,
-      "SELECT COUNT(DISTINCT zuuid) AS photo_count FROM photo_info"
-    );
+    let db = new sqlite(db_path);
+    // await dbRun(db, "BEGIN TRANSACTION");
+    row = db.prepare("SELECT COUNT(DISTINCT zuuid) AS photo_count FROM photo_info").run();
+    db.close();
     logEmitter.emit(
       "log-update",
       `Unique Photo count: ${row.photo_count.toLocaleString()} Photos`
     );
     console.log(row);
-    await dbRun(db, "COMMIT");
-    await dbClose(db);
   } catch (err) {
     logEmitter.emit("error-update", `Error in basicStats: ${err}`);
   }
 }
 
-async function dbquery(sqlQuery) {
-  try {
-    let db = new sqlite3.Database(
-      path.join(app.getPath("userData"), "photo_lib.sqlite")
-    );
-    await dbRun(db, "BEGIN TRANSACTION");
-    const rows = await dbGetAll(db, sqlQuery); // rows will be an array of objects
-    await dbRun(db, "COMMIT");
-    await dbClose(db);
-    return rows;
-  } catch (err) {
-    console.error("error-update", `Error in basicStats: ${err}`);
-  }
-}
+// async function dbquery(sqlQuery) {
+//   try {
+//     let db = new sqlite3.Database(
+//       path.join(app.getPath("userData"), "photo_lib.sqlite")
+//     );
+//     await dbRun(db, "BEGIN TRANSACTION");
+//     const rows = await dbGetAll(db, sqlQuery); // rows will be an array of objects
+//     await dbRun(db, "COMMIT");
+//     await dbClose(db);
+//     return rows;
+//   } catch (err) {
+//     console.error("error-update", `Error in basicStats: ${err}`);
+//   }
+// }
 
-// changing to work with object of objects instead of array
-async function handleQueries(queryarr) {
-  try {
-    const results = await Promise.all(
-      queryarr.map(async (element) => {
-        return {
-          name: element.name,
-          data: await dbquery(element.query),
-        };
-      })
-    );
+// // changing to work with object of objects instead of array
+// async function handleQueries(queryarr) {
+//   try {
+//     const results = await Promise.all(
+//       queryarr.map(async (element) => {
+//         return {
+//           name: element.name,
+//           data: await dbquery(element.query),
+//         };
+//       })
+//     );
 
-    const res = Object.fromEntries(
-      results.map(({ name, data }) => [name, data])
-    );
-    // if results have item.year_month convert to date
-    if (res[0]?.year_month) {
-      return res.map((item) => {
-        item.year_month = new Date(item.year_month);
-        return item;
-      });
-    } else {
-      return res;
-    }
-  } catch (err) {
-    console.error("error-update", `Error in handleQueries: ${err}`);
-    return null;
-  }
-}
+//     const res = Object.fromEntries(
+//       results.map(({ name, data }) => [name, data])
+//     );
+//     // if results have item.year_month convert to date
+//     if (res[0]?.year_month) {
+//       return res.map((item) => {
+//         item.year_month = new Date(item.year_month);
+//         return item;
+//       });
+//     } else {
+//       return res;
+//     }
+//   } catch (err) {
+//     console.error("error-update", `Error in handleQueries: ${err}`);
+//     return null;
+//   }
+// }
 
-ipcMain.on("sql-query", async (event, queryarr) => {
-  const res = await handleQueries(queryarr);
-  if (res) {
-    event.sender.send("sql-results", res);
-  }
-});
+// ipcMain.on("sql-query", async (event, queryarr) => {
+//   const res = await handleQueries(queryarr);
+//   if (res) {
+//     event.sender.send("sql-results", res);
+//   }
+// });
 
 // sendsql but async using handle/invoke
 
-ipcMain.handle(
-  "call-person-group-stats",
-  async (event, { name_entry, start_date, end_date }) => {
-    try {
-      console.log(start_date, end_date);
-      const query = `select
-    person_uuid,
-    full_name,
-    -- year-month of the photo. sqlite. 
-    -- https://www.sqlite.org/lang_datefunc.html
-    camera_make,
-    camera_model,
-    face_count,
-    gender_estimate,
-    age_estimate,
-    ethnicity_estimate,
-    skin_tone_estimate,
-    facial_hair_estimate,
-    face_mask_estimate,
-    face_expression_estimate,
-    pose_type_estimate,
-    smile_estimate,
-    smile_type_estimate,
-    smile_combined_estimate,
-    lip_makeup_estimate,
-    winking_estimate,
-    glasses_estimate,
-    eye_makeup_estimate,
-    sum(count) as count
-    from photo_info_rollup_monthly
-    where full_name == '${name_entry}'
-    and year_month >= '${start_date ?? "1900-01-01"}' and year_month <= '${
-        end_date ?? "2100-01-01"
-      }'
-    group by
-    1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19, 20;
-    `;
-      console.log(query);
-      const results = await dbquery(
-        query
-        //`SELECT * FROM person_group_stats WHERE full_name = '${name_entry}'`
-      );
-      if (results) {
-        // console.log(results);
-        return results;
-      }
-    } catch (err) {
-      console.error("error-update", `Error in call-person-group-stats: ${err}`);
-      throw err;
-    }
-  }
-);
 
-ipcMain.handle("daily-zeroed-counts", async (event, name_entry) => {
-  try {
-    // probably insecure as fuck but whatever it's a local db lol
-    const query = `
-            with cnt as (
-            select 
-            photos_per_user_daily.full_name as full_name,
-            date_series.date as date,
-            sum(ifnull(photos_per_user_daily.count, 0)) as count
-    
-            from date_series 
-            left join photos_per_user_daily on date_series.date = photos_per_user_daily.date 
-            and photos_per_user_daily.full_name = '${name_entry}'
-            where date_series.date >= (select min(date) from photos_per_user_daily where full_name = '${name_entry}')
-            and date_series.date <= (select max(date) from photos_per_user_daily where full_name ='${name_entry}')
-            group by 1,2
-            order by date_series.date
-            ),
-            -- I know this is horribly inefficient lmao
-            seven as (
-            select 
-            date,
-            count,
-            sum(count) OVER (
-                ORDER BY date
-                ROWS BETWEEN 7 PRECEDING AND current row 
-            ) as seven_day_sum
-            from cnt
-            )
-            select 
-            '${name_entry}' as full_name,
-            date, 
-            count, 
-            seven_day_sum,
-            AVG(seven_day_sum) OVER (
-                ORDER BY date
-                ROWS BETWEEN 30 PRECEDING AND current row 
-            ) as 'thirty_day_rolling',
-            AVG(seven_day_sum) OVER (
-                ORDER BY date
-                ROWS BETWEEN 90 PRECEDING AND current row 
-            ) as 'ninety_day_rolling'
-            from seven;
-            `;
 
-    const results = await dbquery(query);
-    //console.log('ran daily-zeroed-counts query');
-    if (results) {
-      return results;
-    }
-  } catch (err) {
-    console.error("error in daily-zeroed-counts", err);
-    throw err;
-  }
-});
+// ipcMain.handle("daily-zeroed-counts", async (event, name_entry) => {
+//   try {
+//     // probably insecure as fuck but whatever it's a local db lol
+//     const query = `
+//             with cnt as (
+//             select 
+//             photos_per_user_daily.full_name as full_name,
+//             date_series.date as date,
+//             sum(ifnull(photos_per_user_daily.count, 0)) as count
+    
+//             from date_series 
+//             left join photos_per_user_daily on date_series.date = photos_per_user_daily.date 
+//             and photos_per_user_daily.full_name = '${name_entry}'
+//             where date_series.date >= (select min(date) from photos_per_user_daily where full_name = '${name_entry}')
+//             and date_series.date <= (select max(date) from photos_per_user_daily where full_name ='${name_entry}')
+//             group by 1,2
+//             order by date_series.date
+//             ),
+//             -- I know this is horribly inefficient lmao
+//             seven as (
+//             select 
+//             date,
+//             count,
+//             sum(count) OVER (
+//                 ORDER BY date
+//                 ROWS BETWEEN 7 PRECEDING AND current row 
+//             ) as seven_day_sum
+//             from cnt
+//             )
+//             select 
+//             '${name_entry}' as full_name,
+//             date, 
+//             count, 
+//             seven_day_sum,
+//             AVG(seven_day_sum) OVER (
+//                 ORDER BY date
+//                 ROWS BETWEEN 30 PRECEDING AND current row 
+//             ) as 'thirty_day_rolling',
+//             AVG(seven_day_sum) OVER (
+//                 ORDER BY date
+//                 ROWS BETWEEN 90 PRECEDING AND current row 
+//             ) as 'ninety_day_rolling'
+//             from seven;
+//             `;
 
-ipcMain.handle(
-  "call-photos-per-user",
-  async (event, { start_date, end_date }) => {
-    try {
-      query = `  select 
-        full_name, 
-        year_month,
-        sum(count) as count
-        from photo_info_rollup_monthly
-        where year_month >= '${start_date ?? "1900-01-01"}' 
-        and year_month <= '${end_date ?? "2100-01-01"}'
-        and full_name != 'no_name'
-        and full_name != 'no_face'
-        group by 1,2
-        order by count desc;
-      `;
-      console.log(start_date, end_date);
-      console.log(query);
-      const results = await dbquery(
-        query
-        //`SELECT * FROM person_group_stats WHERE full_name = '${name_entry}'`
-      );
-      if (results) {
-        // console.log(results);
-        return results;
-      }
-    } catch (err) {
-      console.error("error-update", `Error in call-person-group-stats: ${err}`);
-      throw err;
-    }
-  }
-);
-ipcMain.handle("call-lat-long", async (event, { elm_name, start_date, end_date }) => {
-    try { 
-        query = `select 
-        zuuid,
-        full_name,
-        latitude,
-        longitude
-        from photo_info
-        where latitude is not null
-        and longitude is not null
+//     const results = await dbquery(query);
+//     //console.log('ran daily-zeroed-counts query');
+//     if (results) {
+//       return results;
+//     }
+//   } catch (err) {
+//     console.error("error in daily-zeroed-counts", err);
+//     throw err;
+//   }
+// });
+
+// ipcMain.handle("call-lat-long", async (event, { elm_name, start_date, end_date }) => {
+//     try { 
+//         query = `select 
+//         zuuid,
+//         full_name,
+//         latitude,
+//         longitude
+//         from photo_info
+//         where latitude is not null
+//         and longitude is not null
     
-        and date_created >= '${start_date ?? "1900-01-01"}'
-        and date_created <= '${end_date ?? "2100-01-01"}'
-        order by date_created asc;
-        `//    and full_name = '${elm_name}'
-        console.log(query);
-        const results = await dbquery(query);
-        if (results) {
-            // console.log(results);
-            return results;
-        }
-    } catch (err) {
-        console.error("error-update", `Error in call-lat-long: ${err}`);
-        throw err;
-    }
-});
-ipcMain.handle("call-map-json", async (event, type) => {
-    try {
-    const world_file = await fs.readFile(path.join(__dirname, "assets", type + ".json")); 
-    const world_json = JSON.parse(world_file);
-  //  const countries = TopoJSON.feature(world_json, world_json.objects.countries);
-    return world_json;
-    } catch (err) {
-        console.error("error-update", `Error in call-world-json: ${err}`);
-        throw err;
-    }
+//         and date_created >= '${start_date ?? "1900-01-01"}'
+//         and date_created <= '${end_date ?? "2100-01-01"}'
+//         order by date_created asc;
+//         `//    and full_name = '${elm_name}'
+//         console.log(query);
+//         const results = await dbquery(query);
+//         if (results) {
+//             // console.log(results);
+//             return results;
+//         }
+//     } catch (err) {
+//         console.error("error-update", `Error in call-lat-long: ${err}`);
+//         throw err;
+//     }
+// });
+// ipcMain.handle("call-map-json", async (event, type) => {
+//     try {
+//     const world_file = await fs.readFile(path.join(__dirname, "assets", type + ".json")); 
+//     const world_json = JSON.parse(world_file);
+//   //  const countries = TopoJSON.feature(world_json, world_json.objects.countries);
+//     return world_json;
+//     } catch (err) {
+//         console.error("error-update", `Error in call-world-json: ${err}`);
+//         throw err;
+//     }
     
-});
+// });
 /* ipcMain.handle(
     "call-start-end-dates",
     async (event, { elm_name }) => {
