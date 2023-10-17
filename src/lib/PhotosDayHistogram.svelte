@@ -58,7 +58,7 @@
  options={{
     title: "Distribution of photos per week",
     caption: html`<span style=${{"font-size": "12px", "text-align": "left" }}>
-        Frequency represents number of rolling 30 day windows with that number of photos
+        Frequency represents number of rolling 7 day windows with that number of photos. Red line is the average. 
         </span>`,
    y: {grid: true},
    x: {
@@ -67,9 +67,13 @@
    marks: [
     Plot.rectY(filtered
         //table.params({start_date, end_date}).filter((d, $) =>  d.date >= $.start_date && d.date <= $.end_date)
-    , Plot.binX({y: "count"}, {x: "thirty_day_rolling", tip: true, fill: "steelblue"}, ),
+    , Plot.binX({y: "count"}, {x:"seven_day_sum", tip: true, fill: "steelblue", inset: 0, stroke: "white"},  ),
     ),
-    Plot.ruleY([0])
+ //   Plot.ruleY([0]),
+    // add average x value 
+    Plot.ruleX(filtered,
+    Plot.groupZ({x: "mean"}, {x: 'seven_day_sum', stroke: 'red', tip: true, label: "Mean", strokeWidth: 2})
+    ),
    ]
  }}
 />
@@ -78,18 +82,3 @@
 {:else}
  <p>Waiting for data...</p>
 {/if}
-<style>
-    .flex-container-col {
-      display: flex;
-      justify-content: space-around;
-      flex-direction: column;
-      min-width: "30%";
-    }
-    .flex-container-row {
-      display: flex;
-      justify-content: space-around;
-    }
-    .text-intro {
-        max-width: 40%;
-    }
-  </style>

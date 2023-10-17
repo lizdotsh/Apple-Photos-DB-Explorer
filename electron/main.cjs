@@ -65,10 +65,10 @@ const createWindow = () => {
   });
   // define how electron will load the app
   if (isDevEnvironment) {
-       win.loadFile(path.join(__dirname, 'db_load/index.html'));
+    //    win.loadFile(path.join(__dirname, 'db_load/index.html'));
 
     // if your vite app is running on a different port, change it here
-    // win.loadURL("http://localhost:5173/");
+    win.loadURL("http://localhost:5173/");
 
     // Open the DevTools.
     win.webContents.on("did-frame-finish-load", () => {
@@ -231,6 +231,7 @@ async function handleFileAndDbActions(
     //win.webContents.send("file-and-db-actions-complete");
   } catch (err) {
     console.error("Error in handleFileAndDbActions:", err);
+
   }
 }
 
@@ -328,6 +329,7 @@ async function readSqlFile(db_path, sql_path, rollup_sql_path) {
     logEmitter.emit("log-update", "SQL script executed and database closed.");
   } catch (err) {
     logEmitter.emit("error-update", `Error in readSqlFile: ${err}`);
+    throw err;
   } finally {
     win.loadFile(path.join(__dirname, "build", "index.html"));
   }

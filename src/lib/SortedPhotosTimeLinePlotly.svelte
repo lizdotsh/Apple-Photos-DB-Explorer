@@ -16,7 +16,7 @@ $: table = daily_with_rolling;
 //     console.log(e);
 //   });
 
-  $: console.log(table?.filter(d => d.thirty_day_rolling > 200));
+  $: console.log(table?.filter(d => d.thirty_day_rolling_week > 200));
   
 
 
@@ -64,7 +64,7 @@ $: table = daily_with_rolling;
           mode: "lines",
           name: '30d Rolling',
           x: table?.columnArray('date'),
-            y: table?.columnArray("thirty_day_rolling"),
+            y: table?.columnArray("thirty_day_rolling_week"),
         // y: filled.map((d) => d.count),
           line: {color: '#bd7ebe'}
         },
@@ -73,7 +73,7 @@ $: table = daily_with_rolling;
           mode: "lines",
           name: '90d Rolling',
           x: table?.columnArray('date'),
-            y: table?.columnArray("ninety_day_rolling"),
+            y: table?.columnArray("ninety_day_rolling_week"),
         // y: filled.map((d) => d.count),
           line: {color: '#ffb55a'}
           

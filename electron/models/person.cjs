@@ -82,11 +82,15 @@ exports.getDailyZeroedCounts = function(person_id) {
     AVG(seven_day_sum) OVER (
         ORDER BY date
         ROWS BETWEEN 30 PRECEDING AND current row 
-    ) as 'thirty_day_rolling',
+    ) as 'thirty_day_rolling_week',
+    sum(count) OVER (
+        ORDER BY date
+        ROWS BETWEEN 30 PRECEDING AND current row 
+    ) as 'thirty_day_sum',
     AVG(seven_day_sum) OVER (
         ORDER BY date
         ROWS BETWEEN 90 PRECEDING AND current row 
-    ) as 'ninety_day_rolling'
+    ) as 'ninety_day_rolling_week'
     from seven;
     `;
     
