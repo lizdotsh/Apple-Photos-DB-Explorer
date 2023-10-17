@@ -8,7 +8,12 @@
   export let person_time;
   export let start_date;
   export let activeTab;
-    export let end_date;
+  export let end_date;
+  export let start_date_daily;
+    export let end_date_daily;
+    export let start_date_ms;
+    export let end_date_ms;
+
     $: console.log("PERSON",people, person);
     let person_id;
    // let people = {};
@@ -79,6 +84,11 @@
           dateMax={person?.end_date}
           bind:start_date_month
           bind:end_date_month
+          bind:start_date_ms
+        bind:end_date_ms
+        bind:start_date_daily
+        bind:end_date_daily
+
         />
       {/if}
 

@@ -1,4 +1,3 @@
-
 <script>
   let name;
   import * as Plot from "@observablehq/plot";
@@ -26,13 +25,19 @@
   import SelfieHeatmap from "./lib/SelfieHeatmap.svelte";
   let person;
   let people = {};
-  let activeTab = 'Tab1';
+  let activeTab = "Tab1";
+  let start_date = person?.start_date;
+  let end_date = person?.end_date;
 
-// function setActive(tabName) {
-//   activeTab = tabName;
-// }
+  // function setActive(tabName) {
+  //   activeTab = tabName;
+  // }
   let person_time;
   let people_time;
+  let start_date_ms;
+  let end_date_ms;
+  let start_date_daily
+    let end_date_daily
 
   $: api.getPeopleTime(start_date, end_date).then((data) => {
     people_time = aq.from(data);
@@ -68,49 +73,58 @@
     .getPersonStat(person?.person_uuid, start_date, end_date, group_stats)
     .then((data) => {
       person_group_stats = data;
-    //   console.log(data);
+      //   console.log(data);
     });
   $: console.log("group", person_group_stats);
-  let start_date;
   let date_range_string;
   const today = new Date();
   // let peopletest;
   // $: peopletest = window.db.getPeople();
   // $: console.log(peopletest);
-  let end_date; //= today?.toISOString()?.slice(0, 10);
   // Send SQL query to main process
 
   let latlong;
   let world;
   let us;
- let daily_with_rolling;
+  let daily_with_rolling;
   $: api.getDailyZeroedCounts(person?.person_uuid).then((data) => {
     if (data) {
-        data.forEach(d => {
+      data.forEach((d) => {
         d.parsed_date = d3.utcParse("%Y-%m-%d")(d.date);
-    })
-    daily_with_rolling = data ? aq.from(data): null;
-    console.log(data);
+      });
+      daily_with_rolling = data ? aq.from(data) : null;
+      console.log(data);
     }
-   
   });
   //$: latlong = invoke_req("call-lat-long", {elm_name, start_date, end_date});
-//   $: world = invoke_req("call-map-json", "world");
-//   $: us = invoke_req("call-map-json", "us");
+  //   $: world = invoke_req("call-map-json", "world");
+  //   $: us = invoke_req("call-map-json", "us");
   $: console.log(start_date, end_date);
- // $: start_date = start_date_month ? start_date_month + "-01" : undefined;
+  // $: start_date = start_date_month ? start_date_month + "-01" : undefined;
   //$: end_date = end_date_month ? end_date_month + "-01" : undefined;
   $: date_range_string = html`<span
     style=${{ "font-size": "12px", padding: "2px", margin: "2px" }}
     >${start_date ?? "error"} to ${end_date ?? "error"}</span
   >`;
   $: console.log(date_range_string);
+  $: console.log([start_date, end_date]);
 
-//   $: console.log(people[person_id]);
+
+  //   $: console.log(people[person_id]);
 </script>
 
-
-<StatusBar bind:people bind:person {person_time} bind:start_date bind:end_date bind:activeTab/>
+<StatusBar
+  bind:people
+  bind:person
+  {person_time}
+  bind:start_date
+  bind:end_date
+  bind:activeTab
+  bind:start_date_daily
+  bind:end_date_daily
+  bind:start_date_ms
+  bind:end_date_ms
+/>
 
 <!-- <div class="tabs">
     <button on:click={() => setActive('Tab1')}>Main</button>
@@ -118,72 +132,70 @@
 
 </div> -->
 
-
-{#if activeTab === 'Tab1'}
-<!-- {/if} -->
-<div id="not-sticky">
-  <div class="flex-container">
-    <div id="time">
-      {#if daily_with_rolling}
-        <SortedPhotosTimeLinePlotly {daily_with_rolling} />
-        <!-- <AggStats {person_group_stats} {daily_with_rolling} /> -->
-      {:else}
-        <p>Waiting for data...</p>
-      {/if}
-    </div>
-  </div>
-  <div class="flex-container">
-
-    <div id="photo-hist" style="max-width: 100%; margin: auto">
-      <!-- <h2><br><br><br></h2> -->
-      <PhotosDayHistogram {daily_with_rolling} {start_date} {end_date} />
-    </div>
-    <div id="SortedPhotosBar" style="max-width: 100%; margin: auto">
-      <!-- make component smaller -->
-      <SortedPhotosBar {people_time} {people} />
-    </div>
-  </div>
-
-  <div id="agg-stats-grouping">
-    <!-- {#if person_group_stats?.length > 0} -->
+{#if activeTab === "Tab1"}
+  <!-- {/if} -->
+  <div id="not-sticky">
     <div class="flex-container">
-
-      <GenderEstimate {person_group_stats} />
-      <WhichCamera {person_group_stats} />
-        </div>
-        <div class="flex-container">
-            <GlassesEstimate {person_group_stats} />
-              </div> 
-    <div class="flex-container">
-      <AgeEstimate {person_group_stats} />
-
-      <EthnicEstimate {person_group_stats} />
-    </div>
-    <div class="flex-container">
-      <div>
-        Date range: {start_date} to {end_date}
-        <FacialExpressionEstimate {person_group_stats} {date_range_string} />
+      <div id="time">
+        {#if daily_with_rolling}
+          <SortedPhotosTimeLinePlotly
+            {daily_with_rolling}
+            {start_date_ms}
+            {end_date_ms}
+            {start_date_daily}
+            {end_date_daily}
+          />
+          <!-- <AggStats {person_group_stats} {daily_with_rolling} /> -->
+        {:else}
+          <p>Waiting for data...</p>
+        {/if}
       </div>
-
-      <FacialHairEstimate {person_group_stats} />
     </div>
+    <div class="flex-container">
+      <div id="photo-hist" style="max-width: 100%; margin: auto">
+        <!-- <h2><br><br><br></h2> -->
+        <PhotosDayHistogram {daily_with_rolling} {start_date} {end_date}  />
+      </div>
+      <div id="SortedPhotosBar" style="max-width: 100%; margin: auto">
+        <!-- make component smaller -->
+        <SortedPhotosBar {people_time} {people} />
+      </div>
+    </div>
+
+    <div id="agg-stats-grouping">
+      <!-- {#if person_group_stats?.length > 0} -->
+      <div class="flex-container">
+        <GenderEstimate {person_group_stats} />
+        <WhichCamera {person_group_stats} />
+      </div>
+      <div class="flex-container">
+        <GlassesEstimate {person_group_stats} />
+      </div>
+      <div class="flex-container">
+        <AgeEstimate {person_group_stats} />
+
+        <EthnicEstimate {person_group_stats} />
+      </div>
+      <div class="flex-container">
+        <div>
+          Date range: {start_date} to {end_date}
+          <FacialExpressionEstimate {person_group_stats} {date_range_string} />
+        </div>
+
+        <FacialHairEstimate {person_group_stats} />
+      </div>
+    </div>
+
+    <!-- <PhotosDayHistogram {daily_with_rolling} /> -->
   </div>
-
-  <!-- <PhotosDayHistogram {daily_with_rolling} /> -->
-</div>
-
-
-
-{:else if activeTab === 'Tab2'}
-<div class="flex-container">
+{:else if activeTab === "Tab2"}
+  <div class="flex-container">
     <SelfieHeatmap {daily_with_rolling} {start_date} {end_date} />
-</div>
- 
+  </div>
 {/if}
-  
-<br /><br /><br /><br />
-<br /><br /><br /><br />
-<br /><br /><br /><br />
-<br /><br /><br /><br />
-<br /><br /><br /><br />
 
+<br /><br /><br /><br />
+<br /><br /><br /><br />
+<br /><br /><br /><br />
+<br /><br /><br /><br />
+<br /><br /><br /><br />

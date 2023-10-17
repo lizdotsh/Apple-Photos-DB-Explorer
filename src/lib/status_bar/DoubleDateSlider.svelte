@@ -8,45 +8,70 @@
   export let dateMin;
   $: console.log(dateMin);
   export let dateMax;
+  export let start_date_ms;
+    export let end_date_ms;
+
   export let start_date_month;
   export let end_date_month;
+  export let start_date_daily;
+  export let end_date_daily;
   let isPlaying = false;
   let interval;
   let isOneWayMode;
   let ms_per_month = 100;
-  function toMonths(iso_months) {
-    const [year, month] = iso_months.split("-").map(Number);
-    return year * 12 + month - 1;
-  }
-  function toIso(month_cnt) {
-    const year = Math.trunc(month_cnt / 12);
-    const month = (month_cnt % 12) + 1;
-    return `${year}-${month.toString().padStart(2, "0")}`;
-  }
-  function remDays(iso_date_string) {
-    return iso_date_string.slice(0, 7);
-  }
-  function getDistInMonths(dateMin, dateMax) {
-    const [minCnt, maxCnt] = [dateMin, dateMax].map(remDays).map(toMonths);
-    return maxCnt - minCnt;
-  }
-  function formatDates(start, end, dateMin, dateMax) {
-    const [minCnt, maxCnt] = [dateMin, dateMax].map(remDays).map(toMonths);
-    const valToCount = (count) =>
-      minCnt + Math.floor(count * (maxCnt - minCnt));
-    return [valToCount(start), valToCount(end) + 1].map(toIso);
-  }
-  $: [start_date_month, end_date_month] = formatDates(
-    start,
-    end,
-    dateMin,
-    dateMax
-  );
+//   function toMonths(iso_months) {
+//     const [year, month] = iso_months.split("-").map(Number);
+//     return year * 12 + month - 1;
+//   }
+//   function toIso(month_cnt) {
+//     const year = Math.trunc(month_cnt / 12);
+//     const month = (month_cnt % 12) + 1;
+//     return `${year}-${month.toString().padStart(2, "0")}`;
+//   }
+//   function remDays(iso_date_string) {
+//     return iso_date_string.slice(0, 7);
+//   }
+//   function getDistInMonths(dateMin, dateMax) {
+//     const [minCnt, maxCnt] = [dateMin, dateMax].map(remDays).map(toMonths);
+//     return maxCnt - minCnt;
+//   }
+//   function formatDates(start, end, dateMin, dateMax) {
+//     const [minCnt, maxCnt] = [dateMin, dateMax].map(remDays).map(toMonths);
+//     const valToCount = (count) =>
+//       minCnt + Math.floor(count * (maxCnt - minCnt));
+//     return [valToCount(start), valToCount(end) + 1].map(toIso);
+//   }
+//   $: [start_date_month, end_date_month] = formatDates(
+//     start,
+//     end,
+//     dateMin,
+//     dateMax
+//   );
+let dateMinMs = new Date(dateMin).getTime();
+let dateMaxMs = new Date(dateMax).getTime();
+
+function getDistInMs(dateMinMs, dateMaxMs) {
+  return dateMaxMs - dateMinMs;
+}
+
+function formatDates(start, end, dateMinMs, dateMaxMs) {
+  const valToTime = (frac) => dateMinMs + Math.floor(frac * (dateMaxMs - dateMinMs));
+  return [valToTime(start), valToTime(end)].map(ms => new Date(ms));
+}
+
+$: [start_date_ms, end_date_ms] = formatDates(start, end, dateMinMs, dateMaxMs);
+
+// $: console.log(start_date_ms, end_date_ms)
+// $: console.log(start_date_daily, end_date_daily)
+    $: start_date_month = start_date_ms.toISOString().slice(0, 7);
+    $: end_date_month = end_date_ms.toISOString().slice(0, 7);
+    $: start_date_daily = start_date_ms.toISOString().slice(0, 10)
+    $: end_date_daily = end_date_ms.toISOString().slice(0, 10)
   //$: end_date = formatEndDate(end, dateMin, dateMax)
   let start = 0;
-
+//    $: console.log(start_date, end_date)
   let end = 1;
-  $: console.log(start, end);
+//   $: console.log(start, end);
   let leftHandle;
   let body;
   let slider;

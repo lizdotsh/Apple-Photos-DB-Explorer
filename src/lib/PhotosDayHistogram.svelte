@@ -68,7 +68,7 @@
    marks: [
     Plot.rectY(filtered
         //table.params({start_date, end_date}).filter((d, $) =>  d.date >= $.start_date && d.date <= $.end_date)
-    , Plot.binX({y: "percent"}, {x:"seven_day_sum", tip: true, fill: "steelblue", inset: 0, stroke: "white"},  ),
+    , Plot.binX({y: "count"}, {x:"seven_day_sum", tip: true, fill: "steelblue", inset: 0, stroke: "white"},  ),
     ),
  //   Plot.ruleY([0]),
     // add average x value 
