@@ -1,9 +1,9 @@
 {
   "name": "apple-photos-db-explorer",
-  "description": "Apple Photos Database Explorer",
+  "description": "Apple Photos DB Explorer",
   "license": "MIT",
   "private": true,
-  "version": "0.0.1",
+  "version": "v0.0.5-beta",
   "type": "module",
   "main": "electron/main.cjs",
   "scripts": {
@@ -30,11 +30,13 @@
     "vite": "^4.3.2"
   },
   "dependencies": {
+    "@electron-forge/maker-dmg": "^6.4.2",
     "@electron/rebuild": "^3.3.0",
     "@napi-rs/canvas": "^0.1.44",
     "@observablehq/plot": "^0.6.11",
     "arquero": "^5.2.0",
     "better-sqlite3": "^9.0.0",
+    "electron-mac-permissions": "^2.2.2",
     "electron-squirrel-startup": "^1.0.0",
     "htl": "^0.3.1",
     "leaflet": "^1.9.4",
