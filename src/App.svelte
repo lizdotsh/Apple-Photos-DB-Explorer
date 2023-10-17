@@ -142,8 +142,6 @@
             {daily_with_rolling}
             {start_date_ms}
             {end_date_ms}
-            {start_date_daily}
-            {end_date_daily}
           />
           <!-- <AggStats {person_group_stats} {daily_with_rolling} /> -->
         {:else}

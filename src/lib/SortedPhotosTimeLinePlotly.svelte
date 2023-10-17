@@ -3,8 +3,6 @@
   export let daily_with_rolling;
   export let start_date_ms;
   export let end_date_ms;
-  export let start_date_daily;
-  export let end_date_daily;
   import Plotly from "plotly.js-dist";
   let domReady;
 
@@ -42,7 +40,7 @@
 
 
 
-  let date_range = [start_date_daily, end_date_daily];
+  let date_range = [start_date_ms, end_date_ms];
   function handleRelayout(eventData) {
     date_range = eventData["xaxis.range"]?.map((d) => new Date(d)); //, eventData["xaxis.range[1]"]];
   }
@@ -55,7 +53,7 @@
       height: 500,
       xaxis: {
         // autorange: true,
-        range: [start_date_daily, end_date_daily],
+        range: [start_date_ms, end_date_ms],
 
         rangeselector: {
           buttons: [
