@@ -62,17 +62,19 @@
         </span>`,
    y: {grid: true},
    x: {
+    label: "Number of 7 day period"
    },
   // marginLeft: 120,
    marks: [
     Plot.rectY(filtered
         //table.params({start_date, end_date}).filter((d, $) =>  d.date >= $.start_date && d.date <= $.end_date)
-    , Plot.binX({y: "count"}, {x:"seven_day_sum", tip: true, fill: "steelblue", inset: 0, stroke: "white"},  ),
+    , Plot.binX({y: "percent"}, {x:"seven_day_sum", tip: true, fill: "steelblue", inset: 0, stroke: "white"},  ),
     ),
  //   Plot.ruleY([0]),
     // add average x value 
     Plot.ruleX(filtered,
-    Plot.groupZ({x: "mean"}, {x: 'seven_day_sum', stroke: 'red', tip: true, label: "Mean", strokeWidth: 2})
+    Plot.groupZ({x: "mean"}, {x: 'seven_day_sum', stroke: 'red', tip: true, label: "Mean", strokeWidth: 2}),
+    
     ),
    ]
  }}
