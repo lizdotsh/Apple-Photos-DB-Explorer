@@ -2,6 +2,8 @@
   import * as Plot from "@observablehq/plot";
   import PlotRender from "../Plot.svelte";
   export let person_group_stats;
+  export let date_range_string;
+  import { styleTitle } from "../utils";
   const ethnic = [
     "Black",
     "Asian",
@@ -57,7 +59,8 @@
   <PlotRender
     options={{
       x: { label: "Percent of selected photos", line: true, percent: false },
-      title: "Ethnicity",
+      title: styleTitle("Ethnicity"),
+      subtitle: date_range_string,
       height: 250,
       color: {
         legend: true,

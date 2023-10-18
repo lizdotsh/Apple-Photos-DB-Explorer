@@ -2,6 +2,8 @@
   import * as Plot from "@observablehq/plot";
   import PlotRender from "../Plot.svelte";
   export let person_group_stats;
+  export let date_range_string;
+  import { styleTitle } from '../utils.js';
   const dm = ["Front Camera", "Back Camera"];
 </script>
 
@@ -11,7 +13,8 @@
     options={{
       x: { label: "Percent of selected photos", percent: false },
       //correct capitalization
-      title: "Camera",
+      title: styleTitle("Camera"),
+      subtitle: date_range_string,
       height: 100,
       color: {
         legend: true,

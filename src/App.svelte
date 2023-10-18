@@ -102,11 +102,11 @@
   $: console.log(start_date, end_date);
   // $: start_date = start_date_month ? start_date_month + "-01" : undefined;
   //$: end_date = end_date_month ? end_date_month + "-01" : undefined;
-  $: date_range_string = html`<span
-    style=${{ "font-size": "12px", padding: "2px", margin: "2px" }}
-    >${start_date ?? "error"} to ${end_date ?? "error"}</span
+  $: date_range_string = html`<div
+    style=${{ "font-size": "13px", "padding-bottom": "5px", "padding-top": "0px", "margin": "2px"}}
+    >${start_date?.slice(0,7) ?? "error"} to ${end_date?.slice(0,7) ?? "error"}</div
   >`;
-  
+
   $: console.log(date_range_string);
   $: console.log([start_date, end_date]);
 
@@ -164,16 +164,16 @@
     <div class="agg-stats-grouping">
       <!-- {#if person_group_stats?.length > 0} -->
       <div class="flex-container">
-        <GenderEstimate {person_group_stats} />
-        <WhichCamera {person_group_stats} />
+        <GenderEstimate {person_group_stats} {date_range_string}/>
+        <WhichCamera {person_group_stats} {date_range_string}/>
       </div>
       <div class="flex-container">
-        <GlassesEstimate {person_group_stats} />
+        <GlassesEstimate {person_group_stats} {date_range_string}/>
       </div>
       <div class="flex-container">
-        <AgeEstimate {person_group_stats} />
+        <AgeEstimate {person_group_stats} {date_range_string}/>
 
-        <EthnicEstimate {person_group_stats} />
+        <EthnicEstimate {person_group_stats}{date_range_string} />
       </div>
       <div class="flex-container">
         <div>
@@ -181,7 +181,7 @@
           <FacialExpressionEstimate {person_group_stats} {date_range_string} />
         </div>
 
-        <FacialHairEstimate {person_group_stats} />
+        <FacialHairEstimate {person_group_stats} {date_range_string}/>
       </div>
     </div>
 
