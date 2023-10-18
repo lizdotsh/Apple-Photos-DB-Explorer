@@ -18,7 +18,6 @@
         }
     }
     $: processtable(daily_with_rolling, start_date, end_date);
-    // $: console.log(filtered);
 
     
  
@@ -26,7 +25,7 @@
         if (table?.nrows === 0) {
             return null;
         }
-        console.log(table?._nrows);
+        // console.log(table?._nrows);
         if (start_date && end_date) {
             return table
             ?.params({start_date, end_date})
@@ -44,11 +43,7 @@
         }
         return table;
     }
-  //$: filtered = filter_table(table, start_date, end_date);
-//   $: console.log(start_date, end_date, filtered); 
-    
-    //date
- // $: start_date = start_date;
+
   </script>
 
 {#if filtered}
