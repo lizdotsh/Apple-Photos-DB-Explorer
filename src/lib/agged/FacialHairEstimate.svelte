@@ -2,6 +2,9 @@
   import * as Plot from "@observablehq/plot";
   import PlotRender from "../Plot.svelte";
   export let person_group_stats;
+  export let start_date;
+  export let end_date;
+  import { styleTitle, genDateSubtitle } from "../utils.js";
   // import * as aq from "arquero";
   // let filt;
   // $: person_group_stats.then((data) => {
@@ -26,7 +29,8 @@
   <PlotRender
     options={{
       x: { label: "Percent of selected photos", line: true, percent: false },
-      title: "Facial Hair",
+      title: styleTitle("Facial Hair"),
+      subtitle: genDateSubtitle(start_date, end_date),
       height: 250,
       y: {
         label: "Facial Hair Type",

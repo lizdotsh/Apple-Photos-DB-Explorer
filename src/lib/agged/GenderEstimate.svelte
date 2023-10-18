@@ -1,35 +1,36 @@
 <script>
-    import * as Plot from "@observablehq/plot";
-    import PlotRender from "../Plot.svelte"
-    export let person_group_stats;
-    import * as aq from "arquero";
+  import * as Plot from "@observablehq/plot";
+  import PlotRender from "../Plot.svelte";
+  export let person_group_stats;
+  export let start_date;
+  export let end_date;
+  import { styleTitle, genDateSubtitle } from "../utils.js";
+  // let gender;
+  // $: person_group_stats.then((data) => {
 
-    // let gender;
-    // $: person_group_stats.then((data) => {
-  
-    //   gender = aq.from(data)
-    //     .groupby("gender_estimate")
-    //     .rollup({ cnt: (d) => aq.op.sum(d.count) })
-    //     .orderby("cnt")
-    //     .ungroup()
-    //     .derive({ pct: (d) => d.cnt / aq.op.sum(d.cnt) })
-    //     .orderby()
-    
-      // face_expression_estimate
-  
-      //   console.log(df);
-    // }).catch((e) => {
-    //     console.log(e);
-    //   });
-  </script>
-  
-  {#if person_group_stats}
+  //   gender = aq.from(data)
+  //     .groupby("gender_estimate")
+  //     .rollup({ cnt: (d) => aq.op.sum(d.count) })
+  //     .orderby("cnt")
+  //     .ungroup()
+  //     .derive({ pct: (d) => d.cnt / aq.op.sum(d.cnt) })
+  //     .orderby()
+
+  // face_expression_estimate
+
+  //   console.log(df);
+  // }).catch((e) => {
+  //     console.log(e);
+  //   });
+</script>
+
+{#if person_group_stats}
   <PlotRender
     options={{
-      x: { label: "Percent of selected photos", percent: false
-     },
+      x: { label: "Percent of selected photos", percent: false },
       //correct capitalization
-      title: "Gender", 
+      title: styleTitle("Gender"),
+      subtitle: genDateSubtitle(start_date, end_date),
       height: 100,
       color: {
         legend: true,
@@ -53,27 +54,29 @@
             },
           },
           percent: true,
-          order: ['Male', "unknown", "Female"]
-         // sort: true,
+          order: ["Male", "unknown", "Female"],
+          // sort: true,
         }),
-        Plot.text(person_group_stats.gender_estimate, Plot.stackX({
+        Plot.text(
+          person_group_stats.gender_estimate,
+          Plot.stackX({
             x: "pct",
-           // fill: "gender_estimate",
-           z: 'gender_estimate',
-            text: (d) => `${((d.pct)).toFixed(0)}%`,
+            // fill: "gender_estimate",
+            z: "gender_estimate",
+            text: (d) => `${d.pct.toFixed(0)}%`,
             //center text
             lineAnchor: "middle",
             textAnchor: "middle",
             frameAnchor: "middle",
             percent: true,
             fill: "white",
-            order: ['Male', "unknown", "Female"]
+            order: ["Male", "unknown", "Female"],
             //textAnchor: "middle",
-        }))
+          })
+        ),
       ],
     }}
   />
-  {:else}
-    <p>Waiting for data...</p>
-  {/if}
-  
+{:else}
+  <p>Waiting for data...</p>
+{/if}

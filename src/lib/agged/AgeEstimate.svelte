@@ -2,7 +2,10 @@
   import * as Plot from "@observablehq/plot";
   import PlotRender from "../Plot.svelte";
   export let person_group_stats;
-    const ages = [
+  export let start_date;
+  export let end_date;
+  import { styleTitle, genDateSubtitle } from "../utils.js";
+      const ages = [
       "Infant/Toddler",
       "Toddler/Child",
       "Child/Young Adult",
@@ -16,7 +19,8 @@
     options={{
       x: { label: "Percent of selected photos", line: true, percent: false },
       marginRight: 40,
-      title: "Age",
+      title: styleTitle("Age"),
+      subtitle: genDateSubtitle(start_date, end_date),
       height: 250,
       color: { legend: true, label: "Age Estimate", domain: ages },
       y: {

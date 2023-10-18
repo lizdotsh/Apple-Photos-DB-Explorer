@@ -23,6 +23,7 @@
   import WhichCamera from "./lib/agged/WhichCamera.svelte";
   import GlassesEstimate from "./lib/agged/GlassesEstimate.svelte";
   import SelfieHeatmap from "./lib/SelfieHeatmap.svelte";
+  import { genDateSubtitle } from "./lib/utils";
   let person;
   let people = {};
   let activeTab = "Tab1";
@@ -102,11 +103,8 @@
   $: console.log(start_date, end_date);
   // $: start_date = start_date_month ? start_date_month + "-01" : undefined;
   //$: end_date = end_date_month ? end_date_month + "-01" : undefined;
-  $: date_range_string = html`<span
-    style=${{ "font-size": "12px", padding: "2px", margin: "2px" }}
-    >${start_date ?? "error"} to ${end_date ?? "error"}</span
-  >`;
-  
+  $: date_range_string = genDateSubtitle(start_date, end_date); 
+
   $: console.log(date_range_string);
   $: console.log([start_date, end_date]);
 
@@ -157,31 +155,30 @@
       </div>
       <div id="SortedPhotosBar" style="max-width: 100%; margin: auto">
         <!-- make component smaller -->
-        <SortedPhotosBar {people_time} {people} />
+        <SortedPhotosBar {people_time} {people} {person} />
       </div>
     </div>
 
     <div class="agg-stats-grouping">
       <!-- {#if person_group_stats?.length > 0} -->
       <div class="flex-container">
-        <GenderEstimate {person_group_stats} />
-        <WhichCamera {person_group_stats} />
+        <GenderEstimate {person_group_stats} {start_date} {end_date}/>
+        <WhichCamera {person_group_stats} {start_date} {end_date}/>
       </div>
       <div class="flex-container">
-        <GlassesEstimate {person_group_stats} />
+        <GlassesEstimate {person_group_stats} {start_date} {end_date}/>
       </div>
       <div class="flex-container">
-        <AgeEstimate {person_group_stats} />
+        <AgeEstimate {person_group_stats} {start_date} {end_date}/>
 
-        <EthnicEstimate {person_group_stats} />
+        <EthnicEstimate {person_group_stats}{start_date} {end_date} />
       </div>
       <div class="flex-container">
         <div>
-          Date range: {start_date} to {end_date}
-          <FacialExpressionEstimate {person_group_stats} {date_range_string} />
+          <FacialExpressionEstimate {person_group_stats} {start_date} {end_date} />
         </div>
 
-        <FacialHairEstimate {person_group_stats} />
+        <FacialHairEstimate {person_group_stats} {start_date} {end_date}/>
       </div>
     </div>
 
