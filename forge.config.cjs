@@ -36,6 +36,7 @@ module.exports = {
       name: "@electron-forge/maker-dmg",
     },
   ],
+
 //   plugins: [
 //     {
 //       name: '@electron-forge/plugin-vite',

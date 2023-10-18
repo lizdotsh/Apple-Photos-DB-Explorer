@@ -33,7 +33,7 @@
 {#if person_group_stats}
   <PlotRender
     options={{
-      x: { label: "Percent of Total", line: true, percent: false },
+      x: { label: "Percent of selected photos", line: true, percent: false },
       marginRight: 40,
       title: "Age",
       height: 250,
