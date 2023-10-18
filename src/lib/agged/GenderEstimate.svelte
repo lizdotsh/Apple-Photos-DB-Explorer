@@ -2,9 +2,9 @@
   import * as Plot from "@observablehq/plot";
   import PlotRender from "../Plot.svelte";
   export let person_group_stats;
-  export let date_range_string;
-  import { styleTitle } from "../utils.js";
-
+  export let start_date;
+  export let end_date;
+  import { styleTitle, genDateSubtitle } from "../utils.js";
   // let gender;
   // $: person_group_stats.then((data) => {
 
@@ -30,7 +30,7 @@
       x: { label: "Percent of selected photos", percent: false },
       //correct capitalization
       title: styleTitle("Gender"),
-      subtitle: date_range_string,
+      subtitle: genDateSubtitle(start_date, end_date),
       height: 100,
       color: {
         legend: true,

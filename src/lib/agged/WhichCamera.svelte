@@ -2,19 +2,19 @@
   import * as Plot from "@observablehq/plot";
   import PlotRender from "../Plot.svelte";
   export let person_group_stats;
-  export let date_range_string;
-  import { styleTitle } from '../utils.js';
+  export let start_date;
+  export let end_date;
+  import { styleTitle, genDateSubtitle } from "../utils.js";
   const dm = ["Front Camera", "Back Camera"];
 </script>
 
 {#if person_group_stats}
   <PlotRender
-  
     options={{
       x: { label: "Percent of selected photos", percent: false },
       //correct capitalization
       title: styleTitle("Camera"),
-      subtitle: date_range_string,
+      subtitle: genDateSubtitle(start_date, end_date),
       height: 100,
       color: {
         legend: true,

@@ -2,9 +2,9 @@
   import * as Plot from "@observablehq/plot";
   import PlotRender from "../Plot.svelte";
   export let person_group_stats;
-  export let date_range_string;
-  import { styleTitle } from '../utils.js';
-//   let filt;
+  export let start_date;
+  export let end_date;
+  import { styleTitle, genDateSubtitle } from "../utils.js";//   let filt;
 //   $: person_group_stats.then((data) => {
 //     filt = aq
 //       .from(data)
@@ -27,7 +27,7 @@
     options={{
       x: { label: "Percent of selected photos", line: true, percent: false },
       title: styleTitle('Facial Expression'),
-      subtitle: date_range_string,
+      subtitle: genDateSubtitle(start_date, end_date),
       height: 250,
       color: {
         label: "Facial Expression",
