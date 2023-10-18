@@ -155,7 +155,7 @@
       </div>
       <div id="SortedPhotosBar" style="max-width: 100%; margin: auto">
         <!-- make component smaller -->
-        <SortedPhotosBar {people_time} {people} />
+        <SortedPhotosBar {people_time} {people} {person} />
       </div>
     </div>
 

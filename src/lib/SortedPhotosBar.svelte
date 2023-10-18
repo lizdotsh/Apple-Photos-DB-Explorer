@@ -1,8 +1,10 @@
 <script>
     import * as Plot from "@observablehq/plot";
     import PlotRender from './Plot.svelte';
+    import { styleTitle, genDateSubtitle } from './utils.js';
     export let people_time;
     export let people;
+    export let person;
     let names; 
     $: {
         if (people) {
@@ -23,13 +25,15 @@
     //     ?.filter((d, $) => d.full_name === $.person_id);
     //     }
     // })(filt);
-
+$: console.log(people_time);
 
    // $: selected_count = filt?.objects()?.find((e) => e.person_uuid === elm_name)?.count ?? "N/A";
   </script>
-  <h2> Number of Photos by person (all time)</h2> 
+  <!-- <h2> Number of Photos by person (all time)</h2>  -->
   {#if people_time}
   <PlotRender options={{ 
+    title: styleTitle("Number of Photos by person (all time)"),
+    subtitle: genDateSubtitle(person?.start_date, person?.end_date),
     x: {label: 'Name', line: true, tickRotate: -45},
     y: {label: 'Number of Photos', line: true},
     color: {

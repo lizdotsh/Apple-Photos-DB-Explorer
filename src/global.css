@@ -81,7 +81,8 @@ button:focus {
   }
   .flex-container {
     display: flex;
-    justify-content: center;
+    justify-content:    center;
+    align-items: flex-start;
 
     box-sizing: border-box;
   }

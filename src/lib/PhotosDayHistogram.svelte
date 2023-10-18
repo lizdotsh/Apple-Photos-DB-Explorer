@@ -7,6 +7,7 @@
     export let end_date;
     let filtered;
     import * as aq from "arquero";
+    import { styleTitle, genDateSubtitle } from './utils.js';
     //todays date
     function processtable(daily_with_rolling, start_date, end_date){
       //  let res;
@@ -25,7 +26,7 @@
         if (table?.nrows === 0) {
             return null;
         }
-        // console.log(table?._nrows);
+        console.log(table?._nrows);
         if (start_date && end_date) {
             return table
             ?.params({start_date, end_date})
@@ -47,11 +48,14 @@
   </script>
 
 {#if filtered}
-  
+
+<div id = 'hist'>
+
 
  <PlotRender
  options={{
-    title: "Distribution of photos per week",
+    title: styleTitle("Distribution of photos per week"),
+    subtitle: genDateSubtitle(start_date, end_date),
     caption: html`<span style=${{"font-size": "12px", "text-align": "left" }}>
         Frequency represents number of rolling 7 day windows with that number of photos. Red line is the average. 
         </span>`,
@@ -75,7 +79,14 @@
  }}
 />
 
+</div>
 
 {:else}
  <p>Waiting for data...</p>
 {/if}
+
+<style>
+#hist {
+    align-self: flex-start;
+}
+</style>
