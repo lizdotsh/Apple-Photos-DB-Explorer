@@ -1,16 +1,16 @@
 <script>
-  import { get } from "svelte/store";
   // Editied to work with dates. Imported originally from https://svelte.dev/repl/75d34e46cbe64bb68b7c2ac2c61931ce?version=4.2.1
   // Unsure who created it, just found it on google. Wasn't on npm either. Otherwise would credit.
+  // I added support for dates and a play button.
   import { clamp } from "yootils";
-  //export let start = 0;
-  //export let end = 1;
+  const ms_in_a_month = 30.44 * 24 * 60 * 60 * 1000;
   export let dateMin;
-  $: console.log(dateMin);
   export let dateMax;
   export let start_date_ms;
-    export let end_date_ms;
-
+  export let end_date_ms;
+  // Messy as fuck. Might try to consolidate someday.
+  // Main issue is just that some things update every day, some things continuous, and some things monthly.
+  // Would rather just recompute in one place and send out updates via this component.
   export let start_date_month;
   export let end_date_month;
   export let start_date_daily;
@@ -18,60 +18,101 @@
   let isPlaying = false;
   let interval;
   let isOneWayMode;
-  let ms_per_month = 100;
-//   function toMonths(iso_months) {
-//     const [year, month] = iso_months.split("-").map(Number);
-//     return year * 12 + month - 1;
-//   }
-//   function toIso(month_cnt) {
-//     const year = Math.trunc(month_cnt / 12);
-//     const month = (month_cnt % 12) + 1;
-//     return `${year}-${month.toString().padStart(2, "0")}`;
-//   }
-//   function remDays(iso_date_string) {
-//     return iso_date_string.slice(0, 7);
-//   }
-//   function getDistInMonths(dateMin, dateMax) {
-//     const [minCnt, maxCnt] = [dateMin, dateMax].map(remDays).map(toMonths);
-//     return maxCnt - minCnt;
-//   }
-//   function formatDates(start, end, dateMin, dateMax) {
-//     const [minCnt, maxCnt] = [dateMin, dateMax].map(remDays).map(toMonths);
-//     const valToCount = (count) =>
-//       minCnt + Math.floor(count * (maxCnt - minCnt));
-//     return [valToCount(start), valToCount(end) + 1].map(toIso);
-//   }
-//   $: [start_date_month, end_date_month] = formatDates(
-//     start,
-//     end,
-//     dateMin,
-//     dateMax
-//   );
-let dateMinMs = new Date(dateMin).getTime();
-let dateMaxMs = new Date(dateMax).getTime();
-
-
-function formatDates(start, end, dateMinMs, dateMaxMs) {
-  const valToTime = (frac) => dateMinMs + Math.floor(frac * (dateMaxMs - dateMinMs));
-  return [valToTime(start), valToTime(end)].map(ms => new Date(ms));
-}
-
-$: [start_date_ms, end_date_ms] = formatDates(start, end, dateMinMs, dateMaxMs);
-
-// $: console.log(start_date_ms, end_date_ms)
-// $: console.log(start_date_daily, end_date_daily)
-    $: start_date_month = start_date_ms.toISOString().slice(0, 7);
-    $: end_date_month = end_date_ms.toISOString().slice(0, 7);
-    $: start_date_daily = start_date_ms.toISOString().slice(0, 10)
-    $: end_date_daily = end_date_ms.toISOString().slice(0, 10)
-  //$: end_date = formatEndDate(end, dateMin, dateMax)
+  let speedFactor = 100;
   let start = 0;
-//    $: console.log(start_date, end_date)
   let end = 1;
-//   $: console.log(start, end);
   let leftHandle;
   let body;
   let slider;
+  let lastTime;
+  $: dateMinMs = new Date(dateMin).getTime();
+  $: dateMaxMs = new Date(dateMax).getTime();
+  $: speedFactorMs = ms_in_a_month * (speedFactor / 25);
+
+  $: start_date_month = start_date_ms.toISOString().slice(0, 7);
+  $: end_date_month = end_date_ms.toISOString().slice(0, 7);
+  $: start_date_daily = start_date_ms.toISOString().slice(0, 10);
+  $: end_date_daily = end_date_ms.toISOString().slice(0, 10);
+
+  $: [start_date_ms, end_date_ms] = formatDates(
+    start,
+    end,
+    dateMinMs,
+    dateMaxMs
+  );
+  // Adjust this for speed control
+
+  function timeToVal(start_ms, end_ms, dateMinMs, dateMaxMs) {
+    return (start_ms - dateMinMs) / (dateMaxMs - dateMinMs);
+  }
+
+  function setStartDateFromEnd(durationMs) {
+    const newStartDate = end_date_ms - durationMs;
+    if (newStartDate < dateMinMs) {
+      start = 0;
+    } else {
+      start = timeToVal(newStartDate, end_date_ms, dateMinMs, dateMaxMs);
+    }
+  }
+
+  function moveSlider(timestamp) {
+    if (!lastTime) lastTime = timestamp;
+    const elapsed = timestamp - lastTime;
+    const dist =
+      (elapsed / 1000) *
+      speedFactorMs *
+      (1 / getDistInMs(dateMinMs, dateMaxMs));
+
+    if (isOneWayMode) {
+      if (end + dist >= 1) {
+        cancelAnimationFrame(interval);
+        isPlaying = false;
+        end = 1;
+        return;
+      }
+      end += dist;
+    } else {
+      if (end + dist >= 1) {
+        cancelAnimationFrame(interval);
+        isPlaying = false;
+        start += 1 - end;
+        end = 1;
+        return;
+      }
+      start += dist;
+      end += dist;
+    }
+
+    lastTime = timestamp;
+    interval = requestAnimationFrame(moveSlider);
+  }
+  function toggleSlider() {
+    if (isPlaying) {
+      cancelAnimationFrame(interval);
+      isPlaying = false;
+      return;
+    }
+    if (end === 1 && start === 0) {
+      end = 0.2;
+      toggleSlider();
+      return;
+    }
+    if (end === 1 && start !== 0) {
+      const dist = end - start;
+      start = 0;
+      end = dist;
+    }
+
+    lastTime = null;
+    interval = requestAnimationFrame(moveSlider);
+    isPlaying = true;
+  }
+  function formatDates(start, end, dateMinMs, dateMaxMs) {
+    const valToTime = (frac) =>
+      dateMinMs + Math.floor(frac * (dateMaxMs - dateMinMs));
+    return [valToTime(start), valToTime(end)].map((ms) => new Date(ms));
+  }
+
   function draggable(node) {
     let x;
     let y;
@@ -158,89 +199,8 @@ $: [start_date_ms, end_date_ms] = formatDates(start, end, dateMinMs, dateMaxMs);
     end = pEnd;
   }
   function getDistInMs(dateMinMs, dateMaxMs) {
-  return dateMaxMs - dateMinMs;
-}
-$: console.log(start, stop)
-
-//   function moveSlider(dist) {
-//     if (end + dist > 1) {
-//       clearInterval(interval);
-//       isPlaying = false;
-//       start += 1 - end;
-//       end = 1;
-//       return;
-//     }
-//     start += dist;
-//     end += dist;
-//   }
-//   function toggleSlider() {
-//     if (isPlaying) {
-//       clearInterval(interval);
-//       isPlaying = false;
-//       return;
-//     }
-//     if (end === 1 && start !== 0) {
-//       const dist = end - start;
-//       start = 0;
-//       end = dist;
-//     }
-//     interval = setInterval(
-//       moveSlider,
-//       ms_per_month,
-//       1 / getDistInMonths(dateMin, dateMax)
-//     );
-//     isPlaying = true;
-//   }
-let lastTime;
-const ms_in_a_month = 1000 * 60 * 60 * 24 * 30;
-$: speedFactor =  ms_in_a_month/ms_per_month ; // Adjust this for speed control
-
-function moveSlider(timestamp) {
-  if (!lastTime) lastTime = timestamp;
-  const elapsed = timestamp - lastTime;
-  const dist = (elapsed) * speedFactor * (1 / getDistInMs(dateMinMs, dateMaxMs));
-
-  if (isOneWayMode) {
-    if (end + dist >= 1) {
-      cancelAnimationFrame(interval);
-      isPlaying = false;
-      end = 1;
-      return;
-    }
-    end += dist;
-  } else {
-    if (end + dist >= 1) {
-      cancelAnimationFrame(interval);
-      isPlaying = false;
-      start += 1 - end;
-      end = 1;
-      return;
-    }
-    start += dist;
-    end += dist;
+    return dateMaxMs - dateMinMs;
   }
-  
-  lastTime = timestamp;
-  interval = requestAnimationFrame(moveSlider);
-}
-function toggleSlider() {
-  if (isPlaying) {
-    cancelAnimationFrame(interval);
-    isPlaying = false;
-    return;
-  }
-  if (end === 1 && start !== 0) {
-    const dist = end - start;
-    start = 0;
-    end = dist;
-  } else if (end === 1 && start === 0) {
-    end = .2;
-    toggleSlider();
-  }
-  lastTime = null;
-  interval = requestAnimationFrame(moveSlider);
-  isPlaying = true;
-}
 </script>
 
 <div id="total">
@@ -251,22 +211,36 @@ function toggleSlider() {
         <span style="padding-right: 5px; padding-left: 5px;"
           ><button class="scrubber-button-toggle" on:click={toggleSlider}
             >{isPlaying ? "Pause" : "Play"}</button
-          ></span>
-          <span>
-
-            delay (ms): 
-            <input type = 'number' style = "font-size: 12px" bind:value={ms_per_month} min = 25 max = 1000 step = 25>
-          </span>
+          ></span
+        >
+        <span>
+          Speed:
+          <input
+            type="number"
+            style="font-size: 12px"
+            bind:value={speedFactor}
+            min="25"
+            max="1000"
+            step="25"
+          />
+        </span>
         <input
           style="width: 20px;"
           type="checkbox"
           name="togglePlayMode"
           bind:checked={isOneWayMode}
         />
-        <span style = 'font-size: 12px;'>Only move end of date range</span>
+        <span style="font-size: 14px;">Cumulative Mode</span>
       </div>
-      <div class="label-right">
-        Note: graphs unreliable if no photos in date range
+      <div id = "quickButtons">
+        {#each [1, 3, 6, 12, 24, 60, 120] as duration}
+          <button on:click={() => setStartDateFromEnd(duration * ms_in_a_month)}
+            >{(duration % 12) == 0 ? `${duration/12}Y` : `${duration}M`}</button
+          >
+        {/each}
+        <button on:click={() => {start = 0; end = 1}}
+            >All</button
+          >
       </div>
     </div>
 
@@ -404,5 +378,16 @@ function toggleSlider() {
     padding-left: 5px;
     padding-top: 2px;
     padding-bottom: 2px;
+  }
+  #quickButtons {
+    display: flex; 
+    justify-content: flex-end;
+  }
+  #slider-labels {
+    display: flex;
+    justify-content: space-between;
+  }
+  #slider-labels > :last-child {
+    justify-content: flex-end;
   }
 </style>

@@ -1,5 +1,4 @@
 <script>
-  
   import DoubleDateSlider from "./DoubleDateSlider.svelte";
   import { api } from "../../ipc.js";
   import { onMount } from "svelte";
@@ -10,57 +9,54 @@
   export let activeTab;
   export let end_date;
   export let start_date_daily;
-    export let end_date_daily;
-    export let start_date_ms;
-    export let end_date_ms;
+  export let end_date_daily;
+  export let start_date_ms;
+  export let end_date_ms;
 
-    $: console.log("PERSON",people, person);
-    let person_id;
-   // let people = {};
-    onMount(async () => {
+  $: console.log("PERSON", people, person);
+  let person_id;
+  // let people = {};
+  onMount(async () => {
     people = await api.getPeople().then((data) => {
-        person_id = Object.keys(data)[0];
+      person_id = Object.keys(data)[0];
       console.log(data);
 
       return data;
-      //   person_id = Object.keys(people)[0];
     });
   });
   $: person = people[person_id];
- 
 
-  // $: person_time = people_time?.objects()?.find((e) => e.person_uuid === person_id);
-  let elm_name;
   let start_date_month;
   let end_date_month;
 
   $: console.log(person);
-  
+
   $: console.log(start_date, end_date);
   $: start_date = start_date_month ? start_date_month + "-01" : undefined;
   $: end_date = end_date_month ? end_date_month + "-01" : undefined;
   function setActive(tabName) {
-  activeTab = tabName;
-}
- // $: console.log(people[person_id]);
+    activeTab = tabName;
+  }
 </script>
-
 
 <div id="title-selector">
   <div class="flex-container-title">
     <div class="flex-container-col">
       <div id="app-title">Apple Photos DB Explorer</div>
       <div>
-      {person_time?.count ?? "error"} of {person?.count ?? "N/A"} Photos Selected
+        {person_time?.count ?? "error"} of {person?.count ?? "N/A"} Photos Selected
       </div>
-      <!-- <SelectedInfo name_count={person?.count} {elm_name} {person} /> -->
       <div class="flex-container">
         <div class="tabs">
-            <button class:active-tab={activeTab === 'Tab1'} on:click={() => setActive('Tab1')}>Main</button>
-            <button class:active-tab={activeTab === 'Tab2'} on:click={() => setActive('Tab2')}>Photo Heatmap</button>
-        
+          <button
+            class:active-tab={activeTab === "Tab1"}
+            on:click={() => setActive("Tab1")}>Main</button
+          >
+          <button
+            class:active-tab={activeTab === "Tab2"}
+            on:click={() => setActive("Tab2")}>Photo Heatmap</button
+          >
         </div>
-        <!-- {people_time?.find()} of {person?.count ?? "N/A"} photos selected. -->
       </div>
     </div>
     <div />
@@ -85,20 +81,18 @@
           bind:start_date_month
           bind:end_date_month
           bind:start_date_ms
-        bind:end_date_ms
-        bind:start_date_daily
-        bind:end_date_daily
+          bind:end_date_ms
+          bind:start_date_daily
+          bind:end_date_daily
 
         />
       {/if}
 
-      <!-- {person?.start_date ?? "N/A"} to {person?.end_date ?? "N/A"} -->
     </div>
   </div>
 </div>
 
 <style>
-
   .text-intro {
     max-width: 40%;
   }
@@ -145,7 +139,7 @@
   .tabs {
     /* display: flex; */
     justify-content: space-around;
-    margin-top: .5em;
+    margin-top: 0.5em;
     background-color: #ccc;
     /* padding: 10px; */
     border-radius: 5px;
@@ -157,4 +151,3 @@
     color: #fff;
   }
 </style>
-
