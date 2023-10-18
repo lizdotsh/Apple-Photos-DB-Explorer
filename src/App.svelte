@@ -106,6 +106,7 @@
     style=${{ "font-size": "12px", padding: "2px", margin: "2px" }}
     >${start_date ?? "error"} to ${end_date ?? "error"}</span
   >`;
+  
   $: console.log(date_range_string);
   $: console.log([start_date, end_date]);
 
@@ -160,7 +161,7 @@
       </div>
     </div>
 
-    <div id="agg-stats-grouping">
+    <div class="agg-stats-grouping">
       <!-- {#if person_group_stats?.length > 0} -->
       <div class="flex-container">
         <GenderEstimate {person_group_stats} />
@@ -197,3 +198,4 @@
 <br /><br /><br /><br />
 <br /><br /><br /><br />
 <br /><br /><br /><br />
+

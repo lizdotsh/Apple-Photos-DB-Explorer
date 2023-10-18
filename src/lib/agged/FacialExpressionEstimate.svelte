@@ -3,7 +3,7 @@
   import PlotRender from "../Plot.svelte";
   export let person_group_stats;
   export let date_range_string;
-  import * as aq from "arquero";
+  import { styleTitle } from '../utils.js';
 //   let filt;
 //   $: person_group_stats.then((data) => {
 //     filt = aq
@@ -26,7 +26,7 @@
   <PlotRender
     options={{
       x: { label: "Percent of selected photos", line: true, percent: false },
-      title: "Facial Expression",
+      title: styleTitle('Facial Expression'),
       subtitle: date_range_string,
       height: 250,
       color: {
