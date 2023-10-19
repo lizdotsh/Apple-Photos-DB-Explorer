@@ -1,7 +1,7 @@
 # Apple Photos DB Examiner
 <div>
-    <img src="readme_images/timeline.png" alt="Timeline" style="display: inline-block;">
-    <img src="readme_images/stats.png" alt="Stats" style="display: inline-block;">
+    <img src="readme_images/timeline.png" alt="Timeline" style="display: inline-block; width: 400px; height: auto;">
+    <img src="readme_images/stats.png" alt="Stats" style="display: inline-block; width: 400px; height: auto;">
 </div>
 <img src="readme_images/activity.png" alt="Github-style activity metric">
 Very WIP. dm me @inerati if you have any issues. 
