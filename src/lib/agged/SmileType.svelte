@@ -5,7 +5,7 @@
   export let start_date;
   export let end_date;
   import { styleTitle, genDateSubtitle } from "../utils.js";
-  const domainArray = ["Showing Teeth", "other/unknown", "Not Wearing Teeth"]
+  const domainArray = ["Showing Teeth", "other/unknown", "Not Showing Teeth"]
 </script>
 
 {#if person_group_stats}
