@@ -149,7 +149,7 @@
       </div>
     </div>
     <div class="flex-container">
-      <div id="photo-hist" style="max-width: 100%; margin: auto">
+      <div id="photo-hist" style="max-width: 100%; margin: auto vertical-align: top;">
         <!-- <h2><br><br><br></h2> -->
         <PhotosDayHistogram {daily_with_rolling} {start_date} {end_date}  />
       </div>
