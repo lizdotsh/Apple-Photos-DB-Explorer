@@ -5,7 +5,7 @@
   export let start_date;
   export let end_date;
   import { styleTitle, genDateSubtitle } from "../utils.js";
-  const dm = ["Front Camera", "Back Camera"];
+  const domainArray = ["Showing Teeth", "other/unknown", "Not Showing Teeth"]
 </script>
 
 {#if person_group_stats}
@@ -13,14 +13,14 @@
     options={{
       x: { label: "Percent of selected photos", percent: false },
       //correct capitalization
-      title: styleTitle("Selfie"),
+      title: styleTitle("Smile Type"),
       subtitle: genDateSubtitle(start_date, end_date),
       height: 100,
       color: {
         legend: true,
         type: "categorical",
-        domain: dm,
-        // range: ["#5778a4", "#6a9f58", "#f1a2a9"],
+       domain: domainArray,
+        range: ["#5778a4", "#6a9f58", "#f1a2a9"],
       },
       tip: {
         format: {
@@ -29,24 +29,24 @@
         },
       },
       marks: [
-        Plot.barX(person_group_stats.which_camera, {
+        Plot.barX(person_group_stats.smile_type_estimate, {
           x: "pct",
-          fill: "which_camera",
+          fill: "smile_type_estimate",
           tip: {
             format: {
               x: (d) => `${d.toFixed(1)}%`,
             },
           },
           percent: true,
-          order: dm,
+          order: domainArray,
           // sort: true,
         }),
         Plot.text(
-          person_group_stats.which_camera,
+          person_group_stats.smile_type_estimate,
           Plot.stackX({
             x: "pct",
             // fill: "gender_estimate",
-            z: "which_camera",
+            z: "smile_type_estimate",
             text: (d) => `${d.pct.toFixed(0)}%`,
             //center text
             lineAnchor: "middle",
@@ -54,7 +54,7 @@
             frameAnchor: "middle",
             percent: true,
             fill: "white",
-            order: dm,
+            order: domainArray,
             //textAnchor: "middle",
           })
         ),

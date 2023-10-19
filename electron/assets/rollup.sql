@@ -70,14 +70,16 @@ winking_estimate,
 glasses_estimate,
 eye_makeup_estimate,
 which_camera,
+hair_color_estimate,
 count(distinct zuuid) as count
 from photo_info
 where full_name != '' and full_name is not null
 group by
-1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19, 20, 21;
+1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19, 20, 21, 22;
 
 create index person_monthly_uuid_index on photo_info_rollup_monthly(person_uuid);
 create index photo_info_monthly_person_uuid_year_month on photo_info_rollup_monthly(year_month);
+create index photo_info_monthly_personid_name_date on photo_info_rollup_monthly(person_uuid, full_name, year_month);
 drop table if exists photos_per_user_daily;
 create table photos_per_user_daily as
         select 
@@ -173,3 +175,30 @@ select person_uuid, full_name, sum(count) as count,
                 and full_name != 'no_name'
                 and full_name != 'no_face'
                 group by 1,2 order by count desc;
+
+drop table if exists people_cumsum;
+
+create table people_cumsum as 
+with counts as (
+    select
+    person_uuid,
+    full_name,
+    year_month, 
+    sum(count) as count
+    from photo_info_rollup_monthly
+    where person_uuid != 'no_person' 
+    and full_name != 'no_name'
+    and full_name != 'no_face'
+    group by 1,2,3
+)
+
+select 
+person_uuid,
+full_name,
+year_month,
+count,
+sum(count) over (partition by person_uuid order by year_month) as cumsum
+from counts
+order by cumsum desc;
+
+create index people_cumsum_uuid_date_index on people_cumsum(person_uuid, year_month);
