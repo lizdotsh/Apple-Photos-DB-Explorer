@@ -146,12 +146,10 @@ SELECT
     CASE
         zDetFace.ZHASFACEMASK
         WHEN 0
-            THEN 'No Mask'
+            THEN 'Not Wearing Mask'
         WHEN 1
-            THEN 'Has Mask'
-        WHEN 2
-            THEN '2-StillTesting'
-        ELSE 'Unknown-New-Value!: ' || zDetFace.ZHASFACEMASK || ''
+            THEN 'Wearing Mask'
+        ELSE 'other/unknown'
     END AS 'face_mask_estimate',
     CASE
         zDetFace.ZFACEEXPRESSIONTYPE
