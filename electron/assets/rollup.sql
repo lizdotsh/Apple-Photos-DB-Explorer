@@ -70,6 +70,7 @@ winking_estimate,
 glasses_estimate,
 eye_makeup_estimate,
 which_camera,
+avg(curation_score) as curation_score,
 count(distinct zuuid) as count
 from photo_info
 where full_name != '' and full_name is not null

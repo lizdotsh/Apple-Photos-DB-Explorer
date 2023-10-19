@@ -71,6 +71,7 @@
     "glasses_estimate",
     "eye_makeup_estimate",
     "which_camera",
+    "curation_score",
   ];
   $: api
     .getPersonStat(person?.person_uuid, start_date, end_date, group_stats)
@@ -110,6 +111,7 @@
   $: console.log(date_range_string);
   $: console.log([start_date, end_date]);
 
+  
 
   //   $: console.log(people[person_id]);
 </script>
@@ -135,6 +137,7 @@
 
 {#if activeTab === "Tab1"}
   <!-- {/if} -->
+  {person?.curation_score}
   <div id="not-sticky">
     <div class="flex-container">
       <div id="time">
