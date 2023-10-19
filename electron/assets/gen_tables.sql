@@ -5,7 +5,7 @@ SELECT
     zAsset.zuuid AS zuuid,
     zasset.z_pk AS asset_zpk,
     zperson.z_pk AS person_zpk,
-    DATETIME(zAsset.ZDATECREATED + 978307200, 'UNIXEPOCH') AS 'date_created',
+    'Unknown-New-Value!: ' || zDetFace.ZETHNICITYTYPE || '' DATETIME(zAsset.ZDATECREATED + 978307200, 'UNIXEPOCH') AS 'date_created',
     zExtAttr.ZLATITUDE AS 'latitude',
     zExtAttr.ZLONGITUDE AS 'longitude',
     zExtAttr.ZCAMERAMAKE AS 'camera_make',
@@ -90,7 +90,8 @@ SELECT
         WHEN 5
             THEN 'Pacific Islander'
         ELSE 'other/unknown'
-     CASE
+    END AS 'ethnicity_estimate',
+    CASE
         zDetFace.ZSKINTONETYPE
         WHEN 0
             THEN 'other/unknown'
@@ -349,6 +350,8 @@ LEFT JOIN ZMEDIAANALYSISASSETATTRIBUTES zMedAnlyAstAttr
 
 CREATE INDEX photo_info_idx_zuuid
 ON photo_info (zuuid);
-create index photo_info_person_uuid on photo_info(person_uuid);
+
+CREATE INDEX photo_info_person_uuid
+ON photo_info(person_uuid);
 
 -- OLAP cube esque thing

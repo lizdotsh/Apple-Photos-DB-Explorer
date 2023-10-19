@@ -90,7 +90,8 @@ SELECT
         WHEN 5
             THEN 'Pacific Islander'
         ELSE 'other/unknown'
-     CASE
+    END AS 'ethnicity_estimate',
+    CASE
         zDetFace.ZSKINTONETYPE
         WHEN 0
             THEN 'other/unknown'
@@ -142,7 +143,7 @@ SELECT
             THEN 'Stubble'
         ELSE 'other/unknown'
     END AS 'facial_hair_estimate',
-   CASE
+    CASE
         zDetFace.ZHASFACEMASK
         WHEN 0
             THEN 'Not Wearing Mask'
@@ -349,5 +350,8 @@ LEFT JOIN ZMEDIAANALYSISASSETATTRIBUTES zMedAnlyAstAttr
 
 CREATE INDEX photo_info_idx_zuuid
 ON photo_info (zuuid);
-create index photo_info_person_uuid on photo_info(person_uuid);
+
+CREATE INDEX photo_info_person_uuid
+ON photo_info(person_uuid);
+
 -- OLAP cube esque thing
