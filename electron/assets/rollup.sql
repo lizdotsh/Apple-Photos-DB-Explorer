@@ -173,3 +173,27 @@ select person_uuid, full_name, sum(count) as count,
                 and full_name != 'no_name'
                 and full_name != 'no_face'
                 group by 1,2 order by count desc;
+
+
+create table people_cumsum as 
+with counts as (
+    person_uuid,
+    full_name,
+    year_month, 
+    sum(count) as count
+    from photo_info_rollup_monthly
+    where person_uuid != 'no_person' 
+    and full_name != 'no_name'
+    and full_name != 'no_face'
+    group by 1,2
+)
+
+select 
+c.person_uuid as person_uuid,
+n.full_name as full_name,
+c.year_month as year_month,
+
+
+
+
+from counts c left join names_ids n on counts.person_uuid = names_ids.person_uuid
