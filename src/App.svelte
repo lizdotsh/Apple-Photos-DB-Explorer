@@ -153,11 +153,12 @@
       </div>
     </div>
     <div class="flex-container">
-      <div id="photo-hist" style="max-width: 100%; margin: auto vertical-align: top;">
+        
+      <div id="photo-hist" style="max-width: 100%; vertical-align: top; margin-bottom: 75px">
         <!-- <h2><br><br><br></h2> -->
         <PhotosDayHistogram {daily_with_rolling} {start_date} {end_date}  />
       </div>
-      <div id="SortedPhotosBar" style="max-width: 100%; margin: auto">
+      <div id="SortedPhotosBar" style="max-width: 100%;">
         <!-- make component smaller -->
         <SortedPhotosBar {people_time} {people} {person} />
       </div>

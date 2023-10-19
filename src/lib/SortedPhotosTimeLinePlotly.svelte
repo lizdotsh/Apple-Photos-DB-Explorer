@@ -55,15 +55,7 @@
         // autorange: true,
         range: [start_date_ms, end_date_ms],
 
-        rangeselector: {
-          buttons: [
-            { count: 6, label: "6m", step: "month", stepmode: "backward" },
-            { count: 1, label: "1y", step: "year", stepmode: "backward" },
-            { count: 3, label: "3y", step: "year", stepmode: "backward" },
-            { count: 5, label: "5y", step: "year", stepmode: "backward" },
-            { step: "all" },
-          ],
-        },
+    
         // rangeslider: {},
         type: "date",
       },

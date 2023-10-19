@@ -52,7 +52,9 @@
         },
         marginLeft: 110,
         marginRight: 40,
-  
+        legend: {
+            columns: 4,
+        },
         marks: [
           Plot.barX(person_group_stats.hair_color_estimate, {
             x: "pct",
