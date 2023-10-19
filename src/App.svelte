@@ -191,7 +191,8 @@ $: api.getCurationScore(person?.person_uuid, start_date, end_date).then(d => {
       </div>
       <div class="flex-container">
         <SkinToneEstimate {person_group_stats} {start_date} {end_date}/>
-    </div>
+      </div>
+    </div>j
 
     <!-- <PhotosDayHistogram {daily_with_rolling} /> -->
   </div>
