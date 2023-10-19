@@ -350,5 +350,6 @@ LEFT JOIN ZMEDIAANALYSISASSETATTRIBUTES zMedAnlyAstAttr
 
 CREATE INDEX photo_info_idx_zuuid
 ON photo_info (zuuid);
+create index photo_info_person_uuid on photo_info(person_uuid);
 
 -- OLAP cube esque thing
