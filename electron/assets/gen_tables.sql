@@ -5,7 +5,7 @@ SELECT
     zAsset.zuuid AS zuuid,
     zasset.z_pk AS asset_zpk,
     zperson.z_pk AS person_zpk,
-    'Unknown-New-Value!: ' || zDetFace.ZETHNICITYTYPE || '' DATETIME(zAsset.ZDATECREATED + 978307200, 'UNIXEPOCH') AS 'date_created',
+    DATETIME(zAsset.ZDATECREATED + 978307200, 'UNIXEPOCH') AS 'date_created',
     zExtAttr.ZLATITUDE AS 'latitude',
     zExtAttr.ZLONGITUDE AS 'longitude',
     zExtAttr.ZCAMERAMAKE AS 'camera_make',
