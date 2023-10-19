@@ -3,7 +3,9 @@
     <img src="readme_images/timeline.png" alt="Timeline" style="display: inline-block; width: 45%; height: auto;">
     <img src="readme_images/stats.png" alt="Stats" style="display: inline-block; width: 45%; height: auto;">
 </div>
-<img src="readme_images/activity_fig.png" alt="Github-style activity metric" style = "display: inline-block; width: 30%; height: auto;">
+<div style="text-align:center;">
+    <img src="readme_images/activity_fig.png" alt="Github-style activity metric" style="display:inline-block; width:40%; height:auto;">
+</div>
 Very WIP. dm me @inerati if you have any issues. 
 
 Electron app that scans your Apple Photos SQlite database and shows you a bunch of cool stats about what apple's ML detection system thinks about you. Completely offline, no network requests :)
