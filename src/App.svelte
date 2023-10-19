@@ -26,6 +26,7 @@
   import { genDateSubtitle } from "./lib/utils";
   import MaskEstimate from "./lib/agged/MaskEstimate.svelte";
   import SmileType from "./lib/agged/SmileType.svelte";
+  import NumericScores from "./lib/NumericScores.svelte";
   let person;
   let people = {};
   let activeTab = "Tab1";
@@ -71,7 +72,6 @@
     "glasses_estimate",
     "eye_makeup_estimate",
     "which_camera",
-    "curation_score",
   ];
   $: api
     .getPersonStat(person?.person_uuid, start_date, end_date, group_stats)
@@ -110,7 +110,11 @@
 
   $: console.log(date_range_string);
   $: console.log([start_date, end_date]);
-
+  let person_numeric_scores;
+$: api.getCurationScore(person?.person_uuid, start_date, end_date).then(d => {
+    person_numeric_scores = d;
+    console.log(d);
+    });
   
 
   //   $: console.log(people[person_id]);
@@ -137,7 +141,7 @@
 
 {#if activeTab === "Tab1"}
   <!-- {/if} -->
-  {person?.curation_score}
+  <NumericScores {person_numeric_scores} />
   <div id="not-sticky">
     <div class="flex-container">
       <div id="time">
