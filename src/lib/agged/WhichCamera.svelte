@@ -13,7 +13,7 @@
     options={{
       x: { label: "Percent of selected photos", percent: false },
       //correct capitalization
-      title: styleTitle("Camera"),
+      title: styleTitle("Selfie"),
       subtitle: genDateSubtitle(start_date, end_date),
       height: 100,
       color: {
