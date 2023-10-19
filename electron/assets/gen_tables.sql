@@ -96,18 +96,18 @@ SELECT
         WHEN 0
             THEN 'other/unknown'
         WHEN 1
-            THEN 'Light-Pale White Skin'
+            THEN 'Light-Fair'
         WHEN 2
-            THEN 'White-Fair Skin Tone'
+            THEN 'White-Fair'
         WHEN 3
-            THEN 'Medium-White to Olive Skin Tone'
+            THEN 'Medium-White to Olive'
         WHEN 4
-            THEN 'Olive-Moderate Brown Skin Tone'
+            THEN 'Olive-Moderate Brown'
         WHEN 5
-            THEN 'Brown-Dark Brown Skin Tone'
+            THEN 'Brown-Dark Brown'
         WHEN 6
-            THEN 'Black-Very Dark Brown to Black Skin Tone'
-        ELSE 'Unknown-New-Value!: ' || zDetFace.ZSKINTONETYPE || ''
+            THEN 'Black-Very Dark Brown'
+        ELSE 'other/unknown'
     END AS 'skin_tone_estimate',
     CASE
         zDetFace.ZHAIRCOLORTYPE

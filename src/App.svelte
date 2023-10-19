@@ -27,6 +27,7 @@
   import MaskEstimate from "./lib/agged/MaskEstimate.svelte";
   import SmileType from "./lib/agged/SmileType.svelte";
   import NumericScores from "./lib/NumericScores.svelte";
+  import SkinToneEstimate from "./lib/agged/SkinToneEstimate.svelte";
   let person;
   let people = {};
   let activeTab = "Tab1";
@@ -61,7 +62,7 @@
     "ethnicity_estimate",
     "skin_tone_estimate",
     "facial_hair_estimate",
-    "face_mask_estimate",
+    // "face_mask_estimate",
     "face_expression_estimate",
     "pose_type_estimate",
     "smile_estimate",
@@ -184,12 +185,12 @@ $: api.getCurationScore(person?.person_uuid, start_date, end_date).then(d => {
         <EthnicEstimate {person_group_stats}{start_date} {end_date} />
       </div>
       <div class="flex-container">
-        <div>
           <FacialExpressionEstimate {person_group_stats} {start_date} {end_date} />
-        </div>
 
         <FacialHairEstimate {person_group_stats} {start_date} {end_date}/>
       </div>
+      <div class="flex-container">
+        <SkinToneEstimate {person_group_stats} {start_date} {end_date}/>
     </div>
 
     <!-- <PhotosDayHistogram {daily_with_rolling} /> -->
