@@ -78,6 +78,7 @@ group by
 
 create index person_monthly_uuid_index on photo_info_rollup_monthly(person_uuid);
 create index photo_info_monthly_person_uuid_year_month on photo_info_rollup_monthly(year_month);
+create index photo_info_monthly_personid_name_date on photo_info_rollup_monthly(person_uuid, full_name, year_month);
 drop table if exists photos_per_user_daily;
 create table photos_per_user_daily as
         select 
@@ -174,9 +175,11 @@ select person_uuid, full_name, sum(count) as count,
                 and full_name != 'no_face'
                 group by 1,2 order by count desc;
 
+drop table if exists people_cumsum;
 
 create table people_cumsum as 
 with counts as (
+    select
     person_uuid,
     full_name,
     year_month, 
@@ -185,15 +188,16 @@ with counts as (
     where person_uuid != 'no_person' 
     and full_name != 'no_name'
     and full_name != 'no_face'
-    group by 1,2
+    group by 1,2,3
 )
 
 select 
-c.person_uuid as person_uuid,
-n.full_name as full_name,
-c.year_month as year_month,
+person_uuid,
+full_name,
+year_month,
+count,
+sum(count) over (partition by person_uuid order by year_month) as cumsum
+from counts
+order by cumsum desc;
 
-
-
-
-from counts c left join names_ids n on counts.person_uuid = names_ids.person_uuid
+create index people_cumsum_uuid_date_index on people_cumsum(person_uuid, year_month);

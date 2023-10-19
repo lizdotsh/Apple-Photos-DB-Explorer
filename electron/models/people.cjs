@@ -44,15 +44,13 @@ exports.getPeopleTime = function (start_date, end_date){
       person_uuid, 
       full_name,
       sum(count) as count
-      from photo_info_rollup_monthly
+      from people_cumsum
       --where full_name != 'no_name'
       --and full_name != 'no_face'
       where year_month between ? and ? 
-     
       group by 1,2 order by count desc;
-      
               `;
-    // console.log(query);
+
     return (txGetAll(query, [start_date, end_date]));
   };
   
