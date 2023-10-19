@@ -5,7 +5,7 @@
     export let start_date;
     export let end_date;
     import { styleTitle, genDateSubtitle } from "../utils.js";  
-    const tones = ['Light-Fair', 'White-Fair', 'Medium-White to Olive', 'Olive-Moderate Brown', 'Brown-Dark Brown', 'Black-Very Dark Brown', 'other/unknown'];
+    const tones =['Light to Pale White', 'White to Fair', 'Fair to Olive', 'Olive to Moderate Brown', 'Brown to Dark Brown', 'Very Dark Brown to Black'];
   
     const eachEthnicityZero = tones.map((d) => {
       return { skin_tone_estimate: d, count: 0, pct: 0 };

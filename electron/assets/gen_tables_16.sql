@@ -89,24 +89,23 @@ SELECT
             THEN 'Asian'
         WHEN 5
             THEN 'Pacific Islander'
-        ELSE 'Unknown-New-Value!: ' || zDetFace.ZETHNICITYTYPE || ''
-    END AS 'ethnicity_estimate',
-        CASE
+        ELSE 'other/unknown'
+     CASE
         zDetFace.ZSKINTONETYPE
         WHEN 0
             THEN 'other/unknown'
         WHEN 1
-            THEN 'Light-Fair'
+            THEN 'Light to Pale White'
         WHEN 2
-            THEN 'White-Fair'
+            THEN 'White to Fair'
         WHEN 3
-            THEN 'Medium-White to Olive'
+            THEN 'Fair to Olive'
         WHEN 4
-            THEN 'Olive-Moderate Brown'
+            THEN 'Olive to Moderate Brown'
         WHEN 5
-            THEN 'Brown-Dark Brown'
+            THEN 'Brown to Dark Brown'
         WHEN 6
-            THEN 'Black-Very Dark Brown'
+            THEN 'Very Dark Brown to Black'
         ELSE 'other/unknown'
     END AS 'skin_tone_estimate',
     CASE
@@ -125,7 +124,7 @@ SELECT
             THEN 'Artifical'
         WHEN 6
             THEN 'White/Bald'
-        ELSE 'Unknown-New-Value!: ' || zDetFace.ZHAIRCOLORTYPE || ''
+        ELSE 'other/unknown'
     END AS 'hair_color_estimate',
     CASE
         zDetFace.ZFACIALHAIRTYPE
@@ -141,7 +140,7 @@ SELECT
             THEN 'Mustache'
         WHEN 5
             THEN 'Stubble'
-        ELSE 'Unknown-New-Value!: ' || zDetFace.ZFACIALHAIRTYPE || ''
+        ELSE 'other/unknown'
     END AS 'facial_hair_estimate',
    CASE
         zDetFace.ZHASFACEMASK
