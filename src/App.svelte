@@ -24,6 +24,8 @@
   import GlassesEstimate from "./lib/agged/GlassesEstimate.svelte";
   import SelfieHeatmap from "./lib/SelfieHeatmap.svelte";
   import { genDateSubtitle } from "./lib/utils";
+  import MaskEstimate from "./lib/agged/MaskEstimate.svelte";
+  import SmileType from "./lib/agged/SmileType.svelte";
   let person;
   let people = {};
   let activeTab = "Tab1";
@@ -163,10 +165,11 @@
       <!-- {#if person_group_stats?.length > 0} -->
       <div class="flex-container">
         <GenderEstimate {person_group_stats} {start_date} {end_date}/>
-        <WhichCamera {person_group_stats} {start_date} {end_date}/>
+        <SmileType {person_group_stats} {start_date} {end_date}/>
       </div>
       <div class="flex-container">
         <GlassesEstimate {person_group_stats} {start_date} {end_date}/>
+        <WhichCamera {person_group_stats} {start_date} {end_date}/>
       </div>
       <div class="flex-container">
         <AgeEstimate {person_group_stats} {start_date} {end_date}/>
