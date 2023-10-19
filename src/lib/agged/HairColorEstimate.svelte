@@ -5,40 +5,40 @@
     export let start_date;
     export let end_date;
     import { styleTitle, genDateSubtitle } from "../utils.js";  
-    const tones =['Light to Pale White', 'White to Fair', 'Fair to Olive', 'Olive to Moderate Brown', 'Brown to Dark Brown', 'Very Dark Brown to Black'];
+    const tones =['Black/Brown', 'Brown/Blonde', 'Brown/Red', 'Red/White', 'Artifical', 'White/Bald','other/unknown']
   
-    const eachEthnicityZero = tones.map((d) => {
-      return { skin_tone_estimate: d, count: 0, pct: 0 };
-    });
-    function fixthisshit(stats) {
-      if (!stats) {
-        return null;
-      }
-      // console.log(stats);
-      const ethnic_estimate_stats = stats.map((d) => d.skin_tone_estimate);
-      // console.log(ethnic_estimate_stats);
-      eachEthnicityZero.forEach((e) => {
-        if (!ethnic_estimate_stats.includes(e.skin_tone_estimate)) {
-          stats.push(e);
-        }
+    // const eachEthnicityZero = tones.map((d) => {
+    //   return { skin_tone_estimate: d, count: 0, pct: 0 };
+    // });
+    // function fixthisshit(stats) {
+    //   if (!stats) {
+    //     return null;
+    //   }
+    //   // console.log(stats);
+    //   const ethnic_estimate_stats = stats.map((d) => d.skin_tone_estimate);
+    //   // console.log(ethnic_estimate_stats);
+    //   eachEthnicityZero.forEach((e) => {
+    //     if (!ethnic_estimate_stats.includes(e.skin_tone_estimate)) {
+    //       stats.push(e);
+    //     }
         
-      });
-      return stats;
-    }
-    let filt;
-    $: {
-      if (person_group_stats){
-      filt = fixthisshit(person_group_stats?.skin_tone_estimate);
-      }
-     } //?.concat(eachEthnicityZero)
+    //   });
+    //   return stats;
+    // }
+    // let filt;
+    // $: {
+    //   if (person_group_stats){
+    //   filt = fixthisshit(person_group_stats?.skin_tone_estimate);
+    //   }
+    //  } //?.concat(eachEthnicityZero)
 
   </script>
   
-  {#if filt}
+  {#if person_group_stats}
     <PlotRender
       options={{
         x: { label: "Percent of selected photos", line: true, percent: false },
-        title: styleTitle("Skin Tone"),
+        title: styleTitle("Hair Color"),
         subtitle: genDateSubtitle(start_date, end_date),
         height: 250,
         color: {
@@ -50,14 +50,14 @@
           label: "Detected Skin Tone",
           domain: tones,
         },
-        marginLeft: 150,
+        marginLeft: 110,
         marginRight: 40,
   
         marks: [
-          Plot.barX(filt, {
+          Plot.barX(person_group_stats.hair_color_estimate, {
             x: "pct",
-            y: "skin_tone_estimate",
-            fill: "skin_tone_estimate",
+            y: "hair_color_estimate",
+            fill: "hair_color_estimate",
             channels: { "Photo Count": "cnt" },
             tip: {
               format: {
@@ -70,9 +70,9 @@
             label: true,
             //  sort: { y: "x", reverse: true },
           }),
-          Plot.text(filt, {
+          Plot.text(person_group_stats.hair_color_estimate, {
             x: "pct",
-            y: "skin_tone_estimate",
+            y: "hair_color_estimate",
             text: (d) => `${d.pct.toFixed(0)}%`,
             dx: 15,
           }),

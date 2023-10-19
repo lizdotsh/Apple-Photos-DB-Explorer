@@ -28,6 +28,7 @@
   import SmileType from "./lib/agged/SmileType.svelte";
   import NumericScores from "./lib/NumericScores.svelte";
   import SkinToneEstimate from "./lib/agged/SkinToneEstimate.svelte";
+  import HairColorEstimate from "./lib/agged/HairColorEstimate.svelte";
   let person;
   let people = {};
   let activeTab = "Tab1";
@@ -58,6 +59,7 @@
     "camera_model",
     "face_count",
     "gender_estimate",
+    "hair_color_estimate",
     "age_estimate",
     "ethnicity_estimate",
     "skin_tone_estimate",
@@ -101,21 +103,13 @@
       console.log(data);
     }
   });
-  //$: latlong = invoke_req("call-lat-long", {elm_name, start_date, end_date});
-  //   $: world = invoke_req("call-map-json", "world");
-  //   $: us = invoke_req("call-map-json", "us");
   $: console.log(start_date, end_date);
-  // $: start_date = start_date_month ? start_date_month + "-01" : undefined;
-  //$: end_date = end_date_month ? end_date_month + "-01" : undefined;
-  $: date_range_string = genDateSubtitle(start_date, end_date); 
-
-  $: console.log(date_range_string);
   $: console.log([start_date, end_date]);
-  let person_numeric_scores;
-$: api.getCurationScore(person?.person_uuid, start_date, end_date).then(d => {
-    person_numeric_scores = d;
-    console.log(d);
-    });
+//   let person_numeric_scores;
+// $: api.getCurationScore(person?.person_uuid, start_date, end_date).then(d => {
+    // person_numeric_scores = d;
+    // console.log(d);
+    // });
   
 
   //   $: console.log(people[person_id]);
@@ -142,7 +136,7 @@ $: api.getCurationScore(person?.person_uuid, start_date, end_date).then(d => {
 
 {#if activeTab === "Tab1"}
   <!-- {/if} -->
-  <NumericScores {person_numeric_scores} />
+  <!-- <NumericScores {person_numeric_scores} /> -->
   <div id="not-sticky">
     <div class="flex-container">
       <div id="time">
@@ -191,6 +185,7 @@ $: api.getCurationScore(person?.person_uuid, start_date, end_date).then(d => {
       </div>
       <div class="flex-container">
         <SkinToneEstimate {person_group_stats} {start_date} {end_date}/>
+        <HairColorEstimate {person_group_stats} {start_date} {end_date}/>
       </div>
     </div>j
 

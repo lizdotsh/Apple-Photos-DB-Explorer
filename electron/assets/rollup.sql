@@ -70,11 +70,12 @@ winking_estimate,
 glasses_estimate,
 eye_makeup_estimate,
 which_camera,
+hair_color_estimate,
 count(distinct zuuid) as count
 from photo_info
 where full_name != '' and full_name is not null
 group by
-1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19, 20, 21;
+1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19, 20, 21, 22;
 
 create index person_monthly_uuid_index on photo_info_rollup_monthly(person_uuid);
 create index photo_info_monthly_person_uuid_year_month on photo_info_rollup_monthly(year_month);
