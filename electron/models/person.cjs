@@ -97,7 +97,7 @@ exports.getDailyZeroedCountsQuery = function() {
     AVG(seven_day_sum) OVER (
         ORDER BY date
         ROWS BETWEEN 30 PRECEDING AND current row 
-    ) as 'thirty_day_rolling_week',
+    ) as 'thirty_day_rolling_week', 
     AVG(seven_day_sum) OVER (
         ORDER BY date
         ROWS BETWEEN 90 PRECEDING AND current row 

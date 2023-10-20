@@ -13,7 +13,7 @@
   export let start_date_ms;
   export let end_date_ms;
 
-  $: console.log("PERSON", people, person);
+  $: console.log("PEOPLE_PERSON", people, person);
   let person_id;
   // let people = {};
   onMount(async () => {
@@ -25,6 +25,7 @@
     });
   });
   $: person = people[person_id];
+  $: console.log('PERSON_TIME', person_time);
 
   let start_date_month;
   let end_date_month;

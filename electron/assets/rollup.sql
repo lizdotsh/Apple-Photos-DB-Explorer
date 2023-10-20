@@ -180,29 +180,66 @@ select person_uuid, full_name, sum(count) as count,
                 and full_name != 'no_face'
                 group by 1,2 order by count desc;
 
-drop table if exists people_cumsum;
+drop table if exists people_sum;
 
-create table people_cumsum as 
-with counts as (
+create table people_sum as 
     select
     person_uuid,
     full_name,
-    year_month, 
-    sum(count) as count
-    from photo_info_rollup_monthly
-    where person_uuid != 'no_person' 
-    and full_name != 'no_name'
-    and full_name != 'no_face'
+    strftime('%Y-%m', date_created) || '-01' as year_month,
+    count(distinct zuuid) as count
+    from photo_info
+    where person_uuid is not null
+    and full_name != ''
+    and full_name is not null
     group by 1,2,3
-)
+    union all 
+   select
+    "---" as person_uuid,
+    "All Photos" as full_name,
+    strftime('%Y-%m', date_created) || '-01' as year_month, 
+    count(distinct zuuid) as count
+    
+    from photo_info
+    group by 1,2,3 
+order by count desc;
 
-select 
-person_uuid,
-full_name,
-year_month,
-count,
-sum(count) over (partition by person_uuid order by year_month) as cumsum
-from counts
-order by cumsum desc;
 
-create index people_cumsum_uuid_date_index on people_cumsum(person_uuid, year_month);
+create index people_sum_uuid_date_index on people_sum(person_uuid, year_month);
+
+drop table if exists people_sum_daily;
+create table people_sum_daily as 
+    select
+    person_uuid,
+    full_name,
+    strftime('%Y-%m-%d', date_created)  as date,
+    count(distinct zuuid) as count
+    from photo_info
+    where person_uuid is not null
+    and full_name != ''
+    and full_name is not null
+    group by 1,2,3
+    union all 
+   select
+    "---" as person_uuid,
+    "All Photos" as full_name,
+    strftime('%Y-%m-%d', date_created) as date, 
+    count(distinct zuuid) as count
+    from photo_info
+    group by 1,2,3 
+order by count desc;
+
+
+create index people_sum_daily_uuid_date_index on people_sum_daily(person_uuid, date);
+-- drop table if exists total_sum;
+
+-- create table total_sum as 
+--     select
+--     "---" as person_uuid,
+--     "All Photos" as full_name,
+--     strftime('%Y-%m', date_created) || '-01' as year_month, 
+--     count(distinct zuuid) as count
+--     from photo_info
+--     group by 1,2,3
+-- order by count desc;
+-- create index total_sum_uuid_date_index on people_sum(person_uuid, year_month);
