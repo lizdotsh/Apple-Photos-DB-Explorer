@@ -19,5 +19,6 @@ module.exports = {
     // getPersonStatNameAgnostic: photo_info.getPersonStatNameAgnostic,
     // getDailyZeroedCounts: person.getDailyZeroedCounts,
     // getDailyZeroedCountsNameAgnostic: photo_info.getDailyZeroedCountsNameAgnostic,
-    getCurationScore: person.getCurationScore
+    getCurationScore: person.getCurationScore,
+    getNumericScoresTime: person.getNumericScoresTime,
 }

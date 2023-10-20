@@ -38,26 +38,6 @@ exports.getPersonStat = function(person_id, start_date, end_date, stats) {
     
     return result;
 }; 
-// function composeStats(stats) {
-//     return stats.map((stat) => {
-//         return `select person_uuid, full_name, '${stat}' as stat, ${stat} as value, sum(count) as count
-//         from photo_info_rollup_monthly
-//         where year_month >= :start_date
-//         and year_month <= :end_date
-//         and person_uuid = :person_id
-//         group by 1,2,3
-//         order by count desc`;
-// }).join("\nunion all\n");
-// }
-// exports.getPersonStatFast = function(person_id, start_date, end_date, stats) {
-//     const query = `{with count_only as (
-//         ${composeStats(stats)}
-//     )
-//     select
-//     person_uuid,
-//     full_name,
-//     ${stats.join(",")}
-//     `;
 
 exports.getDailyZeroedCountsQuery = function() {
     return `
@@ -107,84 +87,25 @@ exports.getDailyZeroedCountsQuery = function() {
     
 }
 
-function composeScores(scores) {
-    return scores.map((score) => {
-        return `select person_uuid, 
-        '${score.name}' as score,
-        avg(${score.name}) as value
-        from photo_info where person_uuid = :person_id 
-        and date_created >= :start_date and date_created <= :end_date
-        group by person_uuid`;
-}).join("\nunion all\n");
+exports.getNumericScoresTime = function(person_id, start_date, end_date) {
+    query = `
+    with total as (select sum(count) as tot
+    from numeric_scores_monthly
+    where person_uuid = :person_id
+    and year_month >= :start_date
+    and year_month <= :end_date
+    )
+    select 
+    ${numeric_scores_as_arr_of_objects.map(score => `sum(${score.alias}) / total.tot as ${score.alias}`).join(",\n")}
+    from numeric_scores_monthly n 
+    left join total on 1 = 1
+    where person_uuid = :person_id
+    and year_month >= :start_date
+    and year_month <= :end_date
+    group by person_uuid
+    `;
+    return txGetOne(query, {person_id, start_date, end_date});
 }
-
-function composeScoresOneQuery(scores) {
-    return `select 
-    person_uuid,
-    ${scores.map(score => `avg(${score.name}) as ${score.alias}`).join(",\n")}
-    from photo_info where person_uuid = :person_id
-    and date_created >= :start_date and date_created <= :end_date
-    group by person_uuid`;
-
-}
-exports.getCurationScore = function(person_id, start_date, end_date) {
-    const query_old = `select
-    person_uuid,
-    avg(curation_score) as curation_score
-    from photo_info where person_uuid = :person_id
-    and date_created >= :start_date and date_created <= :end_date
-    group by person_uuid`;
-  //  const query = composeScores(numeric_scores_as_arr_of_objects)
-  const query = composeScoresOneQuery(numeric_scores_as_arr_of_objects);
-    console.log(query);
-    dict = {};
-    res = txGetOne(query, {person_id, start_date, end_date});
-   // res.forEach((row) => {
-    //    dict[row.score] = row.value;
-//        return;
-  //  });
-    return res;
-}
-// exports.getNumericPersonStats = function(person_id, start_date, end_date) {
-//     const query = `
-//     select
-   
-//   `
-// }
-
-// const numeric_scores =  {
-//     "curation_score": "curation_score",
-//     "zm_activity_score": "activity_score",
-//     "zm_video_score": "video_score",
-//     "zm_audio_score": "audio_score",
-//     "zm_wallpaper_score": "wallpaper_score",
-//     "zm_autoplay_suggestion_score": "autoplay_suggestion_score",
-//     "zm_blurriness_score": "blurriness_score",
-//     "zm_exposure_score": "exposure_score",
-//     "zc_behavioral_score": "behavioral_score",
-//     "zc_failure_score": "failure_score",
-//     "zc_harmonious_color_score": "harmonious_color_score",
-//     "zc_immersiveness_score": "immersiveness_score",
-//     "zc_interaction_score": "interaction_score",
-//     "zc_interesting_subject_score": "interesting_subject_score",
-//     "zc_intrusive_object_presence_score": "intrusive_object_presence_score",
-//     "zc_lively_color_score": "lively_color_score",
-//     "zc_low_light": "low_light",
-//     "zc_noise_score": "noise_score",
-//     "zc_pleasant_camera_tilt_score": "pleasant_camera_tilt_score",
-//     "zc_pleasant_composition_score": "pleasant_composition_score",
-//     "zc_pleasant_lighting_score": "pleasant_lighting_score",
-//     "zc_pleasant_pattern_score": "pleasant_pattern_score",
-//     "zc_pleasant_perspective_score": "pleasant_perspective_score",
-//     "zc_pleasant_post_processing_score": "pleasant_post_processing_score",
-//     "zc_pleasant_reflection_score": "pleasant_reflection_score",
-//     "zc_pleasant_symmetry_score": "pleasant_symmetry_score",
-//     "zc_sharply_focused_subject_score": "sharply_focused_subject_score",
-//     "zc_tastefully_blurred_score": "tastefully_blurred_score",
-//     "zc_well_chosen_subject_score": "well_chosen_subject_score",
-//     "zc_well_framed_subject_score": "well_framed_subject_score",
-//     "zc_well_timed_shot_score": "well_timed_shot_score"
-// };
 
 const numeric_scores_as_arr_of_objects = [
     {name: "curation_score", alias: "curation_score"},
