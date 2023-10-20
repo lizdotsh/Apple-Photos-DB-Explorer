@@ -42,8 +42,9 @@
   let people_time;
   let start_date_ms;
   let end_date_ms;
-  let start_date_daily
-    let end_date_daily
+  let start_date_daily;
+  let end_date_daily;
+  let ignore_name;
 
   $: api.getPeopleTime(start_date, end_date).then((data) => {
     people_time = aq.from(data);
@@ -105,12 +106,11 @@
   });
   $: console.log(start_date, end_date);
   $: console.log([start_date, end_date]);
-//   let person_numeric_scores;
-// $: api.getCurationScore(person?.person_uuid, start_date, end_date).then(d => {
-    // person_numeric_scores = d;
-    // console.log(d);
-    // });
-  
+  //   let person_numeric_scores;
+  // $: api.getCurationScore(person?.person_uuid, start_date, end_date).then(d => {
+  // person_numeric_scores = d;
+  // console.log(d);
+  // });
 
   //   $: console.log(people[person_id]);
 </script>
@@ -118,6 +118,7 @@
 <StatusBar
   bind:people
   bind:person
+  bind:ignore_name
   {person_time}
   bind:start_date
   bind:end_date
@@ -153,10 +154,12 @@
       </div>
     </div>
     <div class="flex-container">
-        
-      <div id="photo-hist" style="max-width: 100%; vertical-align: top; margin-bottom: 75px">
+      <div
+        id="photo-hist"
+        style="max-width: 100%; vertical-align: top; margin-bottom: 75px"
+      >
         <!-- <h2><br><br><br></h2> -->
-        <PhotosDayHistogram {daily_with_rolling} {start_date} {end_date}  />
+        <PhotosDayHistogram {daily_with_rolling} {start_date} {end_date} />
       </div>
       <div id="SortedPhotosBar" style="max-width: 100%;">
         <!-- make component smaller -->
@@ -167,28 +170,33 @@
     <div class="agg-stats-grouping">
       <!-- {#if person_group_stats?.length > 0} -->
       <div class="flex-container">
-        <GenderEstimate {person_group_stats} {start_date} {end_date}/>
-        <SmileType {person_group_stats} {start_date} {end_date}/>
+        <GenderEstimate {person_group_stats} {start_date} {end_date} />
+        <SmileType {person_group_stats} {start_date} {end_date} />
       </div>
       <div class="flex-container">
-        <GlassesEstimate {person_group_stats} {start_date} {end_date}/>
-        <WhichCamera {person_group_stats} {start_date} {end_date}/>
+        <GlassesEstimate {person_group_stats} {start_date} {end_date} />
+        <WhichCamera {person_group_stats} {start_date} {end_date} />
       </div>
       <div class="flex-container">
-        <AgeEstimate {person_group_stats} {start_date} {end_date}/>
+        <AgeEstimate {person_group_stats} {start_date} {end_date} />
 
-        <EthnicEstimate {person_group_stats}{start_date} {end_date} />
+        <EthnicEstimate {person_group_stats} {start_date} {end_date} />
       </div>
       <div class="flex-container">
-          <FacialExpressionEstimate {person_group_stats} {start_date} {end_date} />
+        <FacialExpressionEstimate
+          {person_group_stats}
+          {start_date}
+          {end_date}
+        />
 
-        <FacialHairEstimate {person_group_stats} {start_date} {end_date}/>
+        <FacialHairEstimate {person_group_stats} {start_date} {end_date} />
       </div>
       <div class="flex-container">
-        <SkinToneEstimate {person_group_stats} {start_date} {end_date}/>
-        <HairColorEstimate {person_group_stats} {start_date} {end_date}/>
+        <SkinToneEstimate {person_group_stats} {start_date} {end_date} />
+        <HairColorEstimate {person_group_stats} {start_date} {end_date} />
       </div>
-    </div>j
+    </div>
+    j
 
     <!-- <PhotosDayHistogram {daily_with_rolling} /> -->
   </div>
@@ -203,4 +211,3 @@
 <br /><br /><br /><br />
 <br /><br /><br /><br />
 <br /><br /><br /><br />
-

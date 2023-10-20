@@ -4,6 +4,7 @@
   import { onMount } from "svelte";
   export let people;
   export let person;
+  export let ignore_name;
   export let person_time;
   export let start_date;
   export let activeTab;
@@ -70,6 +71,10 @@
             <option value={pid}>{people[pid]["full_name"]}</option>
           {/each}
         </select>
+      </div>
+      <div id="ignore_name_checkbox">
+      
+        <label for="ignore_name"><input type="checkbox" bind:checked={ignore_name} /> Ignore Name Selection (Metrics reflect all photos in library)</label>
       </div>
       <!-- {person?.count ?? "N/A"} Photos of {elm_name} -->
     </div>
