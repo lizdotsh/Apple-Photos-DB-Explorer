@@ -21,7 +21,6 @@ exports.getDailyZeroedCounts = (person_id) => {
   return txGetAll(queryBuilder(), { person_id });
 };
 exports.getPeople = () => {
-  console.log(photo_info.getTotal());
   return arr_reduce(
     [photo_info.getTotal(), ...people.getPeople()],
     "person_uuid"

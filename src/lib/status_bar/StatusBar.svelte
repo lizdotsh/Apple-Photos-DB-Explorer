@@ -55,6 +55,10 @@
             class:active-tab={activeTab === "Tab2"}
             on:click={() => setActive("Tab2")}>Photo Heatmap</button
           >
+          <button
+            class:active-tab={activeTab === "Tab3"}
+            on:click={() => setActive("Tab3")}>Numeric Scores</button
+          >
         </div>
       </div>
     </div>

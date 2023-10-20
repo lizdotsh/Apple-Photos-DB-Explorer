@@ -135,7 +135,7 @@
 
 {#if activeTab === "Tab1"}
   <!-- {/if} -->
-  <NumericScores {person_numeric_scores} />
+  
   <div id="not-sticky">
     <div class="flex-container">
       <div id="time">
@@ -202,6 +202,8 @@
   <div class="flex-container">
     <SelfieHeatmap {daily_with_rolling} {start_date} {end_date} />
   </div>
+{:else if activeTab === "Tab3"}
+<NumericScores {person_numeric_scores} />
 {/if}
 
 <br /><br /><br /><br />
