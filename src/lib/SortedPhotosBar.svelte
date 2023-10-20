@@ -13,7 +13,6 @@
     }
   }
 
-  $: console.log(people_time);
 </script>
 
 {#if people_time}

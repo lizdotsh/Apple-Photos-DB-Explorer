@@ -86,16 +86,13 @@
     }
   });
   $: console.log(start_date, end_date);
-  $: console.log([start_date, end_date]);
   let person_numeric_scores;
   $: api
     .getNumericScoresTime(person?.person_uuid, start_date, end_date)
     .then((d) => {
       person_numeric_scores = d;
-      console.log(d);
     });
 
-  //   $: console.log(people[person_id]);
 </script>
 
 <StatusBar

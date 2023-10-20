@@ -19,8 +19,8 @@ exports.getPersonStat = function(person_id, start_date, end_date, stats) {
             from photo_info_rollup_monthly
             where year_month >= :start_date
             and year_month <= :end_date
+            and person_uuid = :person_id
             group by 1,2,3 
-            having person_uuid = :person_id
             )
             -- unsure about how sqlite will handle this under the hood, breaking it up into two queries.
             select 
