@@ -290,6 +290,7 @@ ON people_sum_daily(person_uuid, DATE);
 DROP TABLE IF EXISTS numeric_scores_monthly;
 
 CREATE TABLE numeric_scores_monthly AS
+with unweighted as (
 SELECT
     person_uuid,
     strftime('%Y-%m', date_created) || '-01' AS YEAR_MONTH,
@@ -369,7 +370,45 @@ SELECT
     AVG(zc_well_timed_shot_score) AS well_timed_shot_score
 FROM photo_info
 GROUP BY 1, 2
-order by year_month;
+order by year_month)
+
+select 
+person_uuid, 
+year_month,
+count,
+curation_score * count as curation_score,
+activity_score * count as activity_score,
+video_score * count as video_score,
+audio_score * count as audio_score,
+wallpaper_score * count as wallpaper_score,
+autoplay_suggestion_score * count as autoplay_suggestion_score,
+blurriness_score * count as blurriness_score,
+exposure_score * count as exposure_score,
+behavioral_score * count as behavioral_score,
+failure_score * count as failure_score,
+harmonious_color_score * count as harmonious_color_score,
+immersiveness_score * count as immersiveness_score,
+interaction_score * count as interaction_score,
+interesting_subject_score * count as interesting_subject_score,
+intrusive_object_presence_score * count as intrusive_object_presence_score,
+lively_color_score * count as lively_color_score,
+low_light * count as low_light,
+noise_score * count as noise_score,
+pleasant_camera_tilt_score * count as pleasant_camera_tilt_score,
+pleasant_composition_score * count as pleasant_composition_score,
+pleasant_lighting_score * count as pleasant_lighting_score,
+pleasant_pattern_score * count as pleasant_pattern_score,
+pleasant_perspective_score * count as pleasant_perspective_score,
+pleasant_post_processing_score * count as pleasant_post_processing_score,
+pleasant_reflection_score * count as pleasant_reflection_score,
+pleasant_symmetry_score * count as pleasant_symmetry_score,
+sharply_focused_subject_score * count as sharply_focused_subject_score,
+tastefully_blurred_score * count as tastefully_blurred_score,
+well_chosen_subject_score * count as well_chosen_subject_score,
+well_framed_subject_score * count as well_framed_subject_score,
+well_timed_shot_score * count as well_timed_shot_score
+from unweighted;
+
 
 CREATE INDEX numeric_scores_monthly_uuid_date_index
 ON numeric_scores_monthly(person_uuid, YEAR_MONTH);
