@@ -275,6 +275,8 @@ ORDER BY COUNT DESC;
 
 CREATE INDEX people_sum_daily_uuid_date_index
 ON people_sum_daily(person_uuid, DATE);
+CREATE INDEX people_sum_daily_uuid_index
+ON people_sum_daily(person_uuid);
 
 -- drop table if exists total_sum;
 -- create table total_sum as 

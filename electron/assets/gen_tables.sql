@@ -347,8 +347,23 @@ LEFT JOIN ZCOMPUTEDASSETATTRIBUTES zCompAssetAttr
     ON zCompAssetAttr.Z_PK = zAsset.ZCOMPUTEDATTRIBUTES
 LEFT JOIN ZMEDIAANALYSISASSETATTRIBUTES zMedAnlyAstAttr
     ON zAsset.ZMEDIAANALYSISATTRIBUTES = zMedAnlyAstAttr.Z_PK
-    where date_created > ( -- inefficient but it works
-        select min(year) || '01-01' from (select strftime('%Y', DATETIME(ZDATECREATED + 978307200, 'UNIXEPOCH')) as year, count(distinct zuuid) as cnt from zasset group by 1) where cnt > 5
+WHERE
+    date_created > (
+        -- inefficient but it works
+        SELECT
+            MIN(year) || '01-01'
+        FROM (
+                SELECT
+                    strftime(
+                        '%Y',
+                        DATETIME(ZDATECREATED + 978307200, 'UNIXEPOCH')
+                    ) AS year,
+                    COUNT(DISTINCT zuuid) AS cnt
+                FROM zasset
+                GROUP BY 1
+            )
+        WHERE
+            cnt > 5
     );
 
 CREATE INDEX photo_info_idx_zuuid
@@ -357,4 +372,9 @@ ON photo_info (zuuid);
 CREATE INDEX photo_info_person_uuid
 ON photo_info(person_uuid);
 
+CREATE INDEX photo_info_date_created
+ON photo_info(date_created);
+
+CREATE INDEX photo_info_date_created_uuid
+ON photo_info(date_created, person_uuid);
 -- OLAP cube esque thing
