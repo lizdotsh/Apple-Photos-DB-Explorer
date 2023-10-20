@@ -151,7 +151,13 @@ exports.getCurationScore = function(person_id, start_date, end_date) {
    
 //   `
 // }
+exports.getNumericScoresTime = function(person_id, start_date, end_date) {
+    query = `select
+    person_uuid,
+    year_month,
+    ${numeric_scores_as_arr_of_objects.map(score => `avg(${score.alais}) * count as ${score.alias}`).join(",\n")}
 
+}
 // const numeric_scores =  {
 //     "curation_score": "curation_score",
 //     "zm_activity_score": "activity_score",
