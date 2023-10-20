@@ -4,7 +4,7 @@
   export let person_group_stats;
   export let start_date;
   export let end_date;
-  import { styleTitle, genDateSubtitle } from "../utils.js";  
+  import { styleTitle, genDateSubtitle } from "../utils.js";
   const ethnic = [
     "Black",
     "Asian",
@@ -20,40 +20,21 @@
     if (!stats) {
       return null;
     }
-    // console.log(stats);
     const ethnic_estimate_stats = stats.map((d) => d.ethnicity_estimate);
-    // console.log(ethnic_estimate_stats);
     eachEthnicityZero.forEach((e) => {
       if (!ethnic_estimate_stats.includes(e.ethnicity_estimate)) {
         stats.push(e);
       }
-      
     });
     return stats;
   }
   let filt;
   $: {
-    if (person_group_stats){
-    filt = fixthisshit(person_group_stats?.ethnicity_estimate);
+    if (person_group_stats) {
+      filt = fixthisshit(person_group_stats?.ethnicity_estimate);
     }
-   } //?.concat(eachEthnicityZero)
-//   $: console.log(filt);
-  //   $: person_group_stats.then((data) => {
-  //     // console.log(data);
-  //     filt  = aq
-  //       .from(eachEthnicityZero.concat(data))
-  //       .groupby("ethnicity_estimate")
-  //       .rollup({ cnt: (d) => aq.op.sum(d.count) })
-  //       .orderby("cnt")
-  //       .ungroup()
-  //       .derive({ pct: (d) => d.cnt / aq.op.sum(d.cnt) });
+  } 
 
-  // face_expression_estimate
-
-  //   console.log(df);
-  //   }).catch((e) => {
-  //         console.log(e);
-  //       });
 </script>
 
 {#if filt}

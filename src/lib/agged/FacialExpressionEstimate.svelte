@@ -4,29 +4,14 @@
   export let person_group_stats;
   export let start_date;
   export let end_date;
-  import { styleTitle, genDateSubtitle } from "../utils.js";//   let filt;
-//   $: person_group_stats.then((data) => {
-//     filt = aq
-//       .from(data)
-//       .groupby(`face_expression_estimate`)
-//       .rollup({ cnt: (d) => aq.op.sum(d.count) })
-//       .orderby("cnt")
-//       .ungroup()
-//       .derive({ pct: (d) => d.cnt / aq.op.sum(d.cnt) });
-
-    // face_expression_estimate
-
-    //   console.log(df);
-//   }).catch((e) => {
-//         console.log(e);
-//       });
+  import { styleTitle, genDateSubtitle } from "../utils.js"; //   let filt;
 </script>
 
 {#if person_group_stats}
   <PlotRender
     options={{
       x: { label: "Percent of selected photos", line: true, percent: false },
-      title: styleTitle('Facial Expression'),
+      title: styleTitle("Facial Expression"),
       subtitle: genDateSubtitle(start_date, end_date),
       height: 250,
       color: {
@@ -56,7 +41,7 @@
       },
       marginLeft: 120,
       marks: [
-        Plot.barX(person_group_stats['face_expression_estimate'], {
+        Plot.barX(person_group_stats["face_expression_estimate"], {
           x: "pct",
           y: "face_expression_estimate",
           marginRight: 40,
@@ -75,10 +60,10 @@
           label: true,
           sort: { y: "x", reverse: true },
         }),
-        Plot.text(person_group_stats['face_expression_estimate'], {
+        Plot.text(person_group_stats["face_expression_estimate"], {
           x: "pct",
           y: "face_expression_estimate",
-          text: (d) => `${(d.pct ).toFixed(0)}%`,
+          text: (d) => `${d.pct.toFixed(0)}%`,
           fill: "black",
           dx: 15,
           //    font: "bold 12px var(--sans-serif)",

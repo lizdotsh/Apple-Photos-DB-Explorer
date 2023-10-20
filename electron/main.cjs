@@ -11,18 +11,8 @@ const TopoJSON = require("topojson-client");
 const exportFns = require('./api.cjs');
 const  permissions  = require("electron-mac-permissions");
 const gentables_sql_path = path.join(__dirname, "assets");
-//const gentables_sql_path_16 = path.join(__dirname, "assets", "gen_tables_16.sql");
 
-// cjs versions below
-// import { log } from "console";
-// import { app, BrowserWindow, ipcMain, dialog } from "electron";
-// import path from "path";
-// import fs from "fs/promises";
-// import EventEmitter from "events";
-// import aq from "arquero";
-// import sqlite3 from "sqlite3/verbose";
-// import TopoJSON from "topojson-client";
-// import exportFns from "./api.cjs";
+
 
 
 ipcMain.handle('CALL_EXPOSED_MAIN_FN', (event, { methodName, args }) => 

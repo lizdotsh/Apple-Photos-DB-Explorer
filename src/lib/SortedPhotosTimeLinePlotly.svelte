@@ -38,13 +38,10 @@
     ];
   }
 
-
-
   let date_range = [start_date_ms, end_date_ms];
   function handleRelayout(eventData) {
     date_range = eventData["xaxis.range"]?.map((d) => new Date(d)); //, eventData["xaxis.range[1]"]];
   }
-  // $: console.log(date_range)
   onMount(() => {
     const layout = {
       title: "Number of Photos Detected per Week",
@@ -52,11 +49,7 @@
       width: 1500,
       height: 500,
       xaxis: {
-        // autorange: true,
         range: [start_date_ms, end_date_ms],
-
-    
-        // rangeslider: {},
         type: "date",
       },
       yaxis: { autorange: true, type: "linear" },
@@ -81,9 +74,4 @@
   }
 </script>
 
-<div id="sortedPlotly">
-
-</div> 
-<!-- //   <Plot {data} {layout} {config}/> -->
-
-
+<div id="sortedPlotly" />

@@ -69,7 +69,6 @@
       marks: [
         Plot.rectY(
           filtered,
-          //table.params({start_date, end_date}).filter((d, $) =>  d.date >= $.start_date && d.date <= $.end_date)
           Plot.binX(
             { y: "count" },
             {
@@ -81,8 +80,6 @@
             }
           )
         ),
-        //   Plot.ruleY([0]),
-        // add average x value
         Plot.ruleX(
           filtered,
           Plot.groupZ(

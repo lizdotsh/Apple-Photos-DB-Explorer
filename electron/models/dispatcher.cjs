@@ -2,6 +2,8 @@ const person = require("./person.cjs");
 const photo_info = require("./photo_info.cjs");
 const people = require("./people.cjs");
 const { txGetAll, arr_reduce } = require("./db_utils.cjs");
+
+
 exports.getPersonStat = (person_id, start_date, end_date, stats) => {
   if (person_id === "---") {
     return photo_info.getPersonStatNameAgnostic(start_date, end_date, stats);
@@ -26,4 +28,3 @@ exports.getPeople = () => {
     "person_uuid"
   );
 };
-

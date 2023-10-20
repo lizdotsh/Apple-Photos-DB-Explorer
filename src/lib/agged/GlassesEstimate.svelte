@@ -20,7 +20,6 @@
         legend: true,
         type: "categorical",
         domain: dm,
-        // range: ["#5778a4", "#6a9f58", "#f1a2a9"],
       },
       tip: {
         format: {

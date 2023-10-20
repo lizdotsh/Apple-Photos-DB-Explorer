@@ -1,34 +1,50 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="UTF-8" />
-  
-  <link rel="stylesheet" type="text/css" href="styles.css">
-  <title>Apple Photos Examiner</title>
+  <head>
+    <meta charset="UTF-8" />
 
-</head>
-<body>
-  <h1 >Apple Photos Examiner</h1>
-  <p>What does apple photos think about you? Attach your apple photos library to see more.</p>
+    <link rel="stylesheet" type="text/css" href="styles.css" />
+    <title>Apple Photos Examiner</title>
+  </head>
+  <body>
+    <h1>Apple Photos Examiner</h1>
+    <p>
+      What does apple photos think about you? Attach your apple photos library
+      to see more.
+    </p>
 
-  <p>Photo Library has been automatically selected for you if available. To pick a specific library, click "Select Library".</p>
+    <p>
+      Photo Library has been automatically selected for you if available. To
+      pick a specific library, click "Select Library".
+    </p>
 
-    <p> <b>NOTE:</b> this program will not work unless you have <em>named</em> faces in your apple photos library.</p>
+    <p>
+      <b>NOTE:</b> this program will not work unless you have
+      <em>named</em> faces in your apple photos library.
+    </p>
 
-    <p> To check this, go to Photos -> People and Pets and make sure you name <b>all</b> the faces you want to get stats about. If you have any issues, DM me!</p>
+    <p>
+      To check this, go to Photos -> People and Pets and make sure you name
+      <b>all</b> the faces you want to get stats about. If you have any issues,
+      DM me!
+    </p>
 
-    <p><b>NOTE:</b> I have had some weird issues im currently debugging where sometimes it will bug out the report will not fully load the db. If this happens, a simply restart of the app fixes it. Hopefully should be fixed soon.</p>
-  <div id="container">
-    <div id="directorySection">
-      <input type="text" id="dirPath">
-      <button id="selectDirBtn">Select Directory</button>
+    <p>
+      <b>NOTE:</b> I have had some weird issues im currently debugging where
+      sometimes it will bug out the report will not fully load the db. If this
+      happens, a simply restart of the app fixes it. Hopefully should be fixed
+      soon.
+    </p>
+    <div id="container">
+      <div id="directorySection">
+        <input type="text" id="dirPath" />
+        <button id="selectDirBtn">Select Directory</button>
+      </div>
+      <button id="generateReportBtn">Generate Report</button>
     </div>
-    <button id="generateReportBtn">Generate Report</button>
-  </div>
-  
 
-  <h2>Console Log:</h2>
-  <pre id="db-load-log"></pre>
-  <script src="./renderer.js"></script>
-</body>
+    <h2>Console Log:</h2>
+    <pre id="db-load-log"></pre>
+    <script src="./renderer.js"></script>
+  </body>
 </html>

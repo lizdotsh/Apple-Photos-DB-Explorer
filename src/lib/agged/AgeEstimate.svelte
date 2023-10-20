@@ -5,13 +5,13 @@
   export let start_date;
   export let end_date;
   import { styleTitle, genDateSubtitle } from "../utils.js";
-      const ages = [
-      "Infant/Toddler",
-      "Toddler/Child",
-      "Child/Young Adult",
-      "Adult",
-      "unknown",
-    ];
+  const ages = [
+    "Infant/Toddler",
+    "Toddler/Child",
+    "Child/Young Adult",
+    "Adult",
+    "unknown",
+  ];
 </script>
 
 {#if person_group_stats}
@@ -29,7 +29,7 @@
       },
       marginLeft: 120,
       marks: [
-        Plot.barX(person_group_stats['age_estimate'], {
+        Plot.barX(person_group_stats["age_estimate"], {
           x: "pct",
           y: "age_estimate",
           fill: "age_estimate",
@@ -47,11 +47,11 @@
           label: true,
           sort: { y: "x", reverse: false },
         }),
-        Plot.text(person_group_stats['age_estimate'], {
+        Plot.text(person_group_stats["age_estimate"], {
           x: "pct",
           y: "age_estimate",
           dx: 15,
-          text: (d) => `${(d.pct).toFixed(0)}%`,
+          text: (d) => `${d.pct.toFixed(0)}%`,
           //    dy: -5,
           fill: "black",
           align: "left",
@@ -63,10 +63,9 @@
   <p>Waiting for data...</p>
 {/if}
 
-   
 <style>
-    h2 {
-        margin-bottom: 0.5rem;
-        padding-bottom: 0.5rem;
-    }
+  h2 {
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
 </style>
