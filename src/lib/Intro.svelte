@@ -30,6 +30,7 @@
     </div>
    
         </div>
+
     <div class='instructions-div'> 
         <h3>Instructions:</h3>
         <p>1. Select a name from the dropdown menu above.</p>
@@ -52,6 +53,7 @@
         display: inline-block;
         /* border-bottom: 1px dotted black; */
         font-size: 12px;
+
     }
 
     .tooltip:hover::before {
@@ -87,4 +89,5 @@
         max-width: 40%;
         margin-left: 20px;
     }
+
 </style>
