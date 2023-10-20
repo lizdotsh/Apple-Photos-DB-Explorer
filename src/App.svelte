@@ -6,40 +6,29 @@
   import * as aq from "arquero";
   import * as d3 from "d3";
   import SortedPhotosBar from "./lib/SortedPhotosBar.svelte";
-  import SortedPhotosTimeLine from "./lib/SortedPhotosTimeLine.svelte";
   import SortedPhotosTimeLinePlotly from "./lib/SortedPhotosTimeLinePlotly.svelte";
   import GenderEstimate from "./lib/agged/GenderEstimate.svelte";
   import PhotosDayHistogram from "./lib/PhotosDayHistogram.svelte";
-  import WorldProjection from "./lib/WorldProjection.svelte";
-  import DoubleDateSlider from "./lib/status_bar/DoubleDateSlider.svelte";
   import FacialHairEstimate from "./lib/agged/FacialHairEstimate.svelte";
   import FacialExpressionEstimate from "./lib/agged/FacialExpressionEstimate.svelte";
   import EthnicEstimate from "./lib/agged/EthnicEstimate.svelte";
   import AgeEstimate from "./lib/agged/AgeEstimate.svelte";
-  import { html } from "htl";
   import { api } from "./ipc.js";
-  import { onMount } from "svelte";
   import StatusBar from "./lib/status_bar/StatusBar.svelte";
   import WhichCamera from "./lib/agged/WhichCamera.svelte";
   import GlassesEstimate from "./lib/agged/GlassesEstimate.svelte";
   import SelfieHeatmap from "./lib/SelfieHeatmap.svelte";
-  import { genDateSubtitle } from "./lib/utils";
-  import MaskEstimate from "./lib/agged/MaskEstimate.svelte";
   import SmileType from "./lib/agged/SmileType.svelte";
   import NumericScores from "./lib/NumericScores.svelte";
   import SkinToneEstimate from "./lib/agged/SkinToneEstimate.svelte";
   import HairColorEstimate from "./lib/agged/HairColorEstimate.svelte";
   import Intro from "./lib/Intro.svelte";
   let person;
+  let person_time;
   let people = {};
   let activeTab = "Tab1";
   let start_date = person?.start_date;
   let end_date = person?.end_date;
-
-  // function setActive(tabName) {
-  //   activeTab = tabName;
-  // }
-  let person_time;
   let people_time;
   let start_date_ms;
   let end_date_ms;
@@ -86,14 +75,6 @@
   $: console.log("group", person_group_stats);
   let date_range_string;
   const today = new Date();
-  // let peopletest;
-  // $: peopletest = window.db.getPeople();
-  // $: console.log(peopletest);
-  // Send SQL query to main process
-
-  let latlong;
-  let world;
-  let us;
   let daily_with_rolling;
   $: api.getDailyZeroedCounts(person?.person_uuid).then((data) => {
     if (data) {
@@ -106,11 +87,13 @@
   });
   $: console.log(start_date, end_date);
   $: console.log([start_date, end_date]);
-    let person_numeric_scores;
-  $: api.getNumericScoresTime(person?.person_uuid, start_date, end_date).then(d => {
-  person_numeric_scores = d;
-  console.log(d);
-  });
+  let person_numeric_scores;
+  $: api
+    .getNumericScoresTime(person?.person_uuid, start_date, end_date)
+    .then((d) => {
+      person_numeric_scores = d;
+      console.log(d);
+    });
 
   //   $: console.log(people[person_id]);
 </script>
@@ -135,11 +118,10 @@
 </div> -->
 
 {#if activeTab === "Tab1"}
-    {#if person}
+  {#if person}
     <Intro {people} {person} />
-    {/if}
-  <!-- {/if} -->
-  
+  {/if}
+
   <div id="not-sticky">
     <div class="flex-container">
       <div id="time">
@@ -207,7 +189,7 @@
     <SelfieHeatmap {daily_with_rolling} {start_date} {end_date} />
   </div>
 {:else if activeTab === "Tab3"}
-<NumericScores {person_numeric_scores} />
+  <NumericScores {person_numeric_scores} />
 {/if}
 
 <br /><br /><br /><br />

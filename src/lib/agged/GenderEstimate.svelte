@@ -5,23 +5,7 @@
   export let start_date;
   export let end_date;
   import { styleTitle, genDateSubtitle } from "../utils.js";
-  // let gender;
-  // $: person_group_stats.then((data) => {
 
-  //   gender = aq.from(data)
-  //     .groupby("gender_estimate")
-  //     .rollup({ cnt: (d) => aq.op.sum(d.count) })
-  //     .orderby("cnt")
-  //     .ungroup()
-  //     .derive({ pct: (d) => d.cnt / aq.op.sum(d.cnt) })
-  //     .orderby()
-
-  // face_expression_estimate
-
-  //   console.log(df);
-  // }).catch((e) => {
-  //     console.log(e);
-  //   });
 </script>
 
 {#if person_group_stats}

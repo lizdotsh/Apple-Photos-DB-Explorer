@@ -5,24 +5,6 @@
   export let start_date;
   export let end_date;
   import { styleTitle, genDateSubtitle } from "../utils.js";
-  // import * as aq from "arquero";
-  // let filt;
-  // $: person_group_stats.then((data) => {
-
-  //   filt = aq
-  //     .from(data)
-  //     .groupby("facial_hair_estimate")
-  //     .rollup({ cnt: (d) => aq.op.sum(d.count) })
-  //     .orderby("cnt")
-  //     .ungroup()
-  //     .derive({ pct: (d) => d.cnt / aq.op.sum(d.cnt) });
-
-  //   // face_expression_estimate
-
-  //   //   console.log(df);
-  // }).catch((e) => {
-  //     console.log(e);
-  //   });
 </script>
 
 {#if person_group_stats}

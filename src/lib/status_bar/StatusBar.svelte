@@ -75,15 +75,16 @@
           {/each}
         </select>
       </div>
-      
+
       <div>
         {#if person_id === "---"}
-    <span style="color: red;">Warning: </span>No face selected, showing stats for all photos combined.
-    {:else}
-    <br><br>
-    {/if}
+          <span style="color: red;">Warning: </span>No face selected, showing
+          stats for all photos combined.
+        {:else}
+          <br /><br />
+        {/if}
       </div>
-      
+
       <!-- {person?.count ?? "N/A"} Photos of {elm_name} -->
     </div>
     <div id="date-selector-slider">
@@ -97,10 +98,8 @@
           bind:end_date_ms
           bind:start_date_daily
           bind:end_date_daily
-
         />
       {/if}
-
     </div>
   </div>
 </div>

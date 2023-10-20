@@ -27,16 +27,11 @@
   $: num = filt?.rollup({ sum: (d) => aq.op.sum(d.front_camera_count) });
 
   $: dm = getYearsBetweenDates(start_date, end_date);
-  //   $: quantile95 = filt
-  //   ?.params({selfieSelector})
-  //   ?.rollup({ percentile95: (d, $)=> aq.topn(d[$.selfieSelector], 0.999) })
-  //   .get('percentile95');
-  //   $: console.log(quantile95)
   $: console.log(num);
   $: heat_title =
     selfieSelector === "front_camera_count"
       ? "Selfie Heatmap"
-      : "Front Camera Heatmap";
+      : "All Photos Heatmap";
 </script>
 
 <!--button to toggle between selfie mode and everything-->
@@ -44,25 +39,26 @@
 <div class="flex-container-col">
   <div class="radio-container">
     <label for="only-selfies">
-    <input
-      type="radio"
-      id="only-selfies"
-      name="is-selfie"
-      value="front_camera_count"
-      checked
-      bind:group={selfieSelector}
-    />
-    Selfies Only
+      <input
+        type="radio"
+        id="only-selfies"
+        name="is-selfie"
+        value="front_camera_count"
+        checked
+        bind:group={selfieSelector}
+      />
+      Selfies Only
     </label>
     <label for="all-photos">
-    <input
-      type="radio"
-      id="All-Photos"
-      name="is-selfie"
-      value="count"
-      bind:group={selfieSelector}
-    />
-All Photos</label>
+      <input
+        type="radio"
+        id="All-Photos"
+        name="is-selfie"
+        value="count"
+        bind:group={selfieSelector}
+      />
+      All Photos</label
+    >
   </div>
   {#if filt}
     <PlotRender
@@ -84,12 +80,9 @@ All Photos</label>
         color: {
           scheme: "PiYG",
           legend: false,
-          //   type: "diverging-symlog",
-          // domain: [0, 100]
         },
         marks: [
           Plot.cell(filt, {
-            // x: (d) => d3.utcWeek.count(d3.utcYear(d.parsed_date), d.parsed_date),
             x: "week",
             y: "dayofweek",
             fy: "year",
@@ -97,12 +90,8 @@ All Photos</label>
               "Photo Count": (d) => d[selfieSelector],
               Date: (d) => d.date,
             },
-            // y: (d) => d.parsed_date.getUTCDay(),
-            // fy: (d) => d.parsed_date.getUTCFullYear(),
             fill: (d) =>
-              d[selfieSelector] === 0 ? 0 : Math.log(d[selfieSelector]), //(d, i) => i > 0 ? (d.Close - dji[i - 1].Close) / dji[i - 1].Close : NaN,
-            //fill: d => d[selfieSelector],
-            // title: (d, i) => i > 0 ? ((d.Close - dji[i - 1].Close) / dji[i - 1].Close * 100).toFixed(1) : NaN,
+              d[selfieSelector] === 0 ? 0 : Math.log(d[selfieSelector]),
             inset: 0.5,
             tip: {
               format: {
@@ -131,10 +120,9 @@ All Photos</label>
     /* padding-left: 50px; */
     padding: 20px;
     align-items: center;
-
   }
-  
+
   .radio-container label {
-  margin-top: 3px; /* adjust this value as needed */
-}
+    margin-top: 3px; /* adjust this value as needed */
+  }
 </style>

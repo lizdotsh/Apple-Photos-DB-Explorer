@@ -232,15 +232,18 @@
         />
         <span style="font-size: 14px;">Cumulative Mode</span>
       </div>
-      <div id = "quickButtons">
+      <div id="quickButtons">
         {#each [1, 3, 6, 12, 24, 60, 120] as duration}
           <button on:click={() => setStartDateFromEnd(duration * ms_in_a_month)}
-            >{(duration % 12) == 0 ? `${duration/12}Y` : `${duration}M`}</button
+            >{duration % 12 == 0 ? `${duration / 12}Y` : `${duration}M`}</button
           >
         {/each}
-        <button on:click={() => {start = 0; end = 1}}
-            >All</button
-          >
+        <button
+          on:click={() => {
+            start = 0;
+            end = 1;
+          }}>All</button
+        >
       </div>
     </div>
 
@@ -380,7 +383,7 @@
     padding-bottom: 2px;
   }
   #quickButtons {
-    display: flex; 
+    display: flex;
     justify-content: flex-end;
   }
   #slider-labels {

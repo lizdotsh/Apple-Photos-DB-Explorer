@@ -5,7 +5,7 @@
   export let start_date;
   export let end_date;
   import { styleTitle, genDateSubtitle } from "../utils.js";
-  const domainArray = ["Not Wearing Mask", "other/unknown", "Wearing Mask"]
+  const domainArray = ["Not Wearing Mask", "other/unknown", "Wearing Mask"];
 </script>
 
 {#if person_group_stats}
@@ -19,7 +19,7 @@
       color: {
         legend: true,
         type: "categorical",
-       domain: domainArray,
+        domain: domainArray,
         range: ["#5778a4", "#6a9f58", "#f1a2a9"],
       },
       tip: {
