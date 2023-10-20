@@ -19,7 +19,7 @@
   // let people = {};
   onMount(async () => {
     people = await api.getPeople().then((data) => {
-      person_id = Object.keys(data)[0];
+      //person_id = Object.keys(data)[0];
       console.log(data);
 
       return data;
@@ -68,6 +68,7 @@
       <div id="selector" class="text-intro">
         <select bind:value={person_id}>
           {#each Object.keys(people) as pid}
+            <option value="---">---</option>
             <option value={pid}>{people[pid]["full_name"]}</option>
           {/each}
         </select>

@@ -1,6 +1,6 @@
 // Like person, but disaggregated to work without selecting a person
 
-const { db, txGetAll, arr_reduce } = require("./db_utils.cjs");
+const { db, txGetAll, txGetOne } = require("./db_utils.cjs");
 
 exports.getDailyZeroedCountsNameAgnostic = function() {
     const query = `
@@ -88,3 +88,17 @@ exports.getPersonStatNameAgnostic = function(start_date, end_date, stats) {
     return result;
 }; 
 
+exports.getTotal = function () {
+    const query = `
+      select 
+      '---' as person_uuid,
+      'All Photos' as full_name, 
+      sum(count) as count,
+      max(date) as end_date, 
+      min(date) as start_date
+    from photo_info_rollup_daily 
+    group by 1,2 order by count desc;
+              `;
+  //   console.log(query);
+    return (txGetOne(query, []), "person_uuid");
+  };
