@@ -2,8 +2,8 @@
 
 const { db, txGetAll, txGetOne } = require("./db_utils.cjs");
 
-exports.getDailyZeroedCountsNameAgnostic = function() {
-    const query = `
+exports.getDailyZeroedCountsNameAgnosticQuery = function() {
+    return `
     with cnt as (
     select 
     date_series.date as date,
@@ -11,12 +11,9 @@ exports.getDailyZeroedCountsNameAgnostic = function() {
     sum(ifnull(photos_per_user_daily.front_camera_count, 0)) as front_camera_count
     from date_series 
     left join photos_per_user_daily on date_series.date = photos_per_user_daily.date 
-    --and photos_per_user_daily.person_uuid = :person_id
     where date_series.date >= (select min(date) from photos_per_user_daily)
     and date_series.date <= (select max(date) from photos_per_user_daily)
     group by 1
-    --having date_series.date between (select min(date) from photos_per_user_daily where person_uuid = :person_id) 
-   -- and (select max(date) from photos_per_user_daily where person_uuid = :person_id)
     order by date_series.date
     ),
     -- I know this is horribly inefficient lmao
@@ -32,6 +29,7 @@ exports.getDailyZeroedCountsNameAgnostic = function() {
     from cnt
     )
     select 
+    :person_id as person_uuid,
     date, 
     count, 
     front_camera_count,
@@ -50,8 +48,7 @@ exports.getDailyZeroedCountsNameAgnostic = function() {
     ) as 'ninety_day_rolling_week'
     from seven;
     `;
-    
-    return txGetAll(query, {} );
+ 
 }
 
 
@@ -71,13 +68,13 @@ exports.getPersonStatNameAgnostic = function(start_date, end_date, stats) {
             from photo_info_rollup_monthly
             where year_month >= :start_date
             and year_month <= :end_date
-            group by 1,2,3 
+            group by 1
             )
             -- unsure about how sqlite will handle this under the hood, breaking it up into two queries.
             select 
             ${stat},
             count,
-            (100*count)/ sum(count) over (partition by person_uuid) as pct
+            (100*count)/ sum(count) over () as pct
             from count_only
             order by count desc;
             `
@@ -100,5 +97,5 @@ exports.getTotal = function () {
     group by 1,2 order by count desc;
               `;
   //   console.log(query);
-    return (txGetOne(query, []), "person_uuid");
+    return txGetOne(query, []);
   };

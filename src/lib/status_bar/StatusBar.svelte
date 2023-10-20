@@ -4,7 +4,6 @@
   import { onMount } from "svelte";
   export let people;
   export let person;
-  export let ignore_name;
   export let person_time;
   export let start_date;
   export let activeTab;
@@ -19,7 +18,7 @@
   // let people = {};
   onMount(async () => {
     people = await api.getPeople().then((data) => {
-      //person_id = Object.keys(data)[0];
+    //  person_id = Object.keys(data)[0];
       console.log(data);
 
       return data;
@@ -35,9 +34,7 @@
   $: console.log(start_date, end_date);
   $: start_date = start_date_month ? start_date_month + "-01" : undefined;
   $: end_date = end_date_month ? end_date_month + "-01" : undefined;
-  function setActive(tabName) {
-    activeTab = tabName;
-  }
+ 
 </script>
 
 <div id="title-selector">
@@ -68,15 +65,12 @@
       <div id="selector" class="text-intro">
         <select bind:value={person_id}>
           {#each Object.keys(people) as pid}
-            <option value="---">---</option>
+            <!-- <option value="---">---</option> -->
             <option value={pid}>{people[pid]["full_name"]}</option>
           {/each}
         </select>
       </div>
-      <div id="ignore_name_checkbox">
-      
-        <label for="ignore_name"><input type="checkbox" bind:checked={ignore_name} /> Ignore Name Selection (Metrics reflect all photos in library)</label>
-      </div>
+   
       <!-- {person?.count ?? "N/A"} Photos of {elm_name} -->
     </div>
     <div id="date-selector-slider">

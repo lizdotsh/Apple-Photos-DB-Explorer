@@ -44,7 +44,6 @@
   let end_date_ms;
   let start_date_daily;
   let end_date_daily;
-  let ignore_name;
 
   $: api.getPeopleTime(start_date, end_date).then((data) => {
     people_time = aq.from(data);
@@ -118,7 +117,6 @@
 <StatusBar
   bind:people
   bind:person
-  bind:ignore_name
   {person_time}
   bind:start_date
   bind:end_date

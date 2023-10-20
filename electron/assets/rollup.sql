@@ -97,6 +97,8 @@ create table photos_per_user_daily as
 create index date_index_daily on photos_per_user_daily(date);
 create index person_uuid_index_daily on photos_per_user_daily(person_uuid);
 create index photo_per_user_daily_person_uuid_date_index on photos_per_user_daily(person_uuid, date);
+
+
 drop table if exists date_series;
 create table date_series as
 WITH RECURSIVE dates AS (
@@ -109,6 +111,8 @@ SELECT dates.date
 FROM dates;
 
 create index date_index on date_series(date);
+
+
 drop table if exists sum_photos_monthly;
 
 create table sum_photos_monthly as
