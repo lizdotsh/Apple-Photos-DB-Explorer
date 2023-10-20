@@ -32,9 +32,9 @@ module.exports = {
       name: "@electron-forge/maker-rpm",
       config: {},
     },
-    {
-      name: "@electron-forge/maker-dmg",
-    },
+    // {
+    //   name: "@electron-forge/maker-dmg",
+    // },
   ],
 
 //   plugins: [
