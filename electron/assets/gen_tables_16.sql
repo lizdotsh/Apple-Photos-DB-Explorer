@@ -346,7 +346,10 @@ LEFT JOIN ZPERSON zPerson
 LEFT JOIN ZCOMPUTEDASSETATTRIBUTES zCompAssetAttr
     ON zCompAssetAttr.Z_PK = zAsset.ZCOMPUTEDATTRIBUTES
 LEFT JOIN ZMEDIAANALYSISASSETATTRIBUTES zMedAnlyAstAttr
-    ON zAsset.ZMEDIAANALYSISATTRIBUTES = zMedAnlyAstAttr.Z_PK;
+    ON zAsset.ZMEDIAANALYSISATTRIBUTES = zMedAnlyAstAttr.Z_PK
+       where date_created > ( -- inefficient but it works
+        select min(year) || '01-01' from (select strftime('%Y', DATETIME(ZDATECREATED + 978307200, 'UNIXEPOCH')) as year, count(distinct zuuid) as cnt from zasset group by 1) where cnt > 5
+    );
 
 CREATE INDEX photo_info_idx_zuuid
 ON photo_info (zuuid);
