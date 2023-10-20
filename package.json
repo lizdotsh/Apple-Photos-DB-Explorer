@@ -3,7 +3,7 @@
   "description": "Apple Photos DB Explorer",
   "license": "MIT",
   "private": true,
-  "version": "v0.0.7-beta",
+  "version": "v0.0.8-beta",
   "type": "module",
   "main": "electron/main.cjs",
   "scripts": {
