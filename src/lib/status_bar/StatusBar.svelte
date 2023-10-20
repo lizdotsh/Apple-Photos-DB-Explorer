@@ -13,7 +13,6 @@
   export let start_date_ms;
   export let end_date_ms;
 
-  $: console.log("PERSON", people, person);
   let person_id;
   // let people = {};
   onMount(async () => {
@@ -34,8 +33,8 @@
   $: console.log(start_date, end_date);
   $: start_date = start_date_month ? start_date_month + "-01" : undefined;
   $: end_date = end_date_month ? end_date_month + "-01" : undefined;
-  function setActive(tabName) {
-    activeTab = tabName;
+  function setActive(tab) {
+    activeTab = tab;
   }
 </script>
 
@@ -67,10 +66,20 @@
       <div id="selector" class="text-intro">
         <select bind:value={person_id}>
           {#each Object.keys(people) as pid}
+            <!-- <option value="---">---</option> -->
             <option value={pid}>{people[pid]["full_name"]}</option>
           {/each}
         </select>
       </div>
+      
+      <div>
+        {#if person_id === "---"}
+    <span style="color: red;">Warning: </span>No face selected, showing stats for all photos combined.
+    {:else}
+    <br><br>
+    {/if}
+      </div>
+      
       <!-- {person?.count ?? "N/A"} Photos of {elm_name} -->
     </div>
     <div id="date-selector-slider">

@@ -7,11 +7,17 @@
 
 const people = require("./models/people.cjs");
 const person = require("./models/person.cjs");
-
+const photo_info = require("./models/photo_info.cjs");
+const dispatcher = require("./models/dispatcher.cjs");
 module.exports = {
-    getPeople: people.getPeople,
+    // getPeople: people.getPeople,
+    getPeople: dispatcher.getPeople,
     getPeopleTime: people.getPeopleTime,
-    getPersonStat: person.getPersonStat,
-    getDailyZeroedCounts: person.getDailyZeroedCounts,
-    getCurationScore: person.getCurationScore,
+    getPersonStat: dispatcher.getPersonStat,
+    getDailyZeroedCounts: dispatcher.getDailyZeroedCounts,
+    // getPersonStat: person.getPersonStat,
+    // getPersonStatNameAgnostic: photo_info.getPersonStatNameAgnostic,
+    // getDailyZeroedCounts: person.getDailyZeroedCounts,
+    // getDailyZeroedCountsNameAgnostic: photo_info.getDailyZeroedCountsNameAgnostic,
+    getCurationScore: person.getCurationScore
 }
