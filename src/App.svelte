@@ -53,7 +53,6 @@
       end_date,
     };
   });
-  $: console.log("PEOPLE TIME", people_time)
   let person_group_stats;
   const group_stats = [
     "camera_make",

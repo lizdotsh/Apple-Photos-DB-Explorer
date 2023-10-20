@@ -13,7 +13,6 @@
   export let start_date_ms;
   export let end_date_ms;
 
-  $: console.log("PEOPLE_PERSON", people, person);
   let person_id;
   // let people = {};
   onMount(async () => {
@@ -25,7 +24,6 @@
     });
   });
   $: person = people[person_id];
-  $: console.log('PERSON_TIME', person_time);
 
   let start_date_month;
   let end_date_month;
@@ -73,7 +71,15 @@
           {/each}
         </select>
       </div>
-   
+      
+      <div>
+        {#if person_id === "---"}
+    <span style="color: red;">Warning: </span>No face selected, showing stats for all photos combined.
+    {:else}
+    <br><br>
+    {/if}
+      </div>
+      
       <!-- {person?.count ?? "N/A"} Photos of {elm_name} -->
     </div>
     <div id="date-selector-slider">
