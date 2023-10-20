@@ -105,11 +105,11 @@
   });
   $: console.log(start_date, end_date);
   $: console.log([start_date, end_date]);
-  //   let person_numeric_scores;
-  // $: api.getCurationScore(person?.person_uuid, start_date, end_date).then(d => {
-  // person_numeric_scores = d;
-  // console.log(d);
-  // });
+    let person_numeric_scores;
+  $: api.getNumericScoresTime(person?.person_uuid, start_date, end_date).then(d => {
+  person_numeric_scores = d;
+  console.log(d);
+  });
 
   //   $: console.log(people[person_id]);
 </script>
@@ -135,7 +135,7 @@
 
 {#if activeTab === "Tab1"}
   <!-- {/if} -->
-  <!-- <NumericScores {person_numeric_scores} /> -->
+  <NumericScores {person_numeric_scores} />
   <div id="not-sticky">
     <div class="flex-container">
       <div id="time">

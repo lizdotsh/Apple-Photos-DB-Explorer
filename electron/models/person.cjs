@@ -152,12 +152,25 @@ exports.getCurationScore = function(person_id, start_date, end_date) {
 //   `
 // }
 exports.getNumericScoresTime = function(person_id, start_date, end_date) {
-    query = `select
-    person_uuid,
-    year_month,
-    ${numeric_scores_as_arr_of_objects.map(score => `avg(${score.alais}) * count as ${score.alias}`).join(",\n")}
-
+    query = `
+    with total as (select sum(count) as tot
+    from numeric_scores_monthly
+    where person_uuid = :person_id
+    and year_month >= :start_date
+    and year_month <= :end_date
+    )
+    select 
+    ${numeric_scores_as_arr_of_objects.map(score => `sum(${score.alias}) / total.tot as ${score.alias}`).join(",\n")}
+    from numeric_scores_monthly n 
+    left join total on 1 = 1
+    where person_uuid = :person_id
+    and year_month >= :start_date
+    and year_month <= :end_date
+    group by person_uuid
+    `;
+    return txGetOne(query, {person_id, start_date, end_date});
 }
+
 // const numeric_scores =  {
 //     "curation_score": "curation_score",
 //     "zm_activity_score": "activity_score",
