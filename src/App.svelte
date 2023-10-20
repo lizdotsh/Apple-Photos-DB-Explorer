@@ -29,6 +29,7 @@
   import NumericScores from "./lib/NumericScores.svelte";
   import SkinToneEstimate from "./lib/agged/SkinToneEstimate.svelte";
   import HairColorEstimate from "./lib/agged/HairColorEstimate.svelte";
+  import Intro from "./lib/Intro.svelte";
   let person;
   let people = {};
   let activeTab = "Tab1";
@@ -134,6 +135,9 @@
 </div> -->
 
 {#if activeTab === "Tab1"}
+    {#if person}
+    <Intro {people} {person} />
+    {/if}
   <!-- {/if} -->
   
   <div id="not-sticky">
