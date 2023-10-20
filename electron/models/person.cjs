@@ -59,7 +59,7 @@ exports.getPersonStat = function(person_id, start_date, end_date, stats) {
 //     ${stats.join(",")}
 //     `;
 
-exports.getDailyZeroedCountsQuery = function(person_id) {
+exports.getDailyZeroedCountsQuery = function() {
     return `
     with cnt as (
     select 
@@ -84,7 +84,8 @@ exports.getDailyZeroedCountsQuery = function(person_id) {
     sum(count) OVER (
         ORDER BY date
         ROWS BETWEEN 7 PRECEDING AND current row 
-    ) as seven_day_sum
+    ) as seven_day_sum,
+  
     from cnt
     )
     select 
@@ -97,10 +98,6 @@ exports.getDailyZeroedCountsQuery = function(person_id) {
         ORDER BY date
         ROWS BETWEEN 30 PRECEDING AND current row 
     ) as 'thirty_day_rolling_week',
-    sum(count) OVER (
-        ORDER BY date
-        ROWS BETWEEN 30 PRECEDING AND current row 
-    ) as 'thirty_day_sum',
     AVG(seven_day_sum) OVER (
         ORDER BY date
         ROWS BETWEEN 90 PRECEDING AND current row 

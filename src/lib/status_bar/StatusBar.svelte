@@ -18,7 +18,7 @@
   // let people = {};
   onMount(async () => {
     people = await api.getPeople().then((data) => {
-    //  person_id = Object.keys(data)[0];
+      person_id = Object.keys(data)[0];
       console.log(data);
 
       return data;
@@ -34,7 +34,9 @@
   $: console.log(start_date, end_date);
   $: start_date = start_date_month ? start_date_month + "-01" : undefined;
   $: end_date = end_date_month ? end_date_month + "-01" : undefined;
- 
+  function setActive(tab) {
+    activeTab = tab;
+  }
 </script>
 
 <div id="title-selector">
