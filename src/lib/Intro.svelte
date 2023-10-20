@@ -30,7 +30,8 @@
     </div>
    
         </div>
-    <div> 
+
+    <div class='instructions-div'> 
         <h3>Instructions:</h3>
         <p>1. Select a name from the dropdown menu above.</p>
         <p>2. Click on the tabs below the app title to see different visualizations.</p>
@@ -51,13 +52,14 @@
         position: relative;
         display: inline-block;
         /* border-bottom: 1px dotted black; */
-        font-size: 14px;
+        font-size: 12px;
+
     }
 
     .tooltip:hover::before {
         content: attr(title);
         position: absolute;
-        top: -30px;
+        top: -10px;
         left: 20px;
         /* background-color: #333; */
         /* color: #fff; */
@@ -83,4 +85,9 @@
         flex-direction: column;
         max-width: 30%;
     }
+    .instructions-div {
+        max-width: 40%;
+        margin-left: 20px;
+    }
+
 </style>

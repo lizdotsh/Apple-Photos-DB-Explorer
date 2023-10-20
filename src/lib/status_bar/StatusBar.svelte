@@ -40,7 +40,7 @@
 
 <div id="title-selector">
   <div class="flex-container-title">
-    <div class="flex-container-col">
+    <div class="flex-container-col title-with-tabs">
       <div id="app-title">Apple Photos DB Explorer</div>
       <div>
         {person_time?.count ?? "error"} of {person?.count ?? "N/A"} Photos Selected
@@ -162,5 +162,8 @@
   .active-tab {
     background-color: #59aef4;
     color: #fff;
+  }
+  .title-with-tabs {
+    min-width: fit-content;
   }
 </style>
