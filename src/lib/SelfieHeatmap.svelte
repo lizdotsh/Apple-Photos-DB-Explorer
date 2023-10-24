@@ -37,29 +37,7 @@
 <!--button to toggle between selfie mode and everything-->
 
 <div class="flex-container-col">
-  <div class="radio-container">
-    <label for="only-selfies">
-      <input
-        type="radio"
-        id="only-selfies"
-        name="is-selfie"
-        value="front_camera_count"
-        checked
-        bind:group={selfieSelector}
-      />
-      Selfies Only
-    </label>
-    <label for="all-photos">
-      <input
-        type="radio"
-        id="All-Photos"
-        name="is-selfie"
-        value="count"
-        bind:group={selfieSelector}
-      />
-      All Photos</label
-    >
-  </div>
+ 
   {#if filt}
     <PlotRender
       options={{
@@ -110,6 +88,29 @@
   {:else}
     <p>Waiting for data...</p>
   {/if}
+  <div class="radio-container">
+    <label for="only-selfies">
+      <input
+        type="radio"
+        id="only-selfies"
+        name="is-selfie"
+        value="front_camera_count"
+        checked
+        bind:group={selfieSelector}
+      />
+      Selfies Only
+    </label>
+    <label for="all-photos">
+      <input
+        type="radio"
+        id="All-Photos"
+        name="is-selfie"
+        value="count"
+        bind:group={selfieSelector}
+      />
+      All Photos</label
+    >
+  </div>
 </div>
 
 <style>
