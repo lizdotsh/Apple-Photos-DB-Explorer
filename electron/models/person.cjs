@@ -64,10 +64,9 @@ exports.getDailyZeroedCountsQuery = function() {
     sum(count) OVER (
         ORDER BY date
         ROWS BETWEEN 7 PRECEDING AND current row 
-    ) as seven_day_sum,
-  
-    from cnt
-    )
+        ) as seven_day_sum
+    from cnt)
+    
     select 
     :person_id as person_uuid,
     date, 
