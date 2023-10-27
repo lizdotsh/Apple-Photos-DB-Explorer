@@ -166,44 +166,7 @@ JOIN main b
 GROUP BY a.year_month, a.full_name, a.count
 ORDER BY a.year_month;
 
-DROP TABLE IF EXISTS person_group_stats;
 
-CREATE TABLE person_group_stats AS
-SELECT
-    person_uuid,
-    full_name,
-    -- year-month of the photo. sqlite. 
-    -- https://www.sqlite.org/lang_datefunc.html
-    camera_make,
-    camera_model,
-    face_count,
-    gender_estimate,
-    age_estimate,
-    ethnicity_estimate,
-    skin_tone_estimate,
-    facial_hair_estimate,
-    face_mask_estimate,
-    face_expression_estimate,
-    pose_type_estimate,
-    smile_estimate,
-    smile_type_estimate,
-    smile_combined_estimate,
-    lip_makeup_estimate,
-    winking_estimate,
-    glasses_estimate,
-    eye_makeup_estimate,
-    which_camera,
-    SUM(COUNT) AS COUNT
-FROM photo_info_rollup_monthly
-WHERE
-    full_name != 'no_name'
-    AND full_name != 'no_face'
-    AND person_uuid != 'no_person'
-GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20;
-
--- Add index
-CREATE INDEX person_group_stats_uuid_index
-ON person_group_stats(person_uuid);
 
 DROP TABLE IF EXISTS names_ids;
 
