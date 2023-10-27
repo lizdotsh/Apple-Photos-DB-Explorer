@@ -8,19 +8,16 @@
   // // }
   // <!-- $: topPersonNotAll =  -->
   const scores = [
-     "Overall Score",
+    "Overall Score",
     //   "Blurriness Score",
-      "Pleasant Composition Score",
-      "Pleasant Lighting Score",
-      "Well Framed Subject Score",
-      "Well Chosen Subject Score",
+    "Pleasant Composition Score",
+    "Pleasant Lighting Score",
+    "Well Framed Subject Score",
+    "Well Chosen Subject Score",
     //   "Interesting Subject Score",
-      "Pleasant Symmetry Score",
-      "Tastefully Blurred Score",
-
-
-
-    ];
+    "Pleasant Symmetry Score",
+    "Tastefully Blurred Score",
+  ];
 
   function format_scores(scoreObj) {
     return scores.map((score) => {
@@ -29,10 +26,10 @@
           name: score,
           score: "N/A",
         };
-    }
+      }
       return {
         name: score,
-        score: (scoreObj[score]).toFixed(1),
+        score: scoreObj[score].toFixed(1),
       };
     });
   }
@@ -74,9 +71,7 @@
   </div>
   <div id="other-scores">
     <!-- <span style = "font-size: 18px; padding: 3px;">Photo Scores (out of 100)</span> -->
-    <b>
-        Photo Scores (out of 100)
-    </b>
+    <b> Photo Scores (out of 100) </b>
     <table>
       {#each formattedScores.slice(1) as score}
         <tr>
@@ -91,7 +86,6 @@
     </table>
   </div>
 
-
   <div class="instructions-div">
     <h3>Instructions:</h3>
     <p>1. Select a name from the dropdown menu above.</p>
@@ -104,7 +98,6 @@
       You can also hit 'play' and have it automatically move it for you :)
     </p>
   </div>
-
 </div>
 
 <style>
@@ -151,14 +144,7 @@
     max-width: 30%;
     margin-left: 20px;
   }
-  .scores-div {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    min-width: 30%;
 
-    flex-direction: row;
-  }
   #overall-score {
     display: flex;
     flex-direction: column;
@@ -188,5 +174,4 @@
   #other-scores tr:nth-child(even) {
     background-color: #f2f2f2;
   }
-
 </style>
