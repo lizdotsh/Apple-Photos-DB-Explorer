@@ -7,24 +7,55 @@
   //     // person = people[person_id];
   // // }
   // <!-- $: topPersonNotAll =  -->
-  function extractScores(scoreObj) {
-    return [
-        ["curation_score", "Overall Score"],
-    ].map(score => {
-        if (!scoreObj) {
-            return {
-                name: score[1],
-                score: "N/A"
-            }
-        }
-        return {
-            name: score[1],
-            score: (scoreObj[score[0]] * 100).toFixed(2) 
-        }
-    })
+  const scores = [
+     "Overall Score",
+    //   "Blurriness Score",
+      "Pleasant Composition Score",
+      "Pleasant Lighting Score",
+      "Well Framed Subject Score",
+      "Well Chosen Subject Score",
+    //   "Interesting Subject Score",
+      "Pleasant Symmetry Score",
+      "Tastefully Blurred Score",
 
+
+
+    ];
+//   function extractScores(scoreObj) {
+//     return .map((score) => {
+//       if (!scoreObj) {
+//         return {
+//           name: score[1],
+//           score: "N/A",
+//         };
+//       }
+//       if (score[2]) {
+//         return {
+//           name: score[1],
+//           score: ((scoreObj[score[0]] * 50) + 50).toFixed(2),
+//           tooltip: "Higher is better",
+//         };
+//       }
+//       return {
+//         name: score[1],
+//         score: (scoreObj[score[0]] * 100).toFixed(2),
+//       };
+//     });
+  function format_scores(scoreObj) {
+    return scores.map((score) => {
+      if (!scoreObj) {
+        return {
+          name: score,
+          score: "N/A",
+        };
+    }
+      return {
+        name: score,
+        score: (scoreObj[score]).toFixed(1),
+      };
+    });
   }
-  $: formattedScores = extractScores(person_numeric_scores);
+  $: formattedScores = format_scores(person_numeric_scores);
 </script>
 
 <div class="instructions-flex">
@@ -50,9 +81,31 @@
         {/if}
       </p>
     </div>
-</div>
-    <div>
-        <!-- {#if person_numeric_scores}
+  </div>
+
+  <!-- <div class="scores-div"> -->
+  <div id="overall-score">
+    <h2>Overall Score</h2>
+
+    <span style="font-size: 5rem; text-align: center; display: block;">
+      {formattedScores[0]["score"]}
+    </span>
+  </div>
+  <div id="other-scores">
+    <table>
+      {#each formattedScores.slice(1) as score}
+        <tr>
+          <td>
+            {score["name"]}
+          </td>
+          <td>
+            {score["score"]}
+          </td>
+        </tr>
+      {/each}
+    </table>
+  </div>
+  <!-- {#if person_numeric_scores}
       {#each [
         ["curation_score", "Overall Photo: "]
     ] as score}
@@ -61,13 +114,9 @@
           2
         )}
       {/each} -->
-      {#each formattedScores as score}
-        {score["name"]}: {score["score"]}
-        {/each}
-     
-      <!-- {/if} -->
-    </div>
 
+  <!-- {/if} -->
+  <!-- </div> -->
 
   <div class="instructions-div">
     <h3>Instructions:</h3>
@@ -106,31 +155,63 @@
     width: 200px;
     border-radius: 50px;
   }
-  /* .intro-section {
+  .intro-section {
     text-align: left;
-    height: 100px;
-    width: 200px;
-    position: relative; /* set position to relative */
-    /* align-self: flex-start */
-  /* } */
+  }
   .instructions-flex {
     display: flex;
     justify-content: space-around;
     align-items: center;
     flex-direction: row;
+    max-width: 80%;
+    margin: 0 auto;
   }
   .text-intro-flex {
     display: flex;
     justify-content: start;
     align-items: flex-start;
     flex-direction: column;
-    max-width: 30%;
-    min-width: 30%;
+    max-width: 20%;
+    min-width: 10%;
     height: 100%;
     align-self: flex-start;
   }
   .instructions-div {
-    max-width: 40%;
+    max-width: 30%;
     margin-left: 20px;
   }
+  .scores-div {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    min-width: 30%;
+
+    flex-direction: row;
+  }
+  #overall-score {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  #other-scores {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  #other-scores table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 20px;
+  }
+  #other-scores td {
+    padding: 7px;
+    border: 1px solid #ddd;
+    text-align: left;
+  }
+  #other-scores tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+
 </style>

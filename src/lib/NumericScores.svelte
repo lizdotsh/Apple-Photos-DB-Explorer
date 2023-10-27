@@ -30,7 +30,7 @@
         <tr>
           <th>Score</th>
           <th>Value</th>
-          <th>Value (Percent)</th>
+          <!-- <th>Value (Percent)</th> -->
         </tr>
       </thead>
       <tbody>
@@ -38,7 +38,7 @@
           <tr>
             <td>{score}</td>
             <td>{Number(value).toFixed(3)}</td>
-            <td>{(Number(value) * 100).toFixed(2)}%</td>
+            <!-- <td>{(Number(value) * 100).toFixed(2)}%</td> -->
           </tr>
         {/each}
       </tbody>
