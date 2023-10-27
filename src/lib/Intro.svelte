@@ -21,26 +21,7 @@
 
 
     ];
-//   function extractScores(scoreObj) {
-//     return .map((score) => {
-//       if (!scoreObj) {
-//         return {
-//           name: score[1],
-//           score: "N/A",
-//         };
-//       }
-//       if (score[2]) {
-//         return {
-//           name: score[1],
-//           score: ((scoreObj[score[0]] * 50) + 50).toFixed(2),
-//           tooltip: "Higher is better",
-//         };
-//       }
-//       return {
-//         name: score[1],
-//         score: (scoreObj[score[0]] * 100).toFixed(2),
-//       };
-//     });
+
   function format_scores(scoreObj) {
     return scores.map((score) => {
       if (!scoreObj) {
@@ -92,6 +73,10 @@
     </span>
   </div>
   <div id="other-scores">
+    <!-- <span style = "font-size: 18px; padding: 3px;">Photo Scores (out of 100)</span> -->
+    <b>
+        Photo Scores (out of 100)
+    </b>
     <table>
       {#each formattedScores.slice(1) as score}
         <tr>
@@ -105,18 +90,7 @@
       {/each}
     </table>
   </div>
-  <!-- {#if person_numeric_scores}
-      {#each [
-        ["curation_score", "Overall Photo: "]
-    ] as score}
-        {score[1]}: 
-        {(person_numeric_scores[score[0]] * 100)?.toFixed(
-          2
-        )}
-      {/each} -->
 
-  <!-- {/if} -->
-  <!-- </div> -->
 
   <div class="instructions-div">
     <h3>Instructions:</h3>
@@ -130,10 +104,7 @@
       You can also hit 'play' and have it automatically move it for you :)
     </p>
   </div>
-  <!-- 
-    <div> 
-        <h3>Stats:</h3>
-    </div> -->
+
 </div>
 
 <style>
@@ -163,7 +134,7 @@
     justify-content: space-around;
     align-items: center;
     flex-direction: row;
-    max-width: 80%;
+    max-width: 90%;
     margin: 0 auto;
   }
   .text-intro-flex {
@@ -199,16 +170,20 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    padding-top: 10px;
   }
   #other-scores table {
     border-collapse: collapse;
     width: 100%;
-    margin-top: 20px;
+    margin-top: 10px;
   }
   #other-scores td {
-    padding: 7px;
+    padding: 8px;
     border: 1px solid #ddd;
     text-align: left;
+  }
+  #other-scores td:nth-child(odd) {
+    padding-right: 40px;
   }
   #other-scores tr:nth-child(even) {
     background-color: #f2f2f2;
