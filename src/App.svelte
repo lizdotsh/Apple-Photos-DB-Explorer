@@ -116,7 +116,7 @@
 
 {#if activeTab === "Tab1"}
   {#if person}
-    <Intro {people} {person} />
+    <Intro {people} {person} {person_numeric_scores} />
   {/if}
 
   <div id="not-sticky">
