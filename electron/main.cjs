@@ -192,6 +192,7 @@ async function handleFileAndDbActions(
     
     basicStats(db_path);
 
+    resetDb();
     win.loadFile(path.join(__dirname, "build", "index.html"));
     //win.webContents.send("file-and-db-actions-complete");
   } catch (err) {
