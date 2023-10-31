@@ -1,10 +1,10 @@
-const { db, txGetOne } = require("./db_utils.cjs");
+const { txGetAll, txGetOne } = require("./db_utils.cjs");
 
 
 exports.getPersonStat = function(person_id, start_date, end_date, stats) {
     let result = {};
     // console.log(stats)
-    db.transaction(() => {
+    // db.transaction(() => {
         //result = {};
         for (let stat of stats) {
             // I know this is horribly unsafe, im just lazy. 
@@ -32,9 +32,9 @@ exports.getPersonStat = function(person_id, start_date, end_date, stats) {
             from count_only
             order by count desc;
             `
-            result[stat] = db.prepare(query).all({person_id, start_date, end_date});
+            result[stat] = txGetAll(query, {person_id, start_date, end_date});
         }
-    })();
+    // })();
     
     return result;
 }; 

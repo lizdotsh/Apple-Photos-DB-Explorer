@@ -12,7 +12,7 @@ exports.txGetAll = function (query, params) {
   return result;
 };
 exports.resetDb = function () {
-    db.close();
+   // db.close();
     db = new sqlite(db_path);
     exports.db = db;
 
