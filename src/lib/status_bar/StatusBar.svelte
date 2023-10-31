@@ -63,7 +63,7 @@
       </div>
     </div>
     <div />
-    <div class="flex-container-col">
+    <div style = "min-width: 20%" class="flex-container-col">
       <div id="title-text">
         <b>Select a name</b>
       </div>

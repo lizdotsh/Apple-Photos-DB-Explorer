@@ -26,6 +26,5 @@ exports.getPeopleTime = function (start_date, end_date) {
       group by 1,2
       order by count desc;
               `;
-  const query2 = `        `;
   return txGetAll(query, { start_date, end_date });
 };

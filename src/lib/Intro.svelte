@@ -3,10 +3,7 @@
   export let people;
   export let person_numeric_scores;
 
-  // <!-- function getPerson(person_id) { -->
-  //     // person = people[person_id];
-  // // }
-  // <!-- $: topPersonNotAll =  -->
+  
   const scores = [
     "Overall Score",
     //   "Blurriness Score",
@@ -48,14 +45,16 @@
       </h1>
     </div>
     <div>
-      <p>You currently have {person.full_name} selected.</p>
+      
     </div>
 
     <div>
       <p>
         {#if person.full_name === "All Photos"}
-          <b>You currently have no face/name selected.</b> Showing stats for all
-          photos in your library (many face-specific stats may be meaningless)
+          <b>You currently have no face/name selected.</b> <p>Showing stats for all
+          photos in your library (many face-specific stats may be meaningless)</p>
+        {:else}
+        <p>You currently have {person.full_name} selected.</p>
         {/if}
       </p>
     </div>
@@ -90,7 +89,7 @@
     <h3>Instructions:</h3>
     <p>1. Select a name from the dropdown menu above.</p>
     <p>
-      2. Click on the tabs below the app title to see different visualizations.
+      2. Scroll and/or click on the tabs below the app title to see different visualizations.
     </p>
     <p>3. Hover over the visualizations to see more information.</p>
     <p>
@@ -169,7 +168,7 @@
     text-align: left;
   }
   #other-scores td:nth-child(odd) {
-    padding-right: 40px;
+    padding-right: 30px;
   }
   #other-scores tr:nth-child(even) {
     background-color: #f2f2f2;

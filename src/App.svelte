@@ -1,8 +1,4 @@
 <script>
-  let name;
-  import * as Plot from "@observablehq/plot";
-  import PlotRender from "./lib/Plot.svelte";
-  // arquero
   import * as aq from "arquero";
   import * as d3 from "d3";
   import SortedPhotosBar from "./lib/SortedPhotosBar.svelte";
@@ -54,7 +50,6 @@
     "ethnicity_estimate",
     "skin_tone_estimate",
     "facial_hair_estimate",
-    // "face_mask_estimate",
     "face_expression_estimate",
     "pose_type_estimate",
     "smile_estimate",
@@ -70,11 +65,8 @@
     .getPersonStat(person?.person_uuid, start_date, end_date, group_stats)
     .then((data) => {
       person_group_stats = data;
-      //   console.log(data);
     });
   $: console.log("group", person_group_stats);
-  let date_range_string;
-  const today = new Date();
   let daily_with_rolling;
   $: api.getDailyZeroedCounts(person?.person_uuid).then((data) => {
     if (data) {
@@ -108,11 +100,7 @@
   bind:end_date_ms
 />
 
-<!-- <div class="tabs">
-    <button on:click={() => setActive('Tab1')}>Main</button>
-    <button on:click={() => setActive('Tab2')}>Activity Map</button>
 
-</div> -->
 
 {#if activeTab === "Tab1"}
   {#if person}
@@ -128,7 +116,6 @@
             {start_date_ms}
             {end_date_ms}
           />
-          <!-- <AggStats {person_group_stats} {daily_with_rolling} /> -->
         {:else}
           <p>Waiting for data...</p>
         {/if}
@@ -139,17 +126,14 @@
         id="photo-hist"
         style="max-width: 100%; vertical-align: top; margin-bottom: 75px"
       >
-        <!-- <h2><br><br><br></h2> -->
         <PhotosDayHistogram {daily_with_rolling} {start_date} {end_date} />
       </div>
       <div id="SortedPhotosBar" style="max-width: 100%;">
-        <!-- make component smaller -->
         <SortedPhotosBar {people_time} {people} {person} />
       </div>
     </div>
 
     <div class="agg-stats-grouping">
-      <!-- {#if person_group_stats?.length > 0} -->
       <div class="flex-container">
         <GenderEstimate {person_group_stats} {start_date} {end_date} />
         <SmileType {person_group_stats} {start_date} {end_date} />
