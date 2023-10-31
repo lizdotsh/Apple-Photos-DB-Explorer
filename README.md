@@ -31,8 +31,9 @@ This app is a simple electron app that automatically scans your Apple Photos lib
 
     
 2. Unzip the file
-3. **RIGHT CLICK** --> open the .app file. This is important, as the app is not signed, and MacOS will not let you open it otherwise.
-    1. Note: this may not work the first time, and give a weird error. Simply right click and open again, and it should give you an 'open' option in the dialog box.
+3. **RIGHT CLICK** --> open the .app file. __It will give an error.__ This is expected. 
+3. Right click --> open **again**. Now it should show you an "open" option in the dialog box. Click open. 
+    1. The right click and doing it twice is important. It __will not work__ if you just double click or do it once. This is because I didn't want to pay apple $100 a year. 
 4. The app will automatically scan your photos library, and then open a browser window with the visualization.
 
 If you have any issues, please DM me ASAP. 
