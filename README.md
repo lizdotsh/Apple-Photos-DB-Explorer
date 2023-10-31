@@ -53,6 +53,8 @@ All UX and visualization is located in `src`. `App.svelte` is the primary window
 
 Please keep in mind this is the first real thing I have ever made in JS. I have never made even a very simple website before this. If i'm doing anything stupid or wrong please let me know ahah. I'm also aware I should have just used TS and will be for future projects :). 
 
+Also some of the SQL is quite messy and duplicated a lot. More indexes than it probably needs but it doesn't really add much overhead and I don't want to experiment any more with this project ahah. Also a lot of one off tables pre made and indexed are just for specific performance heavy queries used that lagged otherwise. 
+
 ## Referenced work: 
 
 I heavily relied on the work of @ScottKjr3347 with their [iOS_Local_PL_Photos.sqlite_Queries](https://github.com/ScottKjr3347/iOS_Local_PL_Photos.sqlite_Queries) repo. The first processing step is a heavily modified version of their .sql file. Everything in `rollup.sql` is completely independent, and `gen_tables.sql` is a modified version of their queries. 

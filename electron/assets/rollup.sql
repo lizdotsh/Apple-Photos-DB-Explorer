@@ -201,8 +201,8 @@ WHERE
 GROUP BY 1, 2, 3
 UNION ALL
 SELECT
-    "---" AS person_uuid,
-    "All Photos" AS full_name,
+    '---' AS person_uuid,
+    'All Photos' AS full_name,
     strftime('%Y-%m', date_created) || '-01' AS YEAR_MONTH,
     COUNT(DISTINCT zuuid) AS COUNT
 FROM photo_info
@@ -228,8 +228,8 @@ WHERE
 GROUP BY 1, 2, 3
 UNION ALL
 SELECT
-    "---" AS person_uuid,
-    "All Photos" AS full_name,
+    '---' AS person_uuid,
+    'All Photos' AS full_name,
     strftime('%Y-%m-%d', date_created) AS DATE,
     COUNT(DISTINCT zuuid) AS COUNT
 FROM photo_info

@@ -24,7 +24,7 @@
 
 {#if person_numeric_scores}
   <div class='numeric-table'>
-    <div>Note: I am not sure it means anything in percent terms, I just think it is easier to read. </div>
+    <div>Note: Some of the raw scores were from -1 to 1 -- I linearly transformed it to be from 0-100 instead </div>
     <table>
       <thead>
         <tr>
