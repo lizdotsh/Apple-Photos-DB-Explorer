@@ -26,8 +26,8 @@ This app is a simple electron app that automatically scans your Apple Photos lib
 ## Installation
 
 1. Click below to download the latest release from the according to which processor you have (Intel or M1): 
-    1. [Apple Silicon Mac (~2020 and later)](https://github.com/lizdotsh/Apple-Photos-DB-Examiner/releases/latest/apple-photos-db-examiner-apple-silicon.zip)
-    2. [Intel Mac (~2019 and earlier)](https://github.com/lizdotsh/Apple-Photos-DB-Examiner/releases/latest/apple-photos-db-examiner-intel.zip)
+    1. [Apple Silicon Mac (~2020 and later)](https://github.com/lizdotsh/Apple-Photos-DB-Examiner/releases/latest/download/apple-photos-db-examiner-apple-silicon.zip)
+    2. [Intel Mac (~2019 and earlier)](https://github.com/lizdotsh/Apple-Photos-DB-Examiner/releases/latest/download/apple-photos-db-examiner-intel.zip)
 
     
 2. Unzip the file
