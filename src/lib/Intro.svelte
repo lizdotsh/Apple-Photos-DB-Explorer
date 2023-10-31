@@ -52,7 +52,7 @@
       <p>
         {#if person.full_name === "All Photos"}
           <b>You currently have no face/name selected.</b> <p>Showing stats for all
-          photos in your library (many face-specific stats may be meaningless)</p>
+          photos in your library (face-specific stats may be meaningless)</p>
         {:else}
         <p>You currently have {person.full_name} selected.</p>
         {/if}
@@ -136,8 +136,10 @@
     flex-direction: column;
     max-width: 20%;
     min-width: 10%;
-    height: 100%;
+    /* height: 100%; */
+    margin-top: 20px;
     align-self: flex-start;
+    
   }
   .instructions-div {
     max-width: 30%;
@@ -149,6 +151,8 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    margin-left: 20px;
+    margin-right: 30px;
   }
   #other-scores {
     display: flex;
