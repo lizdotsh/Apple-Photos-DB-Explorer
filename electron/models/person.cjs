@@ -1,4 +1,4 @@
-const { db, txGetAll, txManyArr, arr_reduce, txGetOne } = require("./db_utils.cjs");
+const { db, txGetOne } = require("./db_utils.cjs");
 
 
 exports.getPersonStat = function(person_id, start_date, end_date, stats) {

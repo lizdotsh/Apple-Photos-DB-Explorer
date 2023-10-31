@@ -5,7 +5,6 @@ const path = require("path");
 const fs = require("fs").promises;
 const EventEmitter = require("events");
 const aq = require("arquero");
-// const sqlite3 = require("sqlite3").verbose();
 const sqlite = require('better-sqlite3');
 const TopoJSON = require("topojson-client");
 const exportFns = require('./api.cjs');
@@ -160,32 +159,7 @@ ipcMain.handle("generate-report", async (event, system_photo_library_path) => {
   }
 });
 
-function showOpenDialog(win) {
-  return new Promise((resolve, reject) => {
-    logEmitter.emit(
-      "log-update",
-      "Waiting for user to select a photo library..."
-    );
-    dialog
-      .showOpenDialog(win, {
-        properties: ["openFile", "openDirectory"],
-      })
-      .then((result) => {
-        if (!result.canceled) {
-          logEmitter.emit(
-            "log-update",
-            `User selected: ${result.filePaths[0]}`
-          );
-          resolve(result.filePaths[0]);
-        }
 
-        resolve(null);
-      })
-      .catch((err) => {
-        reject(err);
-      });
-  });
-}
 function chooseSqlFile(db_path, sql_path) {
     try { 
         let db = new sqlite(db_path);

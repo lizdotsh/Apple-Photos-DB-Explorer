@@ -66,6 +66,7 @@
         label: "Number of 7 day period",
       },
       // marginLeft: 120,
+      height: 300,
       marks: [
         Plot.rectY(
           filtered,

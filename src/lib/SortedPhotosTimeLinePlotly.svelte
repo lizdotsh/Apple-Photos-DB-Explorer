@@ -46,8 +46,8 @@
     const layout = {
       title: "Number of Photos Detected per Week",
       //  width: 1000,
-      width: 1500,
-      height: 500,
+      width: 1300,
+      height: 480,
       xaxis: {
         range: [start_date_ms, end_date_ms],
         type: "date",

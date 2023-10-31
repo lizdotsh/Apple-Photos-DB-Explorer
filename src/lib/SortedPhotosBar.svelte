@@ -25,6 +25,7 @@
       color: {
         domain: names,
       },
+      height: 400,
       marginBottom: 120,
       marginLeft: 50,
       marks: [
