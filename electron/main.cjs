@@ -2,13 +2,13 @@
 const { log } = require("console");
 const { app, BrowserWindow, ipcMain, dialog, shell } = require("electron");
 const path = require("path");
-const fs = require("fs").promises;
+const fs = require("fs");
 const EventEmitter = require("events");
 const sqlite = require('better-sqlite3');
 const exportFns = require('./api.cjs');
 const  permissions  = require("electron-mac-permissions");
 const gentables_sql_path = path.join(__dirname, "assets");
-
+const { txExecAll, txGetOne, getPragma, resetDb} = require("./models/db_utils.cjs");
 
 
 
@@ -126,7 +126,7 @@ ipcMain.handle("validate-directory", async (event, dirPath) => {
   if (dirPath.endsWith(".photoslibrary")) {
     const sqlitePath = path.join(dirPath, "database", "Photos.sqlite");
     try {
-      await fs.access(sqlitePath);
+      await fs.promises.access(sqlitePath);
       return true;
     } catch (err) {
       return false;
@@ -160,9 +160,9 @@ ipcMain.handle("generate-report", async (event, system_photo_library_path) => {
 
 function chooseSqlFile(db_path, sql_path) {
     try { 
-        let db = new sqlite(db_path);
-        const result = db.pragma('table_info(ZDETECTEDFACE);');
-        db.close();
+        // let db = new sqlite(db_path);
+        const result = getPragma('table_info(ZDETECTEDFACE);');
+        // db.close();
         logEmitter.emit(result);
         const in_res = result.some(e => e.name === 'ZASSETFORFACE')
         logEmitter.emit('log-update', `Library Version: ${in_res ? '17' : '16'}`);
@@ -186,10 +186,13 @@ async function handleFileAndDbActions(
       "Requesting Permissions..."
     );
     const db_path = await copyDatabase(system_db_path);
+    resetDb();
     const sql_file = chooseSqlFile(db_path, gentables_sql_path);
-    await readSqlFile(db_path, sql_file, rollup_sql_path);
+    readSqlFile(db_path, sql_file, rollup_sql_path);
     
-    await basicStats(db_path);
+    basicStats(db_path);
+
+    win.loadFile(path.join(__dirname, "build", "index.html"));
     //win.webContents.send("file-and-db-actions-complete");
   } catch (err) {
     console.error("Error in handleFileAndDbActions:", err);
@@ -215,11 +218,12 @@ async function copyDatabase(system_photo_library_path) {
         logEmitter.emit("log-update", "Permission granted.");
 
         logEmitter.emit("log-update", "Deleting existing DB if it exists...");
-        await fs.rm(db_path, {force: true });
-        await fs.rm(db_path + '-shm', {force: true });
-        await fs.rm(db_path + '-wal', {force: true });
+        fs.rmSync(db_path, {force: true });
+        fs.rmSync(db_path + '-shm', {force: true });
+        fs.rmSync(db_path + '-wal', {force: true });
         logEmitter.emit("log-update", "Copying database...");
-        await fs.copyFile(system_photo_db_path, db_path);
+        fs.copyFileSync(system_photo_db_path, db_path);
+
         return db_path;
     }
   } catch (err) {
@@ -228,82 +232,36 @@ async function copyDatabase(system_photo_library_path) {
   }
 }
 
-// const dbRun = (db, query) =>
-//   new Promise((resolve, reject) => {
-//     db.run(query, (err) => {
-//       if (err) reject(err);
-//       else resolve();
-//     });
-//   });
-
-// const dbExec = (db, query) =>
-//   new Promise((resolve, reject) => {
-//     db.exec(query, (err) => {
-//       if (err) reject(err);
-//       else resolve();
-//     });
-//   });
-
-// const dbClose = (db) =>
-//   new Promise((resolve, reject) => {
-//     db.close((err) => {
-//       if (err) reject(err);
-//       else resolve();
-//     });
-//   });
-
-// const dbGet = (db, query) =>
-//   new Promise((resolve, reject) => {
-//     db.get(query, (err, row) => {
-//       if (err) reject(err);
-//       else resolve(row);
-//     });
-//   });
-// const dbGetAll = (db, query) =>
-//   new Promise((resolve, reject) => {
-//     db.all(query, (err, rows) => {
-//       // Note the use of `all` and `rows`
-//       if (err) reject(err);
-//       else resolve(rows);
-//     });
-//   });
-async function readSqlFile(db_path, sql_path, rollup_sql_path) {
+function readSqlFile(db_path, sql_path, rollup_sql_path) {
   try {
     logEmitter.emit("log-update", db_path);
-    const sql_file = await fs.readFile(sql_path, "utf8");
-    const rollup_sql_file = await fs.readFile(rollup_sql_path, "utf8");
+    const sql_file = fs.readFileSync(sql_path, "utf8");
+    const rollup_sql_file = fs.readFileSync(rollup_sql_path, "utf8");
     logEmitter.emit("log-update", "SQL script read.");
     // logEmitter.emit("log-update", sql_file);
-    let db = new sqlite(db_path);
+  
     logEmitter.emit("log-update", "Running SQL script... may freeze up momentarily...");
     // logEmitter.emit("log-update", sql_file);
-    db.transaction(() => {
-        db.exec(sql_file);
-        db.exec(rollup_sql_file);
-    })();
-    db.close();
-   // let db = new sqlite3.Database(db_path);
-    // await dbRun(db, "BEGIN TRANSACTION");
-    // await dbExec(db, sql_file);
-    // await dbExec(db, rollup_sql_file);
-    // await dbRun(db, "COMMIT");
-    // await dbClose(db);
+    txExecAll(sql_file);
+    txExecAll(rollup_sql_file);
+  
+
     logEmitter.emit("log-update", "SQL script executed and database closed.");
   } catch (err) {
     logEmitter.emit("error-update", `Error in readSqlFile: ${err}`);
     throw err;
     return;
   }
-  win.loadFile(path.join(__dirname, "build", "index.html"));
+
  
 }
 
-async function basicStats(db_path) {
+function basicStats(db_path) {
   try {
-    let db = new sqlite(db_path);
+    // let db = new sqlite(db_path);
     // await dbRun(db, "BEGIN TRANSACTION");
-    row = db.prepare("SELECT COUNT(DISTINCT zuuid) AS photo_count FROM photo_info").get();
-    db.close();
+    row = txGetOne("SELECT COUNT(DISTINCT zuuid) AS photo_count FROM photo_info", []);
+    
     logEmitter.emit(
       "log-update",
       `Unique Photo count: ${row.photo_count.toLocaleString()} Photos`
@@ -311,6 +269,8 @@ async function basicStats(db_path) {
     console.log(row);
   } catch (err) {
     logEmitter.emit("error-update", `Error in basicStats: ${err}`);
+    return;
   }
+ 
 }
 
