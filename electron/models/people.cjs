@@ -1,7 +1,7 @@
 const { db, txGetAll, arr_reduce } = require("./db_utils.cjs");
 
 exports.getPeople = function () {
-  const query = `
+    const query = `
     select 
     person_uuid, 
     full_name, 
@@ -12,11 +12,11 @@ exports.getPeople = function () {
     group by 1,2
   order by count desc;
             `;
-  return txGetAll(query, []);
+    return txGetAll(query, []);
 };
 
 exports.getPeopleTime = function (start_date, end_date) {
-  const query = `
+    const query = `
       select 
       person_uuid, 
       full_name,
@@ -26,5 +26,5 @@ exports.getPeopleTime = function (start_date, end_date) {
       group by 1,2
       order by count desc;
               `;
-  return txGetAll(query, { start_date, end_date });
+    return txGetAll(query, { start_date, end_date });
 };

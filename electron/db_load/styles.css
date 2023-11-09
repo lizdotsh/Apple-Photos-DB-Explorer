@@ -1,7 +1,4 @@
 /* General Styling */
-  
- 
-
 
 #db-load-log {
     background-color: #eee;
@@ -9,124 +6,125 @@
     overflow-x: auto;
     max-height: 300px;
     overflow-y: auto;
-    font-family: 'Courier New', monospace;
+    font-family: "Courier New", monospace;
     font-size: 12px;
 }
-h1, h2 {
-  color: #62abd2;
+h1,
+h2 {
+    color: #62abd2;
 }
 
 p {
-  color: #666;
+    color: #666;
 }
 
 button {
-  background-color: #007bff;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
 }
 
 button:hover {
-  background-color: #70a9e4;
+    background-color: #70a9e4;
 }
 
 pre {
-  background-color: #eee;
-  padding: 10px;
-  overflow-x: auto;
+    background-color: #eee;
+    padding: 10px;
+    overflow-x: auto;
 }
 
-
-
-
-
-  
 #dirPath {
     width: 70%; /* or a specific pixel value */
-  }
+}
 
-  #container {
+#container {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-  }
-  
-  #directorySection {
+}
+
+#directorySection {
     display: flex;
     flex-direction: row;
     gap: 10px;
-    width: 85%
-  }
-  
-  #generateReportBtn {
+    width: 85%;
+}
+
+#generateReportBtn {
     margin-top: 20px;
     width: 30%;
-  }
- 
-  html, body {
-	position: relative;
-	width: 100%;
-	height: 100%;
+}
+
+html,
+body {
+    position: relative;
+    width: 100%;
+    height: 100%;
 }
 
 body {
-	color: #333;
-	margin: 0;
-	padding: 8px;
-	box-sizing: border-box;
-	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    color: #333;
+    margin: 0;
+    padding: 8px;
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+        Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 }
 
 a {
-	color: rgb(0,100,200);
-	text-decoration: none;
+    color: rgb(0, 100, 200);
+    text-decoration: none;
 }
 
 a:hover {
-	text-decoration: underline;
+    text-decoration: underline;
 }
 
 a:visited {
-	color: rgb(0,80,160);
+    color: rgb(0, 80, 160);
 }
 
 label {
-	display: block;
+    display: block;
 }
 
-input, button, select, textarea {
-	font-family: inherit;
-	font-size: inherit;
-	-webkit-padding: 0.4em 0;
-	padding: 0.4em;
-	margin: 0 0 0.5em 0;
-	box-sizing: border-box;
-	border: 1px solid #ccc;
-	border-radius: 2px;
+input,
+button,
+select,
+textarea {
+    font-family: inherit;
+    font-size: inherit;
+    -webkit-padding: 0.4em 0;
+    padding: 0.4em;
+    margin: 0 0 0.5em 0;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 2px;
 }
 
 input:disabled {
-	color: #ccc;
+    color: #ccc;
 }
 
 button {
-	color: #333;
-	background-color: #f4f4f4;
-	outline: none;
+    color: #333;
+    background-color: #f4f4f4;
+    outline: none;
 }
 
 button:disabled {
-	color: #999;
+    color: #999;
 }
 
 button:not(:disabled):active {
-	background-color: #ddd;
+    background-color: #ddd;
 }
 
 button:focus {
-	border-color: #666;
+    border-color: #666;
 }

@@ -2,7 +2,7 @@
 
 const { db, txGetAll, txGetOne } = require("./db_utils.cjs");
 
-exports.getDailyZeroedCountsNameAgnosticQuery = function() {
+exports.getDailyZeroedCountsNameAgnosticQuery = function () {
     return `
     with cnt as (
     select 
@@ -45,17 +45,15 @@ exports.getDailyZeroedCountsNameAgnosticQuery = function() {
     ) as 'ninety_day_rolling_week'
     from seven;
     `;
-    
-}
+};
 
-
-exports.getPersonStatNameAgnostic = function(start_date, end_date, stats) {
+exports.getPersonStatNameAgnostic = function (start_date, end_date, stats) {
     let result = {};
     // console.log(stats)
     db.transaction(() => {
         //result = {};
         for (let stat of stats) {
-            // I know this is horribly unsafe, im just lazy. 
+            // I know this is horribly unsafe, im just lazy.
             const query = `
             with count_only as (
 
@@ -74,13 +72,13 @@ exports.getPersonStatNameAgnostic = function(start_date, end_date, stats) {
             (100*count)/ sum(count) over () as pct
             from count_only
             order by count desc;
-            `
-            result[stat] = db.prepare(query).all({start_date, end_date});
+            `;
+            result[stat] = db.prepare(query).all({ start_date, end_date });
         }
     })();
-    
+
     return result;
-}; 
+};
 
 exports.getTotal = function () {
     const query = `
@@ -93,6 +91,6 @@ exports.getTotal = function () {
     from photo_info_rollup_daily 
     group by 1,2 order by count desc;
               `;
-  //   console.log(query);
+    //   console.log(query);
     return txGetOne(query, []);
-  };
+};
